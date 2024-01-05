@@ -1,12 +1,18 @@
 package com.service.marketplace.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
-public class Notification extends BaseEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+@Table(name = "notification")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class Notification extends BaseEntity {
 
     @Column(name = "user_id")
     private int userId;
@@ -14,45 +20,15 @@ public class Notification extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    @Column(name = "content")
+    private String content;
+
+
     @Column(name = "status")
     private String status;
 
-    public Notification(int id, int userId, Type type, String status) {
-        this.id = id;
-        this.userId = userId;
-        this.type = type;
-        this.status = status;
-    }
 
-    public int getId() {
-        return id;
-    }
+    public enum Type {
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }

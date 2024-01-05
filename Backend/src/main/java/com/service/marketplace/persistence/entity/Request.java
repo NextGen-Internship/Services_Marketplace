@@ -9,21 +9,17 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@Table(name = "review")
-public class Review extends BaseEntity {
+@Table(name = "request")
+public class Request extends BaseEntity {
 
-    @Column(name = "customer_id")
+    @Column(name = "customer_id", nullable = false)
     private int customerId;
+
+    @Column(name = "service_id", nullable = false)
+    private int serviceId;
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "raiting")
-    private double raiting;
-
-    @Column(name = "date")
-    private LocalDateTime date;
 
     @Column(name = "created_by")
     private int createdBy;
@@ -31,7 +27,7 @@ public class Review extends BaseEntity {
     @Column(name = "updated_by")
     private int updatedBy;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")

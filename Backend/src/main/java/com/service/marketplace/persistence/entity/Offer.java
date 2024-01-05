@@ -3,27 +3,31 @@ package com.service.marketplace.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@Table(name = "review")
-public class Review extends BaseEntity {
+@Table(name = "offer")
+public class Offer extends BaseEntity {
 
-    @Column(name = "customer_id")
-    private int customerId;
+    @Column(name = "request_id", nullable = false)
+    private int requestId;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "raiting")
-    private double raiting;
+    @Column(name = "offer_price")
+    private double offerPrice;
 
     @Column(name = "date")
-    private LocalDateTime date;
+    private LocalDate date;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "offer_status")
+    private OfferStatus offerStatus;
 
     @Column(name = "created_by")
     private int createdBy;
@@ -31,10 +35,11 @@ public class Review extends BaseEntity {
     @Column(name = "updated_by")
     private int updatedBy;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
 }
+
+
