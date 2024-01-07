@@ -1,9 +1,9 @@
 package com.service.marketplace.persistence.entity;
 
+import com.service.marketplace.persistence.enums.Type;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class Notification extends BaseEntity {
 
     @Column(name = "user_id")
@@ -28,7 +27,5 @@ public class Notification extends BaseEntity {
     private String status;
 
 
-    public enum Type {
 
-    }
 }
