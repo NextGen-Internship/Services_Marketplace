@@ -1,9 +1,7 @@
 package com.service.marketplace.persistence.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.service.marketplace.persistence.enums.TransactionStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,19 +16,17 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 public class Transactions extends BaseEntity {
 
-    @Column(name = "amount")
+    @Column(name = "amount", nullable = false)
     private double amount;
 
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(name = "transaction_status")
-    private String transactionStatus;
+    @Column(name = "transaction_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus transactionStatus;
 
-    @ManyToOne
-    private User user;
-
-    @ManyToOne
+    @OneToOne
     private Offer offer;
 
 }

@@ -10,13 +10,10 @@ import lombok.*;
 @Table(name = "category")
 public class Category extends BaseEntity {
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
-
-    @ManyToOne
-    private Service service;
 
 }

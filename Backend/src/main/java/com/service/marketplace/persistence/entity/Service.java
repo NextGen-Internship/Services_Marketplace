@@ -1,11 +1,13 @@
 package com.service.marketplace.persistence.entity;
 
+import com.service.marketplace.persistence.enums.ServiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,53 +18,34 @@ import java.util.List;
 @Table(name = "service")
 public class Service extends BaseEntity {
 
-    @Column(name = "date")
-    private LocalDateTime date;
-
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "service_status")
-    private boolean serviceStatus;
+    @Enumerated(EnumType.STRING)
+    private ServiceStatus serviceStatus;
 
-    @Column(name = "price")
-    private double price;
+    @Column(name = "price", nullable = false)
+    private BigDecimal price;
 
-    @Column(name = "category_id")
-    private int categoryId;
+    @Column(name = "created_by", nullable = false)
+    @ManyToOne
+    private User createdBy;
 
-    @Column(name = "location_id")
-    private int locationId;
+    @Column(name = "updated_by", nullable = false)
+    @ManyToOne
+    private User updatedBy;
 
-    @Column(name = "created_by")
-    private int createdBy;
-
-    @Column(name = "updated_by")
-    private int updatedBy;
-
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @OneToMany
+    private List<City> city;
+
     @ManyToOne
-    private User user;
-
-    @OneToMany
-    private List<Request> requestList;
-
-    @OneToMany
-    private List<Review> reviewList;
-
-    @OneToOne
-    private City city;
-
-    @OneToMany
-    private List<Category> categoryList;
-
-
-
-
+    private Category category;
 
 }

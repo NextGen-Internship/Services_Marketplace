@@ -12,26 +12,25 @@ import java.time.LocalDateTime;
 @Table(name = "request")
 public class Request extends BaseEntity {
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "created_by")
-    private int createdBy;
+    @Column(name = "created_by", nullable = false)
+    @ManyToOne
+    private User createdBy;
 
-    @Column(name = "updated_by")
-    private int updatedBy;
+    @Column(name = "updated_by", nullable = false)
+    @ManyToOne
+    private User updatedBy;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    private User user;
-
+    @Column(name = "service_id", nullable = false)
     @ManyToOne
     private Service service;
-
 
 }

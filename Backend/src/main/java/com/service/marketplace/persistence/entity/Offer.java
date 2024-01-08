@@ -4,6 +4,7 @@ import com.service.marketplace.persistence.enums.OfferStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,35 +16,32 @@ import java.util.List;
 @Table(name = "offer")
 public class Offer extends BaseEntity {
 
-
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "offer_price")
-    private double offerPrice;
-
-    @Column(name = "date")
-    private LocalDate date;
+    @Column(name = "offer_price", nullable = false)
+    private BigDecimal offerPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "offer_status")
+    @Column(name = "offer_status", nullable = false)
     private OfferStatus offerStatus;
 
-    @Column(name = "created_by")
-    private int createdBy;
+    @Column(name = "created_by", nullable = false)
+    @ManyToOne
+    private User createdBy;
 
-    @Column(name = "updated_by")
-    private int updatedBy;
+    @Column(name = "updated_by", nullable = false)
+    @ManyToOne
+    private User updatedBy;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany
-    private List<Request> requestList;
-
+    @OneToOne
+    private Request request;
 
 }
 

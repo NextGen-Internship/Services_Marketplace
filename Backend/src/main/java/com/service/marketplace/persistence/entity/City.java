@@ -7,7 +7,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "cities")
+@Table(name = "city")
 public class City extends BaseEntity {
 
     @Column(name = "city", nullable = false)
@@ -18,8 +18,5 @@ public class City extends BaseEntity {
 
     @Column(name = "address", nullable = false)
     private String address;
-
-    @OneToOne
-    private Service service;
 
 }

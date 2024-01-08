@@ -10,11 +10,8 @@ import lombok.*;
 @Table(name = "review_media")
 public class ReviewMedia extends BaseEntity {
 
-
     @Lob
     @Column(name = "photo", nullable = false)
     private byte[] photo;
-
-
 
 }

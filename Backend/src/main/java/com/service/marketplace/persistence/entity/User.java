@@ -15,28 +15,28 @@ import java.util.Set;
 @Table(name = "user")
 public class User extends BaseEntity {
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(name = "password")
     private String password;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true, nullable = false)
     private int phoneNumber;
 
-    @Column(name = "experience")
+    @Column(name = "experience", nullable = false)
     private int experience;
 
     @Column(name = "rating")
     private double rating;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Lob
@@ -50,13 +50,5 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
-
-
-
-
-
-
-
-
 
 }

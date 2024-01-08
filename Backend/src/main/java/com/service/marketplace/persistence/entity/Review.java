@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,32 +16,28 @@ public class Review extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "raiting")
-    private double raiting;
+    @Column(name = "rating", nullable = false)
+    private double rating;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+    @Column(name = "created_by", nullable = false)
+    @ManyToOne
+    private User createdBy;
 
-    @Column(name = "created_by")
-    private int createdBy;
+    @Column(name = "updated_by", nullable = false)
+    @ManyToOne
+    private User updatedBy;
 
-    @Column(name = "updated_by")
-    private int updatedBy;
-
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    private User user;
-
+    @Column(name = "service_id", nullable = false)
     @ManyToOne
     private Service service;
 
     @OneToMany
-    private ReviewMedia reviewMedia;
-
+    private List<ReviewMedia> reviewMedia;
 
 }
