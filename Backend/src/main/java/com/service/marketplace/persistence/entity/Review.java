@@ -37,6 +37,7 @@ public class Review extends BaseEntity {
     @ManyToOne
     private Service service;
 
+    @Column(name = "review_media")
     @OneToMany
     private List<ReviewMedia> reviewMedia;
 

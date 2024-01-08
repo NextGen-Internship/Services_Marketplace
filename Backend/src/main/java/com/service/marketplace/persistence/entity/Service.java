@@ -42,9 +42,11 @@ public class Service extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "city_id", nullable = false)
     @OneToMany
     private List<City> city;
 
+    @Column(name = "category_id", nullable = false)
     @ManyToOne
     private Category category;
 
