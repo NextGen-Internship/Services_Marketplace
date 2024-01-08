@@ -12,12 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "request")
 public class Request extends BaseEntity {
 
-    @Column(name = "customer_id", nullable = false)
-    private int customerId;
-
-    @Column(name = "service_id", nullable = false)
-    private int serviceId;
-
     @Column(name = "description")
     private String description;
 

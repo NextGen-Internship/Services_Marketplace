@@ -17,12 +17,6 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 public class Transactions extends BaseEntity {
 
-    @Column(name = "user_id")
-    private int userId;
-
-    @Column(name = "offer_id")
-    private int offerId;
-
     @Column(name = "amount")
     private double amount;
 

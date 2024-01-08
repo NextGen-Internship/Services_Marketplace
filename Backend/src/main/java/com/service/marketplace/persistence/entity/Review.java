@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "review")
 public class Review extends BaseEntity {
 
-    @Column(name = "customer_id")
-    private int customerId;
-
     @Column(name = "description")
     private String description;
 

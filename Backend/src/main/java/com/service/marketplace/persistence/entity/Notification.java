@@ -13,9 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Notification extends BaseEntity {
 
-    @Column(name = "user_id")
-    private int userId;
-
     @Enumerated(EnumType.STRING)
     private Type type;
 
