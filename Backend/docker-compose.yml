@@ -6,7 +6,7 @@ services:
     image: mysql:latest
     environment:
       MYSQL_DATABASE: service_marketplace
-      MYSQL_ROOT_PASSWORD: borislav.nikolov123
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
       MYSQL_USER: borislav.nikolov
       MYSQL_PASSWORD: borislav.nikolov123
     ports:
