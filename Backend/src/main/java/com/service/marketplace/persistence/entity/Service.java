@@ -1,14 +1,13 @@
 package com.service.marketplace.persistence.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -46,5 +45,24 @@ public class Service extends BaseEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    private User user;
+
+    @OneToMany
+    private List<Request> requestList;
+
+    @OneToMany
+    private List<Review> reviewList;
+
+    @OneToOne
+    private City city;
+
+    @OneToMany
+    private List<Category> categoryList;
+
+
+
+
 
 }

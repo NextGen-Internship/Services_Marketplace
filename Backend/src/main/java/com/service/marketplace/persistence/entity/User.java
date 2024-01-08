@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -49,6 +50,26 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    @OneToMany
+    private List<Service> servicesList;
+
+    @OneToMany
+    private List<Request> requestList;
+
+    @OneToMany
+    private List<Review> reviewList;
+
+    @OneToMany
+    private List<Notification> notificationList;
+
+    @OneToMany
+    private List<Transactions> transactionsList;
+
+
+
+
+
 
 
 }

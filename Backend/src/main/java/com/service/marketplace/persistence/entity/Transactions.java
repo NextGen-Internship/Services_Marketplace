@@ -2,6 +2,7 @@ package com.service.marketplace.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,4 +26,11 @@ public class Transactions extends BaseEntity {
 
     @Column(name = "transaction_status")
     private String transactionStatus;
+
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Offer offer;
+
 }

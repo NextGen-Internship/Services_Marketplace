@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -39,6 +40,12 @@ public class Offer extends BaseEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany
+    private List<Request> requestList;
+
+    @OneToMany
+    private List<Transactions> transactionsList;
 }
 
 

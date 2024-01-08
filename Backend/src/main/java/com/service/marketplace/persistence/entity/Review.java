@@ -33,4 +33,14 @@ public class Review extends BaseEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @ManyToOne
+    private User user;
+
+    @OneToMany
+    private Service service;
+
+    @OneToOne
+    private ReviewMedia reviewMedia;
+
+
 }

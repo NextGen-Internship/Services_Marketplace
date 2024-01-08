@@ -27,4 +27,13 @@ public class Request extends BaseEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Service service;
+
+    @ManyToOne
+    private Offer offer;
+
 }

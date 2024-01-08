@@ -19,4 +19,7 @@ public class City extends BaseEntity {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @OneToOne
+    private Service service;
+
 }
