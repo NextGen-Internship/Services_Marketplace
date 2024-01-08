@@ -10,8 +10,8 @@ import lombok.*;
 @Table(name = "city")
 public class City extends BaseEntity {
 
-    @Column(name = "city", nullable = false)
-    private String city;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "zip_code", nullable = false)
     private int zipCode;

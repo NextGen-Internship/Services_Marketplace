@@ -27,20 +27,20 @@ public class User extends BaseEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "phone_number", unique = true, nullable = false)
+    @Column(name = "phone_number", unique = true)
     private int phoneNumber;
 
-    @Column(name = "experience", nullable = false)
+    @Column(name = "experience")
     private int experience;
 
     @Column(name = "rating")
     private double rating;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
     @Lob
-    @Column(name = "picture")
+    @Column(name = "picture", nullable = false)
     private byte[] picture;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

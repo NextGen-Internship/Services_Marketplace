@@ -24,6 +24,7 @@ public class Notification extends BaseEntity {
     @Column(name = "status", nullable = false)
     private NotificationStatus status;
 
+    @Column(name = "user_id", nullable = false)
     @ManyToOne
     private User user;
 
