@@ -1,20 +1,20 @@
 CREATE TABLE IF NOT EXISTS services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     provider_id INT NOT NULL,
-    FOREIGN KEY (provider_id) REFERENCES users (id),
     review_id INT NOT NULL,
-    FOREIGN KEY (review_id) REFERENCES reviews (id),
     title VARCHAR(50) NOT NULL,
     date DATETIME NOT NULL,
     description VARCHAR(255),
     service_status BOOLEAN NOT NULL,
     price DOUBLE NOT NULL,
     category_id INT NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES category (id),
     city_id INT NOT NULL,
-    FOREIGN KEY (city_id) REFERENCES cities (id),
     created_by INT,
     updated_by INT,
     created_at DATETIME,
-    updated_at DATETIME
+    updated_at DATETIME,
+    FOREIGN KEY (provider_id) REFERENCES users (id),
+    FOREIGN KEY (review_id) REFERENCES reviews (id),
+    FOREIGN KEY (category_id) REFERENCES category (id),
+    FOREIGN KEY (city_id) REFERENCES cities (id)
 );
