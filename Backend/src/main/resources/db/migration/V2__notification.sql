@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS notifications (
     content VARCHAR(255),
     status ENUM('Read', 'Unread'),
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (user_id) REFERENCES user (id)
 );

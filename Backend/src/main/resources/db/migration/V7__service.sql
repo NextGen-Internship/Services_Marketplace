@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS services (
+CREATE TABLE IF NOT EXISTS service (
     id INT AUTO_INCREMENT PRIMARY KEY,
     provider_id INT NOT NULL,
     review_id INT NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS services (
     updated_by INT,
     created_at DATETIME,
     updated_at DATETIME,
-    FOREIGN KEY (provider_id) REFERENCES users (id),
-    FOREIGN KEY (review_id) REFERENCES reviews (id),
+    FOREIGN KEY (provider_id) REFERENCES user (id),
+    FOREIGN KEY (review_id) REFERENCES review (id),
     FOREIGN KEY (category_id) REFERENCES category (id),
-    FOREIGN KEY (city_id) REFERENCES cities (id)
+    FOREIGN KEY (city_id) REFERENCES city (id)
 );
