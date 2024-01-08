@@ -51,20 +51,7 @@ public class User extends BaseEntity {
     )
     private Set<Role> roles;
 
-    @OneToMany
-    private List<Service> servicesList;
 
-    @OneToMany
-    private List<Request> requestList;
-
-    @OneToMany
-    private List<Review> reviewList;
-
-    @OneToMany
-    private List<Notification> notificationList;
-
-    @OneToMany
-    private List<Transactions> transactionsList;
 
 
 

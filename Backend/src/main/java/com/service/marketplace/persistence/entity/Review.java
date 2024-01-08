@@ -36,10 +36,10 @@ public class Review extends BaseEntity {
     @ManyToOne
     private User user;
 
-    @OneToMany
+    @ManyToOne
     private Service service;
 
-    @OneToOne
+    @OneToMany
     private ReviewMedia reviewMedia;
 
 

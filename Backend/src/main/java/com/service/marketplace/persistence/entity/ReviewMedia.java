@@ -15,7 +15,6 @@ public class ReviewMedia extends BaseEntity {
     @Column(name = "photo", nullable = false)
     private byte[] photo;
 
-    @OneToOne
-    private  Review review;
+
 
 }

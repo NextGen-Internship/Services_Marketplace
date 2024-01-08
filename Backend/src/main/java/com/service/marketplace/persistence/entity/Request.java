@@ -33,7 +33,5 @@ public class Request extends BaseEntity {
     @ManyToOne
     private Service service;
 
-    @ManyToOne
-    private Offer offer;
 
 }

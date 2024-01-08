@@ -44,8 +44,7 @@ public class Offer extends BaseEntity {
     @OneToMany
     private List<Request> requestList;
 
-    @OneToMany
-    private List<Transactions> transactionsList;
+
 }
 
 
