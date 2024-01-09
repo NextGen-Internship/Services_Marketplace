@@ -3,6 +3,8 @@ package com.service.marketplace.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,5 +20,8 @@ public class City extends BaseEntity {
 
     @Column(name = "address", nullable = false)
     private String address;
+
+    @ManyToMany(mappedBy = "cities")
+    private List<Service> services;
 
 }

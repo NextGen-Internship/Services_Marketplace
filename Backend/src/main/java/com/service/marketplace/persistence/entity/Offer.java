@@ -26,11 +26,11 @@ public class Offer extends BaseEntity {
     @Column(name = "offer_status", nullable = false)
     private OfferStatus offerStatus;
 
-    @Column(name = "created_by", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     @ManyToOne
     private User createdBy;
 
-    @Column(name = "updated_by", nullable = false)
+    @JoinColumn(name = "updated_by", nullable = false)
     @ManyToOne
     private User updatedBy;
 

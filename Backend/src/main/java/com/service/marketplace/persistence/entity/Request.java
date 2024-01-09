@@ -15,11 +15,11 @@ public class Request extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "created_by", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     @ManyToOne
     private User createdBy;
 
-    @Column(name = "updated_by", nullable = false)
+    @JoinColumn(name = "updated_by", nullable = false)
     @ManyToOne
     private User updatedBy;
 

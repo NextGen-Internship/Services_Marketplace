@@ -18,6 +18,9 @@ import java.util.List;
 @Table(name = "service")
 public class Service extends BaseEntity {
 
+    @Column(name = "title", nullable = false)
+    private String title;
+
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -28,11 +31,11 @@ public class Service extends BaseEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "created_by", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     @ManyToOne
     private User createdBy;
 
-    @Column(name = "updated_by", nullable = false)
+    @JoinColumn (name = "updated_by", nullable = false)
     @ManyToOne
     private User updatedBy;
 
@@ -42,12 +45,17 @@ public class Service extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "city_id", nullable = false)
-    @OneToMany
-    private List<City> city;
-
     @Column(name = "category_id", nullable = false)
     @ManyToOne
     private Category category;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "service_city",
+            joinColumns = @JoinColumn(name = "service_id"),
+            inverseJoinColumns = @JoinColumn(name = "city_id")
+    )
+    private List<City> cities;
+
 
 }

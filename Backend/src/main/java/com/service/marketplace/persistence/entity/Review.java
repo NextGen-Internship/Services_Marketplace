@@ -19,11 +19,11 @@ public class Review extends BaseEntity {
     @Column(name = "rating", nullable = false)
     private double rating;
 
-    @Column(name = "created_by", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     @ManyToOne
     private User createdBy;
 
-    @Column(name = "updated_by", nullable = false)
+    @JoinColumn(name = "updated_by", nullable = false)
     @ManyToOne
     private User updatedBy;
 
@@ -37,8 +37,8 @@ public class Review extends BaseEntity {
     @ManyToOne
     private Service service;
 
-    @Column(name = "review_media")
-    @OneToMany
-    private List<ReviewMedia> reviewMedia;
+    @Column(name = "files")
+    @ManyToMany
+    private List<Files> filesList;
 
 }
