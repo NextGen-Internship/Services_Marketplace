@@ -20,10 +20,6 @@ const SignUp = () => {
           <FaUserPen className='icon' />
         </div>
         <div className='input-box'>
-          <input type='text' placeholder='Username' required />
-          <FaUserTie className='icon' />
-        </div>
-        <div className='input-box'>
           <input type='text' placeholder='Email' required />
           <MdOutlineEmail className='icon' />
         </div>
