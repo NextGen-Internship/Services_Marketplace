@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     offer_id INT NOT NULL,
     amount DOUBLE NOT NULL,
     timestamp DATETIME NOT NULL,
-    transaction_status ENUM('Active', 'Inactive', 'Pending') NOT NULL,
+    transaction_status VARCHAR(50) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user (id),
     FOREIGN KEY (offer_id) REFERENCES offer (id)
 );

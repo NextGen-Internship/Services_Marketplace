@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS user (
     experience INT,
     rating DOUBLE,
     description VARCHAR(255),
-    photo BLOB,
+    picture BLOB NOT NULL,
     PRIMARY KEY (id)
 );
