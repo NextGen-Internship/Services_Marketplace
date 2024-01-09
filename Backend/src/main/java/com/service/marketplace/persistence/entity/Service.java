@@ -44,7 +44,7 @@ public class Service extends BaseEntity {
     @Column(name = "is_Active")
     private boolean isActive;
 
-    @Column(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     @ManyToOne
     private Category category;
 

@@ -32,12 +32,12 @@ public class Review extends BaseEntity {
     @Column(name = "is_Active")
     private boolean isActive;
 
-    @Column(name = "service_id", nullable = false)
+    @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne
     private Service service;
 
-    @Column(name = "files")
-    @ManyToMany
+    @Column(name = "fiels")
+    @OneToMany
     private List<Files> filesList;
 
 }

@@ -4,9 +4,10 @@ package com.service.marketplace.service;
 import com.service.marketplace.dto.request.AuthenticationRequest;
 import com.service.marketplace.dto.request.RegisterRequest;
 import com.service.marketplace.dto.response.AuthenticationResponse;
-import com.service.marketplace.user.Role;
-import com.service.marketplace.user.User;
-import com.service.marketplace.UserRepository;
+import com.service.marketplace.persistence.entity.Role;
+import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.UserRole;
+import com.service.marketplace.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,7 +24,12 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder().firstname(request.getFirstname()).lastname(request.getLastname()).email(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).role(Role.CUSTOMER).build();
+        var user = User.builder()
+                .firstName(request.getFirstname())
+                .lastName(request.getLastname())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();

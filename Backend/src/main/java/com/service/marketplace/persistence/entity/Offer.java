@@ -37,7 +37,7 @@ public class Offer extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "request_id", nullable = false)
+    @JoinColumn(name = "request_id", nullable = false)
     @OneToOne
     private Request request;
 
