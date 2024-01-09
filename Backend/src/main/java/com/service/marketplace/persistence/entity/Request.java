@@ -26,7 +26,7 @@ public class Request extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "isActive")
+    @Column(name = "is_Active")
     private boolean isActive;
 
     @Column(name = "service_id", nullable = false)
