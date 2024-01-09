@@ -31,13 +31,9 @@ public class Service extends BaseEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @JoinColumn(name = "created_by", nullable = false)
+    @JoinColumn(name = "provider_id", nullable = false)
     @ManyToOne
-    private User createdBy;
-
-    @JoinColumn (name = "updated_by", nullable = false)
-    @ManyToOne
-    private User updatedBy;
+    private User provider;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -45,11 +41,14 @@ public class Service extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "isActive")
+    private boolean isActive;
+
     @Column(name = "category_id", nullable = false)
     @ManyToOne
     private Category category;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "service_city",
             joinColumns = @JoinColumn(name = "service_id"),

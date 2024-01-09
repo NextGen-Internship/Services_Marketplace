@@ -26,13 +26,10 @@ public class Offer extends BaseEntity {
     @Column(name = "offer_status", nullable = false)
     private OfferStatus offerStatus;
 
-    @JoinColumn(name = "created_by", nullable = false)
+    @JoinColumn(name = "provider_id", nullable = false)
     @ManyToOne
-    private User createdBy;
+    private User provider;
 
-    @JoinColumn(name = "updated_by", nullable = false)
-    @ManyToOne
-    private User updatedBy;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

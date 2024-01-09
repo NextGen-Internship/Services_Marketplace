@@ -15,19 +15,19 @@ public class Request extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @JoinColumn(name = "created_by", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     @ManyToOne
-    private User createdBy;
+    private User customer;
 
-    @JoinColumn(name = "updated_by", nullable = false)
-    @ManyToOne
-    private User updatedBy;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "isActive")
+    private boolean isActive;
 
     @Column(name = "service_id", nullable = false)
     @ManyToOne
