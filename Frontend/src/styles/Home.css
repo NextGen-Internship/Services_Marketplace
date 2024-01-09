@@ -1,0 +1,18 @@
+/* CSS file (Home.css) */
+
+.home-wrapper {
+  background: rgb(45, 192, 253);
+  background: linear-gradient(
+    0deg,
+    rgba(45, 192, 253, 0.8715861344537815) 0%,
+    rgba(22, 41, 113, 1) 93%
+  );
+  height: 100vh;
+}
+
+.search-container {
+  margin-top: -49%;
+  margin-left: 250px;
+  width: 550px;
+}
+
