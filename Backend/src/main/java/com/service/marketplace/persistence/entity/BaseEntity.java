@@ -2,6 +2,6 @@ package com.service.marketplace.persistence.entity;
 
 import jakarta.persistence.Entity;
 
-@Entity
+//@Entity
 public class BaseEntity {
 }
