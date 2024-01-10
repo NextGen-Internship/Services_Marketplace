@@ -11,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "offer")
 public class Offer extends BaseEntity {
@@ -37,7 +36,7 @@ public class Offer extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @JoinColumn(name = "request_id", nullable = false)
+    @PrimaryKeyJoinColumn(name = "request_id")
     @OneToOne
     private Request request;
 

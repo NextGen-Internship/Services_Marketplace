@@ -5,7 +5,6 @@ import lombok.*;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "category")
 public class Category extends BaseEntity {
