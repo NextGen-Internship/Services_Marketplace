@@ -1,6 +1,7 @@
 import React from 'react'
 import AddService from './AddService'
 import { useState, useEffect } from 'react';
+import '../styles/AddServicePage.css'
 
 function AddServicePage() {
     const [services, setServices] = useState([]);
@@ -79,7 +80,7 @@ function AddServicePage() {
     //   }
 
   return (
-    <div>
+    <div className='AddServicePage'>
         <AddService onAdd={addService} />
     </div>
   )

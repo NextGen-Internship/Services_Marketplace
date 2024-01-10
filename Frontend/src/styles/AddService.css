@@ -3,7 +3,6 @@
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background: radial-gradient(circle, rgba(73, 143, 199, 1) 0%, rgba(12, 24, 91, 1) 100%);
     color: white;
     max-width: 400px;
     margin: auto;

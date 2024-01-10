@@ -25,7 +25,7 @@ public class ServiceController {
     }
 
     @GetMapping("/{serviceId}")
-    public ResponseEntity<Service> getTaskById(@PathVariable("serviceId") Integer serviceId) {
+    public ResponseEntity<Service> getServiceById(@PathVariable("serviceId") Integer serviceId) {
         Service service = serviceService.getServiceById(serviceId);
 
         if (service != null) {
@@ -58,7 +58,7 @@ public class ServiceController {
     }
 
     @DeleteMapping("/delete/{serviceId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable("serviceId") Integer serviceId) {
+    public ResponseEntity<Void> deleteService(@PathVariable("serviceId") Integer serviceId) {
         serviceService.deleteServiceById(serviceId);
         return ResponseEntity.ok().build();
     }
