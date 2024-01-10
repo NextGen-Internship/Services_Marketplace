@@ -17,6 +17,7 @@ function Navbar({clicked, isClicked}) {
                 <li className='NavElements'><NavLink className='Link' to="/home-page">Home</NavLink></li>
                 <li className='NavElements'><NavLink className='Link' to="/category-page">Category</NavLink></li>
                 <li className='NavElements'><NavLink className='Link' to="/profile">Profile</NavLink></li>
+                <li className='NavElements'><NavLink className='Link' to="/add-service-page">Add Service</NavLink></li>
                 <li className='NavButton'><NavLink className='BtnLink' to="/sign-in">Sign In</NavLink></li>
                 <li className='NavButton'><NavLink className='BtnLink' to="/sign-up">Sign Up</NavLink></li>
             </ul>
