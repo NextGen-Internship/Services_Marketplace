@@ -17,3 +17,4 @@ To launch the Services Marketplace application, follow these steps:
 3. Run the command:
 For start: docker-compose up     
 For stop: docker-compose down --rmi local
+
