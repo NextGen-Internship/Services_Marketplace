@@ -5,6 +5,8 @@
     padding: 20px;
     background: radial-gradient(circle, rgba(73, 143, 199, 1) 0%, rgba(12, 24, 91, 1) 100%);
     color: white;
+    max-width: 400px;
+    margin: auto;
 }
 
 .add-service-form label {
@@ -29,6 +31,7 @@
     font-size: 16px;
     color: white;
     padding: 10px;
+    box-sizing: border-box;
 }
 
 .add-service-form input::placeholder {
@@ -52,4 +55,10 @@
 
 .add-service-form input[type='submit']:hover {
     background: rgb(195, 237, 55);
+}
+
+@media (max-width: 600px) {
+    .add-service-form {
+        max-width: 100%;
+    }
 }
