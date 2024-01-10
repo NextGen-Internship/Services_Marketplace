@@ -4,6 +4,7 @@ import com.service.marketplace.persistence.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,6 +28,8 @@ public class ServiceServiceImplementation implements ServiceService {
 
     @Override
     public com.service.marketplace.persistence.entity.Service createService(com.service.marketplace.persistence.entity.Service serviceToCreate) {
+        serviceToCreate.setCreatedAt(LocalDateTime.now());
+        serviceToCreate.setUpdatedAt(LocalDateTime.now());
         return serviceRepository.save(serviceToCreate);
     }
 
@@ -38,6 +41,9 @@ public class ServiceServiceImplementation implements ServiceService {
             existingService.setTitle(serviceToUpdate.getTitle());
             existingService.setDescription(serviceToUpdate.getDescription());
             existingService.setPrice(serviceToUpdate.getPrice());
+
+            existingService.setCreatedAt(LocalDateTime.now());
+            existingService.setUpdatedAt(LocalDateTime.now());
 
             return serviceRepository.save(existingService);
         } else {
