@@ -43,7 +43,7 @@ export const SignIn = () => {
           <GoogleLogin 
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
-            clientId="your-google-client-id" // replace with your actual Google Client ID
+            clientId="350761079008-0ipa8rk7sumieir1rq4b5ljg3pu78trt.apps.googleusercontent.com"
             buttonText="Login with Google"
             cookiePolicy={'single_host_origin'}
           />
