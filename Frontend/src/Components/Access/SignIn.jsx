@@ -1,32 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import '../../styles/SignIn.css';
-import { FaUserTie } from 'react-icons/fa6';
+import { FaUserTie, FaFacebook } from 'react-icons/fa';
 import { IoIosLock } from 'react-icons/io';
-import { FaGoogle } from 'react-icons/fa';
-import { FaFacebook } from 'react-icons/fa6';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGoogleOAuth, GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin, GoogleLogin } from '@react-oauth/google';
 
 export const SignIn = () => {
   const navigate = useNavigate();
-  const { signInWithGoogle } = useGoogleOAuth();
 
-  useEffect(() => {
-    // No need to manually initialize auth2; the library takes care of it
-  }, []);
-
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      console.log(tokenResponse); // Add a semicolon here
-
-      // Navigate to the desired page or perform any other action after successful login
-      navigate('/home-page');
-    },
-    onError: (error) => {
-      console.error('Google login error:', error);
-      navigate('/sign-in');
-    },
-  });
+  const responseGoogle = (response) => {
+    console.log(response);
+    // Handle Google login response here if needed
+  };
 
   return (
     <div className='sign-in'>
@@ -55,12 +40,13 @@ export const SignIn = () => {
           </div>
         </form>
         <div className='media-options'>
-          <button onClick={login}>
-            <div className='media-options-login-buttons'>
-              <FaGoogle className='icon' />
-              <span>Login with Google</span>
-            </div>
-          </button>
+          <GoogleLogin 
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            clientId="your-google-client-id" // replace with your actual Google Client ID
+            buttonText="Login with Google"
+            cookiePolicy={'single_host_origin'}
+          />
           <button onClick={() => console.log('login with FB click')}>
             <div className='media-options-login-buttons'>
               <FaFacebook className='icon' />
@@ -72,3 +58,5 @@ export const SignIn = () => {
     </div>
   );
 };
+
+export default SignIn;
