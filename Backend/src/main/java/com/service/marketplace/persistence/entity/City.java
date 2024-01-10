@@ -7,7 +7,6 @@ import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "city")
 public class City extends BaseEntity {

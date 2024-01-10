@@ -1,6 +1,7 @@
-package com.service.marketplace.service;
+package com.service.marketplace.service.serviceImplementation;
 
 import com.service.marketplace.persistence.repository.ServiceRepository;
+import com.service.marketplace.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

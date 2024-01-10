@@ -13,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "service")
 public class Service extends BaseEntity {
@@ -31,6 +30,7 @@ public class Service extends BaseEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+    // TODO
     @JoinColumn(name = "provider_id", nullable = false)
     @ManyToOne
     private User provider;
@@ -44,7 +44,7 @@ public class Service extends BaseEntity {
     @Column(name = "is_Active")
     private boolean isActive;
 
-    @Column(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     @ManyToOne
     private Category category;
 
