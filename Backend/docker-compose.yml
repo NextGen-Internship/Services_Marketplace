@@ -11,6 +11,9 @@ services:
       MYSQL_PASSWORD: borislav.nikolov123
     ports:
       - "3306:3306"
+    volumes:
+      - mysql-data
+
 
   # Flyway service
   flyway:
@@ -30,6 +33,7 @@ services:
   # Spring Boot application
   app:
     image: openjdk:17
+    container_name: services-app
     depends_on:
       - db
       - flyway
@@ -42,7 +46,8 @@ services:
     volumes:
       - ./target:/app
     command: ["java", "-jar", "/app/marketplace-0.0.1-SNAPSHOT.jar"]
-    restart: on-failure
+#    restart: on-failure
 
 volumes:
   spring-data:
+  mysql-data:
