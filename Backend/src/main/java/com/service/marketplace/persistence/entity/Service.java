@@ -40,9 +40,6 @@ public class Service extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_Active")
-    private boolean isActive;
-
     @JoinColumn(name = "category_id", nullable = false)
     @ManyToOne
     private Category category;
