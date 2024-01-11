@@ -8,10 +8,14 @@ import java.util.Set;
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "roles")
 public class Role extends BaseEntity {
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @Column(name = "name")
+    private String name;
+
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<User> users;
 
 }
