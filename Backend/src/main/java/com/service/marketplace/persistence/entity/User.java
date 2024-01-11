@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user")
 public class User extends BaseEntity implements UserDetails {
@@ -47,10 +48,10 @@ public class User extends BaseEntity implements UserDetails {
     private String description;
 
     @Lob
-    @Column(name = "picture", nullable = false)
+    @Column(name = "picture")
     private byte[] picture;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),

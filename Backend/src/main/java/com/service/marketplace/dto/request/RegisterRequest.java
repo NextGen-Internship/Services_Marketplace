@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class RegisterRequest {
     @NotEmpty
     @Size(min = 2, max = 20)
