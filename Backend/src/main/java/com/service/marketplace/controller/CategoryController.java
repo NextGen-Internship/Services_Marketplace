@@ -1,5 +1,7 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.request.CategoryRequest;
+import com.service.marketplace.dto.response.CategoryResponse;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.service.CategoryService;
 import lombok.AllArgsConstructor;
@@ -33,13 +35,13 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Category> createCategory(@RequestBody Category categoryToCreate) {
+    public ResponseEntity<Category> createCategory(@RequestBody CategoryRequest categoryToCreate) {
         Category newCategory = categoryService.createCategory(categoryToCreate);
         return ResponseEntity.ok(newCategory);
     }
 
     @PutMapping("/update/{categoryId}")
-    public ResponseEntity<Category> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody Category categoryToUpdate) {
+    public ResponseEntity<Category> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryToUpdate) {
         try {
             Category updatedCategory = categoryService.updateCategory(categoryId, categoryToUpdate);
 

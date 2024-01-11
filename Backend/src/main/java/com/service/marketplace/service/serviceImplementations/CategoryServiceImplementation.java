@@ -1,5 +1,8 @@
 package com.service.marketplace.service.serviceImplementations;
 
+import com.service.marketplace.dto.request.CategoryRequest;
+import com.service.marketplace.dto.response.CategoryResponse;
+import com.service.marketplace.mapper.CategoryMapper;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.repository.CategoryRepository;
 import com.service.marketplace.service.CategoryService;
@@ -13,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryServiceImplementation implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Override
     public List<Category> getAllCategories() {
@@ -21,21 +25,25 @@ public class CategoryServiceImplementation implements CategoryService {
 
     @Override
     public Category getCategoryById(Integer categoryId) {
-        return categoryRepository.findById(categoryId).orElse(null);
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+
+        return category;
     }
 
     @Override
-    public Category createCategory(Category categoryToCreate) {
-        return categoryRepository.save(categoryToCreate);
+    public Category createCategory(CategoryRequest categoryToCreate) {
+        Category newCategory = categoryMapper.categoryRequestToCategory(categoryToCreate);
+        return categoryRepository.save(newCategory);
     }
 
     @Override
-    public Category updateCategory(Integer categoryId, Category categoryToUpdate) {
+    public Category updateCategory(Integer categoryId, CategoryRequest categoryToUpdate) {
         Category existingCategory = categoryRepository.findById(categoryId).orElse(null);
 
         if (existingCategory != null) {
-            existingCategory.setName(categoryToUpdate.getName());
-            existingCategory.setDescription(categoryToUpdate.getDescription());
+//            existingCategory.setName(categoryToUpdate.getName());
+//            existingCategory.setDescription(categoryToUpdate.getDescription());
+            existingCategory = categoryMapper.categoryRequestToCategory(categoryToUpdate);
 
             return categoryRepository.save(existingCategory);
         } else {
