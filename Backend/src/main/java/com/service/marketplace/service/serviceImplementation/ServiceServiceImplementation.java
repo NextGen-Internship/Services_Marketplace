@@ -1,5 +1,6 @@
 package com.service.marketplace.service.serviceImplementation;
 
+import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class ServiceServiceImplementation implements ServiceService {
     @Override
     public com.service.marketplace.persistence.entity.Service getServiceById(Integer serviceId) {
         return serviceRepository.findById(serviceId).orElse(null);
+    }
+
+    @Override
+    public List<com.service.marketplace.persistence.entity.Service> getAllServicesByCategory(Category category) {
+        return serviceRepository.findByCategory(category);
     }
 
     @Override

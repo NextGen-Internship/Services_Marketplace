@@ -30,7 +30,6 @@ public class Service extends BaseEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    // TODO
     @JoinColumn(name = "provider_id", nullable = false)
     @ManyToOne
     private User provider;

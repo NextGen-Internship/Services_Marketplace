@@ -1,5 +1,6 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.entity.Service;
 import com.service.marketplace.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,17 @@ public class ServiceController {
             return ResponseEntity.ok(service);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{category}")
+    public ResponseEntity<List<Service>> getServicesByCategory(@PathVariable("category") Category category) {
+        List<Service> services = serviceService.getAllServicesByCategory(category);
+
+        if (services.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(services);
         }
     }
 
