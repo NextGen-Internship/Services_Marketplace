@@ -1,4 +1,4 @@
-package com.service.marketplace.service.serviceImplementations;
+package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.CategoryRequest;
 import com.service.marketplace.mapper.CategoryMapper;
