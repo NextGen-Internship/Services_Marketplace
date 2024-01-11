@@ -4,14 +4,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Data
-@AllArgsConstructor
 @Table(name = "user")
+@RequiredArgsConstructor
 public class User extends BaseEntity {
 
     @Column(name = "first_name", nullable = false)
@@ -38,9 +39,9 @@ public class User extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @Lob
-    @Column(name = "picture", nullable = false)
-    private byte[] picture;
+//    @Lob
+//    @Column(name = "picture", nullable = false)
+//    private byte[] picture;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
