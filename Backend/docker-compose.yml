@@ -11,9 +11,6 @@ services:
       MYSQL_PASSWORD: borislav.nikolov123
     ports:
       - "3306:3306"
-    volumes:
-      - mysql-data
-
 
   # Flyway service
   flyway:
@@ -41,13 +38,15 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/service_marketplace
       SPRING_DATASOURCE_USERNAME: borislav.nikolov
       SPRING_DATASOURCE_PASSWORD: borislav.nikolov123
+      # Enable remote debugging on port 5005
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
     ports:
       - "8080:8080"
+      - "5005:5005"  # Expose the debugging port
     volumes:
       - ./target:/app
     command: ["java", "-jar", "/app/marketplace-0.0.1-SNAPSHOT.jar"]
-#    restart: on-failure
+    restart: on-failure
 
 volumes:
   spring-data:
-  mysql-data:

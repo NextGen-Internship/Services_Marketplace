@@ -1,3 +1,3 @@
-INSERT INTO roles (role) VALUES ('customer');
-INSERT INTO roles (role) VALUES ('provider');
-INSERT INTO roles (role) VALUES ('admin');
+INSERT INTO roles (name) VALUES ('CUSTOMER');
+INSERT INTO roles (name) VALUES ('PROVIDER');
+INSERT INTO roles (name) VALUES ('ADMIN');

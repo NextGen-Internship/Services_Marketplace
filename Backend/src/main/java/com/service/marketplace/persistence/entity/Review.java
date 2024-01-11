@@ -35,8 +35,8 @@ public class Review extends BaseEntity {
     @ManyToOne
     private Service service;
 
-    @Column(name = "files")
-    @ManyToMany
+    @Column(name = "fiels")
+    @OneToMany
     private List<Files> filesList;
 
 }
