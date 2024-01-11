@@ -5,12 +5,15 @@ import com.service.marketplace.mapper.UserMapper;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.UserService;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Data
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;

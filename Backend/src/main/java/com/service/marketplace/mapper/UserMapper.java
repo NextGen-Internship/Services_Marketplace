@@ -6,8 +6,10 @@ import com.service.marketplace.persistence.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
+import org.springframework.context.annotation.Configuration;
 
-@Mapper
+
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
