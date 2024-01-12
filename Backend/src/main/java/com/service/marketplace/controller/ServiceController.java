@@ -5,6 +5,7 @@ import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.entity.Service;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.ServiceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/services")
 public class ServiceController {
     private final ServiceService serviceService;
-
-    @Autowired
-    public ServiceController(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
 
     @GetMapping("/all")
     public ResponseEntity<List<Service>> getAllServices() {

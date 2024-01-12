@@ -52,17 +52,15 @@ public class User extends BaseEntity implements UserDetails {
     private byte[] picture;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
+        return Set.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
     }
 
     @Override

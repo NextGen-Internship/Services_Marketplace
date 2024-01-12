@@ -26,7 +26,7 @@ function AddServicePage() {
 
     // add service
     const addService = async (service) => {
-        const id = Math.floor(Math.random() * 10000) + 1;
+        // const id = Math.floor(Math.random() * 10000) + 1;
         // const newTask = { id, ...task };
 
         await fetch('http://localhost:8080/v1/services/create', {
@@ -43,41 +43,6 @@ function AddServicePage() {
         })
         .catch((error) => console.error(error));
     }
-
-    // delete service
-    const deleteService = async (id) => {
-        setServices(services.filter((service) => service.id !== id));
-
-        await fetch(`http://localhost:8080/v1/services/delete/${id}`, {
-        method: 'DELETE',
-        })
-        .then((response) => {
-        if (!response.ok) {
-            throw new Error(`Failed to delete task with id ${id}`);
-        }
-        })
-        .catch((error) => console.error(error));
-    };
-
-    // const onAdd = async (service) => {
-    //     console.log(service);
-    //     // const id = Math.floor(Math.random() * 10000) + 1;
-    //     // const newTask = { id, ...task };
-    
-    // //     await fetch('http://localhost:8080/v1/task/create', {
-    // //     method: 'POST',
-    // //     headers: {
-    // //       'Content-Type': 'application/json',
-    // //     },
-    // //     body: JSON.stringify(task),
-    // //   })
-    // //     .then((response) => response.json())
-    // //     .then((data) => {
-    // //       console.log(data); 
-    // //       setTasks([...tasks, data]); 
-    // //     })
-    // //     .catch((error) => console.error(error));
-    //   }
 
   return (
     <div className='AddServicePage'>

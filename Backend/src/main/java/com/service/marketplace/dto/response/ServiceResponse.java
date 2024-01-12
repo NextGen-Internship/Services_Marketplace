@@ -11,15 +11,13 @@ import java.util.List;
 
 @Data
 public class ServiceResponse {
-    private Integer id;
+    private  Integer id;
     private String title;
     private String description;
     private ServiceStatus serviceStatus;
     private BigDecimal price;
     private Integer providerId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private boolean isActive;
     private Integer categoryId;
-    private List<Integer> cityIds;
+//    private LocalDateTime createdAt;
+//    private LocalDateTime updatedAt;
 }

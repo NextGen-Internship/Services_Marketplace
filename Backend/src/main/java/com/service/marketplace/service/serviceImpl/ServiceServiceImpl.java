@@ -2,8 +2,13 @@ package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.mapper.ServiceMapper;
+import com.service.marketplace.persistence.entity.Category;
+import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.CategoryRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
+import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +16,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ServiceServiceImpl implements ServiceService {
     private final ServiceRepository serviceRepository;
     private final ServiceMapper serviceMapper;
-
-    @Autowired
-    public ServiceServiceImpl(ServiceRepository serviceRepository, ServiceMapper serviceMapper) {
-        this.serviceRepository = serviceRepository;
-        this.serviceMapper = serviceMapper;
-    }
+    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<com.service.marketplace.persistence.entity.Service> getAllServices() {
@@ -43,9 +45,11 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public com.service.marketplace.persistence.entity.Service createService(ServiceRequest serviceToCreate) {
-        com.service.marketplace.persistence.entity.Service newService = serviceMapper.serviceRequestToService(serviceToCreate);
-        newService.setCreatedAt(LocalDateTime.now());
-        newService.setUpdatedAt(LocalDateTime.now());
+        Category category = categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null);
+        User provider = userRepository.findById(serviceToCreate.getProviderId()).orElse(null);
+
+        com.service.marketplace.persistence.entity.Service newService = serviceMapper.serviceRequestToService(serviceToCreate, provider, category);
+
         return serviceRepository.save(newService);
     }
 
@@ -53,13 +57,15 @@ public class ServiceServiceImpl implements ServiceService {
     public com.service.marketplace.persistence.entity.Service updateService(Integer serviceId, ServiceRequest serviceToUpdate) {
         com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(serviceId).orElse(null);
 
-        if (existingService != null) {
-            com.service.marketplace.persistence.entity.Service updatedService = serviceMapper.serviceRequestToService(serviceToUpdate);
-            existingService.setTitle(updatedService.getTitle());
-            existingService.setDescription(updatedService.getDescription());
-            existingService.setPrice(updatedService.getPrice());
+        Category category = categoryRepository.findById(serviceToUpdate.getCategoryId()).orElse(null);
+        User provider = userRepository.findById(serviceToUpdate.getProviderId()).orElse(null);
 
-            existingService.setUpdatedAt(LocalDateTime.now());
+        if (provider == null) {
+            return null;
+        }
+
+        if (existingService != null) {
+            existingService = serviceMapper.serviceRequestToService(serviceToUpdate, category);
 
             return serviceRepository.save(existingService);
         } else {

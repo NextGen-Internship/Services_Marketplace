@@ -7,6 +7,7 @@ const AddService = ({ onAdd }) => {
     const [serviceDescription, setServiceDescription] = useState("");
     const [servicePrice, setServicePrice] = useState("");
     const [serviceCategory, setServiceCategory] = useState("");
+    const [serviceLocation, setServiceLocation] = useState("");
     const [categoryList, setCategoryList] = useState([]);
 
     useEffect(() => {
@@ -67,12 +68,13 @@ const AddService = ({ onAdd }) => {
             return;
         }
 
-        onAdd({ serviceTitle, serviceDescription, servicePrice});
+        onAdd({ serviceTitle, serviceDescription, servicePrice, serviceCategory, serviceLocation });
 
         setServiceTitle('');
         setServiceDescription('');
         setServicePrice('');
         setServiceCategory('');
+        setServiceLocation('');
     }
 
     return (
@@ -100,7 +102,11 @@ const AddService = ({ onAdd }) => {
                 ))
                 }
 
-          </select>
+            </select>
+          </div>
+          <div className='form-control'>
+          <label>Location</label>
+            <input type='text' placeholder='Write the location of the service' value={serviceLocation} onChange={(e) => setServiceLocation(e.target.value)} />
           </div>
     
           <input type='submit' value='Add Service' className='btn btn-block' />
