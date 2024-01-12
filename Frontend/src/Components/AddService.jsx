@@ -7,7 +7,24 @@ const AddService = ({ onAdd }) => {
     const [serviceDescription, setServiceDescription] = useState("");
     const [servicePrice, setServicePrice] = useState("");
     const [serviceCategory, setServiceCategory] = useState("");
-    const [categoryList, setCategoryList] = useState([{'id':'1','name':'Painting','description':'Some description'}, {'id':'2','name':'Tire change','description':'Changing tires'}, {'id':'3','name':'Marketing','description':'Make marketing plan for your business'}]);
+    const [categoryList, setCategoryList] = useState([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch('http://localhost:8080/v1/categories');
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const data = await response.json();
+          setCategoryList(data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+    
+      fetchData();
+    }, []);
 
     const handleChange = (event) =>{
         setServiceCategory(event.target.value);
@@ -59,6 +76,7 @@ const AddService = ({ onAdd }) => {
     }
 
     return (
+        <div className='add-service'>
         <form className='add-service-form' onSubmit={onSubmit}>
           <div className='form-control'>
             <label>Title</label>
@@ -87,6 +105,7 @@ const AddService = ({ onAdd }) => {
     
           <input type='submit' value='Add Service' className='btn btn-block' />
         </form>
+        </div>
       )
 }
 
