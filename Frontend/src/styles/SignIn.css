@@ -111,6 +111,14 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    margin-top: 15px;
+    gap: 15px;
+}
+
+.media-options-login-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .media-options a {

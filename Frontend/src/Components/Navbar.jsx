@@ -15,7 +15,7 @@ function Navbar({clicked, isClicked}) {
             <ul className='NavbarWrapper'>
                 <li className='NavLogo'><Link className='Link' to="/">Service Marketplace</Link></li>
                 <li className='NavElements'><NavLink className='Link' to="/home-page">Home</NavLink></li>
-                <li className='NavElements'><NavLink className='Link' to="/category-page">Category</NavLink></li>
+                <li className='NavElements'><NavLink className='Link' to="/category-page">Categories</NavLink></li>
                 <li className='NavElements'><NavLink className='Link' to="/profile">Profile</NavLink></li>
                 <li className='NavButton'><NavLink className='BtnLink' to="/sign-in">Sign In</NavLink></li>
                 <li className='NavButton'><NavLink className='BtnLink' to="/sign-up">Sign Up</NavLink></li>
