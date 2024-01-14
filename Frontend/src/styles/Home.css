@@ -1,18 +1,113 @@
-/* CSS file (Home.css) */
-
-.home-wrapper {
-  background: rgb(45, 192, 253);
-  background: linear-gradient(
-    0deg,
-    rgba(45, 192, 253, 0.8715861344537815) 0%,
-    rgba(22, 41, 113, 1) 93%
-  );
-  height: 100vh;
-}
-
-.search-container {
-  margin-top: -49%;
-  margin-left: 250px;
-  width: 550px;
-}
-
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'poppins', sans-serif;
+  }
+  
+  .home-service,
+  .home-category,
+  .home-users {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: rgb(73, 143, 199);
+    background: radial-gradient(circle, rgba(73, 143, 199, 1) 0%, rgba(12, 24, 91, 1) 100%);
+    height: 100vh;
+  }
+  
+  .home-service h1,
+  .home-category h1 {
+    font-size: 3em;
+    margin: 25px;
+  }
+  
+  .content-box {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 1000px;
+    margin-top: 30px;
+  }
+  
+  .card {
+    min-height: 220px;
+    width: 320px;
+    padding: 30px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #fff;
+    margin: 5px 4px;
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  .card i {
+    margin: 20px;
+    color: #581ed6;
+  }
+  
+  .card h2 {
+    margin-bottom: 12px;
+    font-weight: 400;
+    text-align: center;
+  }
+  
+  .card p {
+    color: #6c757d;
+    text-align: center;
+  }
+  
+  .card:hover i,
+  .card:hover p {
+    color: #fff;
+  }
+  
+  .card:hover h2 {
+    font-weight: 600;
+  }
+  
+  @media (max-width: 991px) {
+    .home-service,
+    .home-category {
+      padding: 25px;
+    }
+  
+    .home-service h1,
+    .home-category h1 {
+      font-size: 2.5em;
+      font-weight: 600;
+    }
+  
+    .content-box {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .card {
+      min-width: 300px;
+      margin: 10px auto;
+    }
+  }
+  
+  .home-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .home-search .input-search {
+    width: 350px;
+    height: 35px;
+    border: none;
+    outline: none;
+    margin-top: 5px;
+    border-radius: 40px;
+    font-size: 16px;
+    padding: 20px 45px 20px 20px;
+  }
+  
