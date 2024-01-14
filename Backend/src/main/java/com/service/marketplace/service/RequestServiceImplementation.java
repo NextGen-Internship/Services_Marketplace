@@ -1,20 +1,21 @@
 package com.service.marketplace.service;
 
+import com.service.marketplace.dto.request.RequestRequest;
+import com.service.marketplace.mapper.RequestMapper;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.repository.RequestRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Data
 public class RequestServiceImplementation implements RequestService {
     private final RequestRepository requestRepository;
-
-    @Autowired
-    public RequestServiceImplementation(RequestRepository requestRepository) {
-        this.requestRepository = requestRepository;
-    }
+    private final RequestMapper requestMapper;
 
     @Override
     public List<Request> getAllRequests() {
@@ -27,21 +28,17 @@ public class RequestServiceImplementation implements RequestService {
     }
 
     @Override
-    public Request createRequest(Request requestToCreate) {
-        return requestRepository.save(requestToCreate);
+    public Request createRequest(RequestRequest requestToCreate) {
+        Request newRequest = requestMapper.requestRequestToRequest(requestToCreate);
+        return requestRepository.save(newRequest);
     }
 
     @Override
-    public Request updateRequest(Integer requestId, Request requestToUpdate) {
+    public Request updateRequest(Integer requestId, RequestRequest requestToUpdate) {
         Request existingRequest = requestRepository.findById(requestId).orElse(null);
 
         if (existingRequest != null) {
-            existingRequest.setDescription(requestToUpdate.getDescription());
-            existingRequest.setCustomer(requestToUpdate.getCustomer());
-            existingRequest.setCreatedAt(requestToUpdate.getCreatedAt());
-            existingRequest.setUpdatedAt(requestToUpdate.getUpdatedAt());
-            existingRequest.setActive(requestToUpdate.isActive());
-            existingRequest.setService(requestToUpdate.getService());
+            existingRequest = requestMapper.requestRequestToRequest(requestToUpdate);
 
             return requestRepository.save(existingRequest);
         } else {
