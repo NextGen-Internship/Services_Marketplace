@@ -1,6 +1,7 @@
 import React from 'react'
 import AddService from './AddService'
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../styles/AddServicePage.css'
 
 function AddServicePage() {
@@ -8,38 +9,34 @@ function AddServicePage() {
 
     useEffect(() => {
         const fetchData = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/v1/services/all');
-            if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            try {
+                const response = await axios.get('http://localhost:8080/v1/services/all');
+                setServices(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
-            const data = await response.json();
-            setServices(data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
         };
-    
+
         fetchData();
     }, []);
     
 
     // add service
     const addService = async (service) => {
-        await fetch('http://localhost:8080/v1/services/create', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(service),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-        console.log(data); 
-        setServices([...services, data]); 
-        })
-        .catch((error) => console.error(error));
-    }
+        try {
+            const response = await axios.post('http://localhost:8080/v1/services/create', service, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = response.data;
+            console.log(data);
+            setServices([...services, data]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
   return (
     <div className='AddServicePage'>

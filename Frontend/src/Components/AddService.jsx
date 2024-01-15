@@ -1,26 +1,29 @@
 // AddService.jsx
 import React, {useState,useEffect} from 'react'
+import axios from 'axios';
 import '../styles/AddService.css'
 
 const AddService = ({ onAdd }) => {
-    const [serviceTitle, setServiceTitle] = useState("");
-    const [serviceDescription, setServiceDescription] = useState("");
+    const [serviceTitle, setServiceTitle] = useState('');
+    const [serviceDescription, setServiceDescription] = useState('');
     const serviceStatus = useState("ACTIVE");
-    const [servicePrice, setServicePrice] = useState("");
-    const [serviceCategory, setServiceCategory] = useState("");
-    const [serviceLocation, setServiceLocation] = useState("");
+    const [servicePrice, setServicePrice] = useState('');
+    const [serviceCategory, setServiceCategory] = useState('');
+    const [serviceLocation, setServiceLocation] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
-    const providerId = useState(4);
+    const providerId = 4;
+    const [locations, setLocations] = useState([]);
 
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('http://localhost:8080/v1/categories');
-          if (!response.ok) {
+          const response = await axios.get('http://localhost:8080/v1/categories');
+    
+          if (response.status !== 200) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          const data = await response.json();
-          setCategoryList(data);
+    
+          setCategoryList(response.data);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -31,6 +34,12 @@ const AddService = ({ onAdd }) => {
 
     const handleChange = (event) =>{
         setServiceCategory(event.target.value);
+    }
+
+    const handleLocation = (event) => {
+      setLocations(event.target.value);
+
+      setServiceLocation(locations);
     }
 
     const onSubmit = (e) => {
@@ -65,19 +74,24 @@ const AddService = ({ onAdd }) => {
             return typeof value === 'number';
           }
 
-        if (!isNumber(servicePrice)) {
+        if (!isNumber(parseFloat(servicePrice))) {
             alert('Price have to be number');
             return;
         }
 
-        // console.log({ serviceTitle, serviceDescription, serviceStatus, servicePrice, providerId, serviceCategory, serviceLocation });
-        onAdd({ serviceTitle, serviceDescription, serviceStatus, servicePrice, providerId, serviceCategory, serviceLocation });
+        console.log({ serviceTitle, serviceDescription, serviceStatus, servicePrice, providerId, serviceCategory });
+        onAdd({ title: serviceTitle,
+          description: serviceDescription,
+          serviceStatus: 'ACTIVE', 
+          price: parseFloat(servicePrice),
+          providerId: providerId, 
+          categoryId: parseInt(serviceCategory)/*, serviceLocation*/ });
 
         setServiceTitle('');
         setServiceDescription('');
         setServicePrice('');
         setServiceCategory('');
-        setServiceLocation('');
+        // setServiceLocation('');
     }
 
     return (
@@ -93,7 +107,7 @@ const AddService = ({ onAdd }) => {
           </div>
           <div className='form-control'>
             <label>Price</label>
-            <input type='text' placeholder='Write service price' value={servicePrice} onChange={(e) => setServicePrice(parseFloat(e.target.value))} />
+            <input type='text' placeholder='Write service price' value={servicePrice} onChange={(e) => setServicePrice(e.target.value)} />
           </div>
           <div className='form-control'>
             <label>Category</label>
@@ -101,16 +115,16 @@ const AddService = ({ onAdd }) => {
               <option value="">Choose Service Category</option>
 
                 {categoryList.map(category => (
-                    <option value={category.name} key={category.id} >{category.name}</option>
+                    <option value={category.id} key={category.id} >{category.name}</option>
                 ))
                 }
 
             </select>
           </div>
-          <div className='form-control'>
+          {/* <div className='form-control'>
           <label>Location</label>
-            <input type='text' placeholder='Write the location of the service' value={serviceLocation} onChange={(e) => setServiceLocation(e.target.value)} />
-          </div>
+            <input type='text' placeholder='Write the location of the service' value={serviceLocation} onChange={handleLocation} />
+          </div> */}
     
           <input type='submit' value='Add Service' className='btn btn-block' />
         </form>
