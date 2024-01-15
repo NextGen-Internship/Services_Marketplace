@@ -27,7 +27,7 @@ export const SignIn = () => {
       console.log('Backend response:', response.data);
 
       // Navigate or perform other actions based on your application logic
-      navigate('/dashboard'); // Redirect to the home page, for example
+      navigate('/home-page'); // Redirect to the home page, for example
     } catch (error) {
       console.error('Error during login:', error);
       // Handle login error, e.g., display an error message to the user
