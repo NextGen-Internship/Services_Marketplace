@@ -60,37 +60,31 @@ public class ServiceController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/all")
-//    public ResponseEntity<List<Service>> getAllServices() {
-//        List<Service> services = serviceService.getAllServices();
-//        return ResponseEntity.ok(services);
-//    }
-//
-//    @GetMapping("/{serviceId}")
-//    public ResponseEntity<Service> getServiceById(@PathVariable("serviceId") Integer serviceId) {
-//        Service service = serviceService.getServiceById(serviceId);
-//
-//        if (service != null) {
-//            return ResponseEntity.ok(service);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ServiceResponse>> getServicesByCategory(@PathVariable("categoryId") Integer categoryId) {
+        List<ServiceResponse> services = serviceService.getAllServicesByCategory(categoryId);
 
-//    @GetMapping("/{categoryId}")
-//    public ResponseEntity<List<Service>> getServicesByCategory(@PathVariable("categoryId") Category category) {
-//        List<Service> services = serviceService.getAllServicesByCategory(category);
-//
-//        if (services.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        } else {
-//            return ResponseEntity.ok(services);
-//        }
-//    }
-//
-//    @GetMapping("/{providerId}")
-//    public ResponseEntity<List<Service>> getServicesByProvider(@PathVariable("providerId") User user) {
-//        List<Service> services = serviceService.getAllServicesByProvider(user);
+        if (services.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(services);
+        }
+    }
+
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<List<ServiceResponse>> getServicesByProvider(@PathVariable("providerId") Integer providerId) {
+        List<ServiceResponse> services = serviceService.getAllServicesByProvider(providerId);
+
+        if (services.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(services);
+        }
+    }
+
+//    @GetMapping("/city/{cityName}")
+//    public ResponseEntity<List<ServiceResponse>> getServicesByCity(@PathVariable("cityName") String cityName) {
+//        List<ServiceResponse> services = serviceService.getAllServicesByCity(cityName);
 //
 //        if (services.isEmpty()) {
 //            return ResponseEntity.notFound().build();
@@ -99,31 +93,4 @@ public class ServiceController {
 //        }
 //    }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<Service> createService(@RequestBody ServiceRequest serviceToCreate) {
-//        Service newService = serviceService.createService(serviceToCreate);
-//        return ResponseEntity.ok(newService);
-//    }
-//
-//    @PutMapping("/update/{serviceId}")
-//    public ResponseEntity<Service> updateService(@PathVariable("serviceId") Integer serviceId, @RequestBody ServiceRequest serviceToUpdate) {
-//        try {
-//            Service updatedService = serviceService.updateService(serviceId, serviceToUpdate);
-//
-//            if (updatedService == null) {
-//                return ResponseEntity.notFound().build();
-//            } else {
-//                return ResponseEntity.ok(updatedService);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.internalServerError().build();
-//        }
-//    }
-//
-//    @DeleteMapping("/delete/{serviceId}")
-//    public ResponseEntity<Void> deleteService(@PathVariable("serviceId") Integer serviceId) {
-//        serviceService.deleteServiceById(serviceId);
-//        return ResponseEntity.ok().build();
-//    }
 }

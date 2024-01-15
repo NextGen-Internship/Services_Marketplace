@@ -28,7 +28,7 @@ public interface ServiceMapper {
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     Service serviceRequestToService(ServiceRequest request, Category category);
 
+    @Mapping(target = "providerId", source = "provider.id")
+    @Mapping(target = "categoryId", source = "category.id")
     ServiceResponse serviceToServiceResponse(Service service);
-
-    void serviceFromRequest(ServiceRequest request, @MappingTarget Service service);
 }

@@ -17,9 +17,11 @@ import java.util.List;
 public class ServiceRequest {
 
     @NotEmpty
+    @Size(min = 2, max = 50)
     private String title;
 
     @NotEmpty
+    @Size(min = 2, max = 200)
     private String description;
 
     private ServiceStatus serviceStatus;

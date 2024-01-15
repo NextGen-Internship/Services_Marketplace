@@ -15,6 +15,7 @@ public interface ServiceService {
     ServiceResponse updateService(Integer serviceId, ServiceRequest serviceToUpdate);
     void deleteServiceById(Integer serviceId);
 
-//    List<Service> getAllServicesByCategory(Category category);
-//    List<Service> getAllServicesByProvider(User user);
+    List<ServiceResponse> getAllServicesByCategory(Integer categoryId);
+    List<ServiceResponse> getAllServicesByProvider(Integer providerId);
+    // List<ServiceResponse> getAllServicesByCity(String cityName);
 }

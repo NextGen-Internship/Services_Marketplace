@@ -18,6 +18,4 @@ public class ServiceResponse {
     private BigDecimal price;
     private Integer providerId;
     private Integer categoryId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
