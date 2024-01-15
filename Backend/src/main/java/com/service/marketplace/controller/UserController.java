@@ -43,7 +43,7 @@ public class UserController {
 
 
     @Valid
-    @PutMapping("/update/{userId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
         try {
             UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
@@ -59,7 +59,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
         boolean deleted = userService.deleteUserById(userId);
         if (deleted) {

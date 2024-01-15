@@ -49,7 +49,7 @@ public class User extends BaseEntity implements UserDetails {
     private String description;
 
     @Column(name = "is_active")
-    private boolean isActive;
+    private boolean isActive = true;
 
 //    @Lob
 //    @Column(name = "picture", nullable = false)
@@ -94,12 +94,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
-    public boolean setActive(boolean b) {
-        return true;
-    }
 }
 
 

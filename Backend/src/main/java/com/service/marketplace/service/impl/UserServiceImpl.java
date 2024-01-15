@@ -26,15 +26,16 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAllByIsActive(true);
         return users.stream()
-                .map(UserMapper.INSTANCE::userToUserResponse)
+                .map(userMapper::userToUserResponse)
                 .collect(Collectors.toList());
     }
 
 
     @Override
     public UserResponse getUserById(Integer userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        return user != null ? UserMapper.INSTANCE.userToUserResponse(user) : null;
+        return userRepository.findById(userId)
+                .map(userMapper::userToUserResponse)
+                .orElse(null);
     }
 
 
@@ -42,9 +43,9 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        UserMapper.INSTANCE.updateUserFromRequest(userToUpdate, existingUser);
+        userMapper.updateUserFromRequest(userToUpdate, existingUser);
         User updatedUser = userRepository.save(existingUser);
-        return UserMapper.INSTANCE.userToUserResponse(updatedUser);
+        return userMapper.userToUserResponse(updatedUser);
     }
 
     @Override
