@@ -27,9 +27,8 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public List<ServiceResponse> getAllServices() {
         List<com.service.marketplace.persistence.entity.Service> services = serviceRepository.findAll();
-        return services.stream()
-                .map(serviceMapper::serviceToServiceResponse)
-                .collect(Collectors.toList());
+
+        return serviceMapper.toServiceResponseList(services);
     }
 
     @Override
@@ -44,6 +43,7 @@ public class ServiceServiceImpl implements ServiceService {
                 userRepository.findById(serviceToCreate.getProviderId()).orElse(null),
                 categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null));
 
+
         return serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
     }
 
@@ -57,6 +57,7 @@ public class ServiceServiceImpl implements ServiceService {
         if (existingService != null) {
             existingService.setTitle(updatedService.getTitle());
             existingService.setDescription(updatedService.getDescription());
+            existingService.setServiceStatus(updatedService.getServiceStatus());
             existingService.setPrice(updatedService.getPrice());
 
             return serviceMapper.serviceToServiceResponse(serviceRepository.save(existingService));
@@ -73,21 +74,17 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public List<ServiceResponse> getAllServicesByCategory(Integer categoryId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
-
         List<com.service.marketplace.persistence.entity.Service> servicesOfCategory = serviceRepository.findByCategory(category);
-        return servicesOfCategory.stream()
-                .map(serviceMapper::serviceToServiceResponse)
-                .collect(Collectors.toList());
+
+        return serviceMapper.toServiceResponseList(servicesOfCategory);
     }
 
     @Override
     public List<ServiceResponse> getAllServicesByProvider(Integer providerId) {
         User provider = userRepository.findById(providerId).orElse(null);
-
         List<com.service.marketplace.persistence.entity.Service> servicesOfProvider = serviceRepository.findByProvider(provider);
-        return servicesOfProvider.stream()
-                .map(serviceMapper::serviceToServiceResponse)
-                .collect(Collectors.toList());
+
+        return serviceMapper.toServiceResponseList(servicesOfProvider);
     }
 
 //    @Override

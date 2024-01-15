@@ -1,6 +1,7 @@
 package com.service.marketplace.mapper;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import com.service.marketplace.persistence.entity.Category;
@@ -8,7 +9,6 @@ import com.service.marketplace.persistence.entity.Service;
 import com.service.marketplace.persistence.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
@@ -31,4 +31,7 @@ public interface ServiceMapper {
     @Mapping(target = "providerId", source = "provider.id")
     @Mapping(target = "categoryId", source = "category.id")
     ServiceResponse serviceToServiceResponse(Service service);
+
+    List<ServiceResponse> toServiceResponseList(List<Service> services);
+
 }

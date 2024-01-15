@@ -60,28 +60,6 @@ public class ServiceController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/category/{categoryId}")
-//    public ResponseEntity<List<ServiceResponse>> getServicesByCategory(@PathVariable("categoryId") Integer categoryId) {
-//        List<ServiceResponse> services = serviceService.getAllServicesByCategory(categoryId);
-//
-//        if (services.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        } else {
-//            return ResponseEntity.ok(services);
-//        }
-//    }
-//
-//    @GetMapping("/provider/{providerId}")
-//    public ResponseEntity<List<ServiceResponse>> getServicesByProvider(@PathVariable("providerId") Integer providerId) {
-//        List<ServiceResponse> services = serviceService.getAllServicesByProvider(providerId);
-//
-//        if (services.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        } else {
-//            return ResponseEntity.ok(services);
-//        }
-//    }
-
     @GetMapping("/filter")
     public ResponseEntity<List<ServiceResponse>> getFilteredServices(
             @RequestParam(required = false) Integer categoryId,

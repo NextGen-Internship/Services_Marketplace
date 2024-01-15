@@ -10,6 +10,7 @@ const AddService = ({ onAdd }) => {
     const [serviceCategory, setServiceCategory] = useState('');
     const [categoryList, setCategoryList] = useState([]);
     const providerId = 4;
+    // const [serviceLocation, setServiceLocation] = useState('');
 
     useEffect(() => {
       const fetchData = async () => {
