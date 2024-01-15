@@ -9,7 +9,7 @@ function AddServicePage() {
     useEffect(() => {
         const fetchData = async () => {
         try {
-            const response = await fetch('http://localhost:8080/v1/services');
+            const response = await fetch('http://localhost:8080/v1/services/all');
             if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -26,9 +26,6 @@ function AddServicePage() {
 
     // add service
     const addService = async (service) => {
-        // const id = Math.floor(Math.random() * 10000) + 1;
-        // const newTask = { id, ...task };
-
         await fetch('http://localhost:8080/v1/services/create', {
         method: 'POST',
         headers: {
