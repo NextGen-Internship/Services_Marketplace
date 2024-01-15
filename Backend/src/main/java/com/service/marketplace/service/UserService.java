@@ -1,13 +1,13 @@
 package com.service.marketplace.service;
 
 import com.service.marketplace.dto.request.UserUpdateRequest;
-import com.service.marketplace.persistence.entity.User;
-
+import com.service.marketplace.dto.response.UserResponse;
 import java.util.List;
 
 public interface UserService {
-    List<User> getAllUsers();
-    User getUserById(Integer userId);
-    User updateUser(Integer userId, UserUpdateRequest userToUpdate);
-    void deleteUserById(Integer userId);
+    List<UserResponse> getAllUsers();
+    UserResponse getUserById(Integer userId);
+    UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate);
+    boolean deleteUserById(Integer userId);
+
 }

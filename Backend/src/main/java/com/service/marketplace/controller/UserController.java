@@ -1,6 +1,8 @@
 package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.UserUpdateRequest;
+import com.service.marketplace.dto.response.UserResponse;
+import com.service.marketplace.mapper.UserMapper;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.UserService;
 import jakarta.validation.Valid;
@@ -22,17 +24,18 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable("userId") Integer userId) {
-        User user = userService.getUserById(userId);
 
-        if (user != null) {
-            return ResponseEntity.ok(user);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("userId") Integer userId) {
+        UserResponse userResponse = userService.getUserById(userId);
+
+        if (userResponse != null) {
+            return ResponseEntity.ok(userResponse);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -41,9 +44,9 @@ public class UserController {
 
     @Valid
     @PutMapping("/update/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
         try {
-            User updatedUser = userService.updateUser(userId, userToUpdate);
+            UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
 
             if (updatedUser == null) {
                 return ResponseEntity.notFound().build();
@@ -57,8 +60,12 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("userId") Integer userId) {
-        userService.deleteUserById(userId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
+        boolean deleted = userService.deleteUserById(userId);
+        if (deleted) {
+            return ResponseEntity.ok("User soft deleted successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

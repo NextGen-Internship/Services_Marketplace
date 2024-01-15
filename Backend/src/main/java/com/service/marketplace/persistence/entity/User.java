@@ -37,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "phone_number", unique = true)
-    private int phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "experience")
     private int experience;
@@ -48,17 +48,18 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "is_active")
+    private boolean isActive;
+
 //    @Lob
 //    @Column(name = "picture", nullable = false)
 //    private byte[] picture;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
 
     @Override
@@ -93,6 +94,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
+        return true;
+    }
+
+    public boolean setActive(boolean b) {
         return true;
     }
 }

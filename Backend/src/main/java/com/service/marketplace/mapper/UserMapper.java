@@ -1,6 +1,7 @@
 package com.service.marketplace.mapper;
 
 import com.service.marketplace.dto.request.UserUpdateRequest;
+import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.dto.response.UserUpdateResponse;
 import com.service.marketplace.persistence.entity.User;
 import org.mapstruct.Mapper;
@@ -19,4 +20,7 @@ public interface UserMapper {
     UserUpdateResponse userToUserUpdateResponse(User user);
 
     void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
+
+
+    UserResponse userToUserResponse(User user);
 }
