@@ -6,13 +6,10 @@ import '../styles/AddService.css'
 const AddService = ({ onAdd }) => {
     const [serviceTitle, setServiceTitle] = useState('');
     const [serviceDescription, setServiceDescription] = useState('');
-    const serviceStatus = useState("ACTIVE");
     const [servicePrice, setServicePrice] = useState('');
     const [serviceCategory, setServiceCategory] = useState('');
-    const [serviceLocation, setServiceLocation] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
     const providerId = 4;
-    const [locations, setLocations] = useState([]);
 
     useEffect(() => {
       const fetchData = async () => {
@@ -36,11 +33,11 @@ const AddService = ({ onAdd }) => {
         setServiceCategory(event.target.value);
     }
 
-    const handleLocation = (event) => {
-      setLocations(event.target.value);
+    // const handleLocation = (event) => {
+    //   setLocations(event.target.value);
 
-      setServiceLocation(locations);
-    }
+    //   setServiceLocation(locations);
+    // }
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -79,7 +76,6 @@ const AddService = ({ onAdd }) => {
             return;
         }
 
-        console.log({ serviceTitle, serviceDescription, serviceStatus, servicePrice, providerId, serviceCategory });
         onAdd({ title: serviceTitle,
           description: serviceDescription,
           serviceStatus: 'ACTIVE', 
