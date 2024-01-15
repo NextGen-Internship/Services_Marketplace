@@ -1,22 +1,19 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.request.RequestRequest;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.service.RequestService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/requests")
+@AllArgsConstructor
+@RequestMapping("/v1/request")
 public class RequestController {
     private final RequestService requestService;
-
-    @Autowired
-    public RequestController(RequestService requestService) {
-        this.requestService = requestService;
-    }
 
     @GetMapping
     public ResponseEntity<List<Request>> getAllRequests() {
@@ -36,13 +33,13 @@ public class RequestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Request> createRequest(@RequestBody Request requestToCreate) {
+    public ResponseEntity<Request> createRequest(@RequestBody RequestRequest requestToCreate) {
         Request newRequest = requestService.createRequest(requestToCreate);
         return ResponseEntity.ok(newRequest);
     }
 
     @PutMapping("/update/{requestId}")
-    public ResponseEntity<Request> updatedRequest(@PathVariable("requestId") Integer requestId, @RequestBody Request requestToUpdate) {
+    public ResponseEntity<Request> updateRequest(@PathVariable("requestId") Integer requestId, @RequestBody RequestRequest requestToUpdate) {
         try {
             Request updatedRequest = requestService.updateRequest(requestId, requestToUpdate);
 

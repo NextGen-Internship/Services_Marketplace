@@ -13,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "service")
 public class Service extends BaseEntity {
@@ -41,10 +40,7 @@ public class Service extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_Active")
-    private boolean isActive;
-
-    @Column(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     @ManyToOne
     private Category category;
 

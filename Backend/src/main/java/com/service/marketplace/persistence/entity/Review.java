@@ -8,7 +8,6 @@ import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "review")
 public class Review extends BaseEntity {
@@ -32,12 +31,12 @@ public class Review extends BaseEntity {
     @Column(name = "is_Active")
     private boolean isActive;
 
-    @Column(name = "service_id", nullable = false)
+    @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne
     private Service service;
 
-    @Column(name = "files")
-    @ManyToMany
+    @Column(name = "fiels")
+    @OneToMany
     private List<Files> filesList;
 
 }
