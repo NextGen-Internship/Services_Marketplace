@@ -36,17 +36,21 @@ export const SignIn = () => {
 
   const handleGoogleLogin = async (response) => {
     try {
-      const googleToken = response.tokenObj.id_token;
-      // Send the Google token to your backend using Axios
-      const backendResponse = await axios.post('http://localhost:8080/api/auth/google/login', {
-        googleToken: googleToken,
-      });
-
-      // Handle the backend response if needed
-      console.log('Backend response:', backendResponse.data);
-      
-      // Navigate or perform other actions based on your application logic
-      navigate('/dashboard'); // Redirect to the home page, for example
+      console.log('Google Login Response:', response);
+  
+      if (response && response.tokenObj && response.tokenObj.id_token) {
+        const googleToken = response.tokenObj.id_token;
+        // Send the Google token to your backend using Axios
+        const backendResponse = await axios.post('http://localhost:8080/api/auth/google/login', {
+          googleToken: googleToken,
+        });
+  
+        // Handle the backend response if needed
+        console.log('Backend response:', backendResponse.data);
+  
+        // Navigate or perform other actions based on your application logic
+        navigate('/home-page'); // Redirect to the home page, for example
+      }
     } catch (error) {
       console.error('Error during Google login:', error);
     }
@@ -74,7 +78,7 @@ export const SignIn = () => {
               placeholder='Password'
               name='password'
               value={formData.password}
-              onChange={handleChange} 
+              onChange={handleChange}
               required
             />
             <IoIosLock className='icon' />
