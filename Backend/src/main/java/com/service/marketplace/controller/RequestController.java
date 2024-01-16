@@ -32,13 +32,13 @@ public class RequestController {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping("/{requestId}")
     public ResponseEntity<Request> createRequest(@RequestBody RequestRequest requestToCreate) {
         Request newRequest = requestService.createRequest(requestToCreate);
         return ResponseEntity.ok(newRequest);
     }
 
-    @PutMapping("/update/{requestId}")
+    @PutMapping("/{requestId}")
     public ResponseEntity<Request> updateRequest(@PathVariable("requestId") Integer requestId, @RequestBody RequestRequest requestToUpdate) {
         try {
             Request updatedRequest = requestService.updateRequest(requestId, requestToUpdate);
@@ -54,7 +54,7 @@ public class RequestController {
         }
     }
 
-    @DeleteMapping("/delete/{requestId}")
+    @DeleteMapping("/{requestId}")
     public ResponseEntity<Void> deleteRequest(@PathVariable("requestId") Integer requestId) {
         requestService.deleteRequestById(requestId);
         return ResponseEntity.ok().build();

@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RequestRequest {
 
-    @NotEmpty(message = "Description cannot be empty")
-    private String description;
 
     @NotNull(message = "Customer ID cannot be null")
     private Long customerId;
 
     @NotNull(message = "Service ID cannot be null")
     private Long serviceId;
+
+    @NotEmpty(message = "Description cannot be empty")
+    private String description;
 
     private boolean isActive;
 }

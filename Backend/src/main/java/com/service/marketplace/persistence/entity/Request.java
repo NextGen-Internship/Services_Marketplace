@@ -26,7 +26,7 @@ public class Request extends BaseEntity {
     private LocalDateTime updatedAt;
 
     @Column(name = "is_Active")
-    private boolean isActive;
+    private boolean isActive = true;
 
     @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne
