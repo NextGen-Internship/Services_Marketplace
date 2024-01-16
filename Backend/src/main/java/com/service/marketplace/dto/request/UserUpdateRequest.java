@@ -10,7 +10,6 @@ public class UserUpdateRequest {
 
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Email should be valid")
-    @Size(min = 10, message = "Email must be at least 10 characters long")
     private String email;
 
     @NotBlank(message = "First name cannot be blank")
@@ -28,9 +27,6 @@ public class UserUpdateRequest {
     @NotBlank
     private String description;
 
-    @Min(value = 0)
-    @Max(value = 5)
-    private double rating;
 
     //private String picture;
 }
