@@ -78,12 +78,13 @@ const AddService = ({ onAdd }) => {
       return;
     }
 
-    function isNumber(value) {
-      return typeof value === 'number';
+    if (isNaN(parseFloat(servicePrice)) || !isFinite(parseFloat(servicePrice))) {
+      alert('Price has to be a valid number');
+      return;
     }
 
-    if (!isNumber(parseFloat(servicePrice))) {
-      alert('Price has to be a number');
+    if (!serviceCategory) {
+      alert('Please choose category');
       return;
     }
 
