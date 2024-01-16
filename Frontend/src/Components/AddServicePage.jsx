@@ -3,6 +3,7 @@ import AddService from './AddService'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/AddServicePage.css'
+import apiService from '../service/ApiService'
 
 function AddServicePage() {
     const [services, setServices] = useState([]);

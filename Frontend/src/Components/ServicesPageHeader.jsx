@@ -12,7 +12,7 @@ ServicesPageHeader.defaultProps = {
     title: 'Services',
 }
 
-ServicesPageHeader.PropTypes = {
+ServicesPageHeader.propTypes = {
     title: PropTypes.string.isRequired
 }
 

@@ -62,3 +62,29 @@
 .add-service .btn-block:hover {
     background: rgb(195, 237, 55);
 }
+
+.react-multiple-select-dropdown-lite {
+    width: 100%;
+  }
+  
+  .react-multiple-select-dropdown-lite .dropdown-wrapper {
+    border: 2px solid rgba(255, 255, 255, .2);
+    border-radius: 40px;
+  }
+  
+  .react-multiple-select-dropdown-lite .selected-list-wrapper {
+    border-top: 2px solid rgba(255, 255, 255, .2);
+  }
+  
+  .react-multiple-select-dropdown-lite .dropdown-container {
+    border-radius: 0 0 40px 40px;
+  }
+  
+  .react-multiple-select-dropdown-lite .item {
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .react-multiple-select-dropdown-lite .item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }

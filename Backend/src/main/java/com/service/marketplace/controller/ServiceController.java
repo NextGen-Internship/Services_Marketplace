@@ -43,8 +43,7 @@ public class ServiceController {
     }
 
     @PutMapping("/update/{serviceId}")
-    public ResponseEntity<ServiceResponse> updateService(@PathVariable("serviceId") Integer serviceId,
-                                                         @RequestBody ServiceRequest serviceToUpdate) {
+    public ResponseEntity<ServiceResponse> updateService(@PathVariable("serviceId") Integer serviceId, @RequestBody ServiceRequest serviceToUpdate) {
         ServiceResponse updatedService = serviceService.updateService(serviceId, serviceToUpdate);
 
         if (updatedService != null) {
@@ -63,7 +62,8 @@ public class ServiceController {
     @GetMapping("/filter")
     public ResponseEntity<List<ServiceResponse>> getFilteredServices(
             @RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false) Integer providerId) {
+            @RequestParam(required = false) Integer providerId,
+            @RequestParam(required = false) Integer cityId) {
 
         List<ServiceResponse> filteredServices;
 
@@ -71,6 +71,8 @@ public class ServiceController {
             filteredServices = serviceService.getAllServicesByCategory(categoryId);
         } else if (providerId != null) {
             filteredServices = serviceService.getAllServicesByProvider(providerId);
+        } else if (cityId != null) {
+            filteredServices = serviceService.getAllServicesByCity(cityId);
         } else {
             filteredServices = serviceService.getAllServices();
         }

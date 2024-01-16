@@ -17,5 +17,5 @@ public interface ServiceService {
 
     List<ServiceResponse> getAllServicesByCategory(Integer categoryId);
     List<ServiceResponse> getAllServicesByProvider(Integer providerId);
-    // List<ServiceResponse> getAllServicesByCity(String cityName);
+    List<ServiceResponse> getAllServicesByCity(Integer cityId);
 }
