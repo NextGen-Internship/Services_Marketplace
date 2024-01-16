@@ -38,15 +38,19 @@ public class UserServiceImpl implements UserService {
                 .orElse(null);
     }
 
-
     @Override
     public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate) {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        userMapper.updateUserFromRequest(userToUpdate, existingUser);
-        User updatedUser = userRepository.save(existingUser);
-        return userMapper.userToUserResponse(updatedUser);
+        User existingUser = userRepository.findById(userId).orElse(null);
+
+        if (existingUser != null) {
+            userMapper.updateUserFromRequest(userToUpdate, existingUser);
+            User updatedUser = userRepository.save(existingUser);
+            return userMapper.userToUserResponse(updatedUser);
+        } else {
+            return null;
+        }
     }
+
 
     @Override
     public boolean deleteUserById(Integer userId) {
