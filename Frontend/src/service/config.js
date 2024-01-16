@@ -1,7 +1,9 @@
 const config = {
-    baseUrl: 'localhost:8080',
-    getAllServices: '/services/all',
-
+    baseUrl: 'http://localhost:8080',
+    getAllServices: '/v1/services/all',
+    getAllCategories: '/v1/categories',
+    getAllCities: '/v1/cities/all',
+    createService: '/v1/services/create',
 }
 
 
