@@ -3,11 +3,12 @@ import '../../styles/SignUp.css'
 import { FaUserPen, FaUserTie } from 'react-icons/fa6';
 import { IoIosLock } from 'react-icons/io';
 import { MdOutlineEmail } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const SignUp = () => {
   // State to hold form data
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -34,6 +35,7 @@ const SignUp = () => {
 
       // Handle the backend response if needed
       console.log('Backend response:', response.data);
+      navigate('/sign-in');
 
       // Redirect or perform other actions based on your application logic
     } catch (error) {
