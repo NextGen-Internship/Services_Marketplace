@@ -1,8 +1,8 @@
 // AddService.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import '../styles/AddService.css';
 import Multiselect from 'multiselect-react-dropdown';
+import { getAllCategories, getAllCities } from '../service/ApiService';
 
 const AddService = ({ onAdd }) => {
   const [serviceTitle, setServiceTitle] = useState('');
@@ -17,13 +17,8 @@ const AddService = ({ onAdd }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/v1/categories');
-
-        if (response.status !== 200) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        setCategoryList(response.data);
+        const categories = await getAllCategories();
+        setCategoryList(categories);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -35,13 +30,9 @@ const AddService = ({ onAdd }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/v1/cities/all');
+        const response = await getAllCities();
 
-        if (response.status !== 200) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const citiesWithLabel = response.data.map((city) => ({
+        const citiesWithLabel = response.map((city) => ({
           id: city.id,
           name: city.name,
         }));

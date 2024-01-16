@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Category.css';
 import { FaSearch } from 'react-icons/fa';
-import axios from 'axios';
+import { getAllCategories } from '../service/ApiService';
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -9,8 +9,8 @@ const Category = () => {
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await axios.get('http://localhost:8080/v1/categories');
-            setCategories(response.data);
+            const categoriesList = await getAllCategories();
+            setCategories(categoriesList);
           } catch (error) {
             console.error('Error fetching data:', error);
           }

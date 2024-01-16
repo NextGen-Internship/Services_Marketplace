@@ -2,7 +2,7 @@ import React from 'react';
 import ServicesPageHeader from './ServicesPageHeader';
 import ServiceBoxes from './ServiceBoxes';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getAllServices } from '../service/ApiService';
 
 const ServicesPage = () => {
     const [services, setServices] = useState([]);
@@ -10,8 +10,8 @@ const ServicesPage = () => {
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await axios.get('http://localhost:8080/v1/services/all');
-            setServices(response.data);
+            const servicesList = await getAllServices();
+            setServices(servicesList);
           } catch (error) {
             console.error('Error fetching data:', error);
           }

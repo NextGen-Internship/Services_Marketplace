@@ -1,16 +1,18 @@
-import config from './config';
-import axios from 'axios';
+import axios from "axios";
+import config from './config.js';
+import isTokenExpired from "../utils/Utils.js";
 
-const apiService = axios.create({
-  baseURL: config.baseUrl,
-});
-
-apiService.interceptors.request.use(
+axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const token = localStorage.getItem("jwt_token");
+
+    if (token && !config.headers.Authorization) {
+      if (isTokenExpired(token)) {
+        return Promise.reject({ message: "Token expired" });
+      }
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => {
@@ -18,34 +20,92 @@ apiService.interceptors.request.use(
   }
 );
 
-apiService.interceptors.response.use(
+axios.interceptors.response.use(
   (response) => {
-    // TODO
-    // You can add your response logic here
     return response;
   },
-  async (error) => {
-    const originalRequest = error.config;
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.error("Unauthorized request. Possible token expiry");
+    }
     return Promise.reject(error);
   }
 );
 
-// Function to refresh the access token (Implement according to your backend logic)
-const refreshAccessToken = async () => {
-  // Implement your token refresh logic here
-  // Example: Make a request to the server to get a new access token
-  const response = await axios.post('https://your-api-base-url.com/refresh-token', {
-    // Include any necessary data for token refresh
-  });
-
-  return response.data.newAccessToken;
+const apiService = {
+  getAllServices: async () => {},
+  googleLogin: async () => {
+    try {
+      const response = await axios.post(
+        config.baseUrl + config.googleLogin,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      localStorage.setItem("role", response.data.company);
+      return response.data;
+    } catch (error) {
+      console.error("There was an error with Google login", error);
+      throw error;
+    }
+  },
 };
 
 const getAllServices = async () => {
+    try {
+      const response = await axios.get(config.baseUrl + config.getAllServices);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching services", error);
+      throw error;
+    }
+};
 
-}
+  const getAllCategories = async () => {
+    try {
+      const response = await axios.get(config.baseUrl + config.getAllCategories);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories", error);
+      throw error;
+    }
+  };
+
+  const getAllCities = async () => {
+    try {
+      const response = await axios.get(config.baseUrl + config.getAllCities);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching cities", error);
+      throw error;
+    }
+  };
+
+ const createService = async (serviceData) => {
+    try {
+      const response = await axios.post(
+        config.baseUrl + config.createService,
+        serviceData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating service", error);
+      throw error;
+    }
+  };
 
 export {
     getAllServices,
+    getAllCategories,
+    getAllCities,
+    createService,
 } 
 export default apiService;
