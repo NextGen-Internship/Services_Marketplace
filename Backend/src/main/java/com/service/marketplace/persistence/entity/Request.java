@@ -14,7 +14,7 @@ public class Request extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = true)
     @ManyToOne
     private User customer;
 

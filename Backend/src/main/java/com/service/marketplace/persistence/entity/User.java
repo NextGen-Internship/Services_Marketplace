@@ -47,17 +47,19 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "description")
     private String description;
 
-    @Lob
-    @Column(name = "picture")
-    private byte[] picture;
+//    @Lob
+//    @Column(name = "picture")
+//    private byte[] picture;
+
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
+
 
 
     @Override

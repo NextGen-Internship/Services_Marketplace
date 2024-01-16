@@ -11,10 +11,10 @@ public class RequestRequest {
 
 
     @NotNull(message = "Customer ID cannot be null")
-    private Long customerId;
+    private Integer customerId;
 
     @NotNull(message = "Service ID cannot be null")
-    private Long serviceId;
+    private Integer serviceId;
 
     @NotEmpty(message = "Description cannot be empty")
     private String description;

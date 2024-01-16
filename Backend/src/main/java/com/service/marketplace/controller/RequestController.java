@@ -1,19 +1,25 @@
 package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.RequestRequest;
+import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.service.RequestService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/v1/request")
 public class RequestController {
     private final RequestService requestService;
+
+    @Autowired
+    public RequestController(RequestService requestService) {
+        this.requestService = requestService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Request>> getAllRequests() {
@@ -21,19 +27,21 @@ public class RequestController {
         return ResponseEntity.ok(requests);
     }
 
+
     @GetMapping("/{requestId}")
     public ResponseEntity<Request> getRequestById(@PathVariable("requestId") Integer requestId) {
-        Request request = requestService.getRequestById(requestId);
+        Request requestResponse = requestService.getRequestById(requestId);
 
-        if (request != null) {
-            return ResponseEntity.ok(request);
+        if (requestResponse != null) {
+            return ResponseEntity.ok(requestResponse);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/{requestId}")
-    public ResponseEntity<Request> createRequest(@RequestBody RequestRequest requestToCreate) {
+
+    @PostMapping("/create")
+    public ResponseEntity<Request> createCategory(@RequestBody RequestRequest requestToCreate) {
         Request newRequest = requestService.createRequest(requestToCreate);
         return ResponseEntity.ok(newRequest);
     }
@@ -59,4 +67,5 @@ public class RequestController {
         requestService.deleteRequestById(requestId);
         return ResponseEntity.ok().build();
     }
+
 }
