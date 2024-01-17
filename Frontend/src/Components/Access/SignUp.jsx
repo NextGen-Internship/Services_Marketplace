@@ -5,6 +5,7 @@ import { IoIosLock } from 'react-icons/io';
 import { MdOutlineEmail } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { postRegister } from '../../service/ApiService';
 
 const SignUp = () => {
   // State to hold form data
@@ -31,10 +32,10 @@ const SignUp = () => {
     try {
       console.log(formData)
       // Send registration data to the backend
-      const response = await axios.post('http://localhost:8080/api/auth/register', formData);
+      const response = await postRegister(formData);
 
       // Handle the backend response if needed
-      console.log('Backend response:', response.data);
+      console.log('Backend response:', response);
       navigate('/sign-in');
 
       // Redirect or perform other actions based on your application logic
