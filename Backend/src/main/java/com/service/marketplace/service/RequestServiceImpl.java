@@ -3,6 +3,7 @@ package com.service.marketplace.service;
 import com.service.marketplace.dto.request.RequestRequest;
 import com.service.marketplace.mapper.RequestMapper;
 import com.service.marketplace.persistence.entity.Request;
+import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RequestRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Request createRequest(RequestRequest requestToCreate) {
-        Request newRequest = requestMapper.requestRequestToRequest(requestToCreate);
+        Request newRequest = requestMapper.requestRequestToRequest(RequestRequest request, User customer, com.service.marketplace.persistence.entity.Service service);
         return requestRepository.save(newRequest);
     }
 

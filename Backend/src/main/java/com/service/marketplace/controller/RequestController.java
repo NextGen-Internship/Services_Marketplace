@@ -41,7 +41,7 @@ public class RequestController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Request> createCategory(@RequestBody RequestRequest requestToCreate) {
+    public ResponseEntity<Request> createRequest(@RequestBody RequestRequest requestToCreate) {
         Request newRequest = requestService.createRequest(requestToCreate);
         return ResponseEntity.ok(newRequest);
     }
