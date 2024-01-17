@@ -15,7 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 import java.util.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
+                .isActive(true)
                 .build();
         userRepository.save(user);
         return null;

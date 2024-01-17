@@ -45,7 +45,7 @@ services:
       - "5005:5005"  # Expose the debugging port
     volumes:
       - ./target:/app
-    command: ["java", "-jar", "/app/marketplace-0.0.1-SNAPSHOT.jar"]
+    command: [ "java", "-jar", "/app/marketplace-0.0.1-SNAPSHOT.jar" ]
     restart: on-failure
 
 volumes:
