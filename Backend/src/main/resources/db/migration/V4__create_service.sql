@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS service (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    provider_id int NOT NULL,
-    category_id int NOT NULL,
+    provider_id int,
+    category_id int,
     title VARCHAR(50) NOT NULL,
     description VARCHAR(255),
     service_status VARCHAR(50) NOT NULL,
