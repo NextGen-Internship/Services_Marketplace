@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS request (
     description VARCHAR(255) NOT NULL,
     created_at DATETIME,
     updated_at DATETIME,
-    isActive BOOLEAN,
+    is_active BOOLEAN,
     FOREIGN KEY (customer_id) REFERENCES user (id),
     FOREIGN KEY (service_id) REFERENCES service (id)
 );

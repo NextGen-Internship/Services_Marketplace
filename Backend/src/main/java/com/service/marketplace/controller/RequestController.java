@@ -21,16 +21,16 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Request>> getAllRequests() {
-        List<Request> requests = requestService.getAllRequests();
+    @GetMapping("/all")
+    public ResponseEntity<List<RequestResponse>> getAllRequests() {
+        List<RequestResponse> requests = requestService.getAllRequests();
         return ResponseEntity.ok(requests);
     }
 
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Request> getRequestById(@PathVariable("requestId") Integer requestId) {
-        Request requestResponse = requestService.getRequestById(requestId);
+    public ResponseEntity<RequestResponse> getRequestById(@PathVariable("requestId") Integer requestId) {
+        RequestResponse requestResponse = requestService.getRequestById(requestId);
 
         if (requestResponse != null) {
             return ResponseEntity.ok(requestResponse);
@@ -41,26 +41,27 @@ public class RequestController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Request> createRequest(@RequestBody RequestRequest requestToCreate) {
-        Request newRequest = requestService.createRequest(requestToCreate);
-        return ResponseEntity.ok(newRequest);
+    public ResponseEntity<RequestResponse> createRequest(@RequestBody RequestRequest requestToCreate) {
+        RequestResponse requestResponse = requestService.createRequest(requestToCreate);
+        return ResponseEntity.ok(requestResponse);
     }
 
-    @PutMapping("/{requestId}")
-    public ResponseEntity<Request> updateRequest(@PathVariable("requestId") Integer requestId, @RequestBody RequestRequest requestToUpdate) {
-        try {
-            Request updatedRequest = requestService.updateRequest(requestId, requestToUpdate);
 
-            if (updatedRequest == null) {
+    @PutMapping("/{requestId}")
+    public ResponseEntity<RequestResponse> updateRequest(@PathVariable("requestId") Integer requestId, @RequestBody RequestRequest requestToUpdate) {
+        try {
+            RequestResponse updatedRequestResponse = requestService.updateRequest(requestId, requestToUpdate);
+            if (updatedRequestResponse == null) {
                 return ResponseEntity.notFound().build();
             } else {
-                return ResponseEntity.ok(updatedRequest);
+                return ResponseEntity.ok(updatedRequestResponse);
             }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
+
 
     @DeleteMapping("/{requestId}")
     public ResponseEntity<Void> deleteRequest(@PathVariable("requestId") Integer requestId) {
