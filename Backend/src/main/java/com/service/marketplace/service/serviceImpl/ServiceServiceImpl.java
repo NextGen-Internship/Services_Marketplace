@@ -12,6 +12,9 @@ import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -117,5 +120,20 @@ public class ServiceServiceImpl implements ServiceService {
         List<com.service.marketplace.persistence.entity.Service> servicesOfCity = serviceRepository.findByCitiesUsingQuery(cities);
 
         return serviceMapper.toServiceResponseList(servicesOfCity);
+    }
+
+    @Override
+    public List<ServiceResponse> sortBasedUponSomeField(String field) {
+        return serviceMapper.toServiceResponseList(serviceRepository.findAll(Sort.by(Sort.Direction.ASC, field)));
+    }
+
+    @Override
+    public Page<ServiceResponse> getServiceWithPagination(Integer offset, Integer pageSize) {
+        return serviceMapper.toServiceResponsePage(serviceRepository.findAll(PageRequest.of(offset, pageSize)));
+    }
+
+    @Override
+    public Page<ServiceResponse> getServiceWithPaginationAndSorting(Integer offset, Integer pageSize, String field) {
+        return serviceMapper.toServiceResponsePage(serviceRepository.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.ASC, field))));
     }
 }

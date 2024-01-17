@@ -8,6 +8,7 @@ import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,6 +79,24 @@ public class ServiceController {
         }
 
         return filteredServices.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(filteredServices);
+    }
+
+    @GetMapping("/sort/{field}")
+    public ResponseEntity<List<ServiceResponse>> sortServices(@PathVariable("field") String field) {
+        List<ServiceResponse> services = serviceService.sortBasedUponSomeField(field);
+        return ResponseEntity.ok(services);
+    }
+
+    @GetMapping("/pagination/{offset}/{pageSize}")
+    public ResponseEntity<Page<ServiceResponse>> paginationService(@PathVariable("offset") Integer offset, @PathVariable("pageSize") Integer pageSize) {
+        Page<ServiceResponse> services = serviceService.getServiceWithPagination(offset, pageSize);
+        return ResponseEntity.ok(services);
+    }
+
+    @GetMapping("/paginationAndSorting/{offset}/{pageSize}/{field}")
+    public ResponseEntity<Page<ServiceResponse>> paginationAndSorting(@PathVariable("offset") Integer offset, @PathVariable("pageSize") Integer pageSize, @PathVariable("field") String field) {
+        Page<ServiceResponse> services = serviceService.getServiceWithPaginationAndSorting(offset, pageSize, field);
+        return ResponseEntity.ok(services);
     }
 
 }

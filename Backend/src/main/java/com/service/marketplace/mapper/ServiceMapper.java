@@ -13,6 +13,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring")
 public interface ServiceMapper {
@@ -45,5 +46,9 @@ public interface ServiceMapper {
         return cities.stream()
                 .map(City::getId)
                 .collect(Collectors.toList());
+    }
+
+    default Page<ServiceResponse> toServiceResponsePage(Page<Service> page) {
+        return page.map(this::serviceToServiceResponse);
     }
 }
