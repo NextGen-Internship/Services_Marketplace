@@ -63,28 +63,86 @@
     background: rgb(195, 237, 55);
 }
 
-.react-multiple-select-dropdown-lite {
-    width: 100%;
+/* Basic styling for Multiselect container */
+.multiselect-container {
+    font-family: 'Arial', sans-serif;
+    width: 300px; /* Set the desired width */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: black;
   }
   
-  .react-multiple-select-dropdown-lite .dropdown-wrapper {
-    border: 2px solid rgba(255, 255, 255, .2);
-    border-radius: 40px;
+  /* Styling for selected values */
+  .selected-list {
+    padding: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
-  .react-multiple-select-dropdown-lite .selected-list-wrapper {
-    border-top: 2px solid rgba(255, 255, 255, .2);
-  }
-  
-  .react-multiple-select-dropdown-lite .dropdown-container {
-    border-radius: 0 0 40px 40px;
-  }
-  
-  .react-multiple-select-dropdown-lite .item {
-    padding: 10px 20px;
+  /* Styling for each option in the dropdown */
+  .option {
+    padding: 8px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
   }
   
-  .react-multiple-select-dropdown-lite .item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+  /* Hover effect for options */
+  .option:hover {
+    background-color: #f0f0f0;
   }
+  
+  /* Styling for the checkbox in front of each option */
+  .checkbox {
+    margin-right: 8px;
+  }
+  
+  /* Styling for the search input */
+  .search-input {
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+  }
+  
+  /* Styling for the clear button */
+  .clear-button {
+    padding: 8px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    border: none;
+  }
+  
+  /* Styling for the dropdown arrow */
+  .dropdown-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  
+  /* Styling for the dropdown menu */
+  .dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid #ccc;
+  }
+  
+  /* Styling for the no options message */
+  .no-options {
+    padding: 8px;
+  }
+  
+  /* Styling for the footer */
+  .footer {
+    padding: 8px;
+    border-top: 1px solid #ccc;
+    background-color: #f5f5f5;
+  }
+  
