@@ -40,6 +40,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
+                .isActive(true)
                 .build();
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);

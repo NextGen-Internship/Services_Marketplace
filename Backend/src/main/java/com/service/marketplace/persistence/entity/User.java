@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "phone_number", unique = true)
-    private int phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "experience")
     private int experience;
@@ -47,9 +48,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "description")
     private String description;
 
-    @Lob
-    @Column(name = "picture")
-    private byte[] picture;
+    @Column(name = "is_active")
+    private boolean isActive = true;
+
+//    @Lob
+//    @Column(name = "picture", nullable = false)
+//    private byte[] picture;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
@@ -90,8 +94,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
+
 }
 
 
