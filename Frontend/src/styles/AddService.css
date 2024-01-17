@@ -1,0 +1,148 @@
+.add-service {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: radial-gradient(circle, rgba(73,143,199,1) 0%, rgba(12,24,91,1) 100%);
+    color: white;
+}
+
+.add-service h1 {
+    font-size: 36px;
+    text-align: center;
+}
+
+.add-service .add-service-form {
+    width: 400px;
+}
+
+.add-service .form-control {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.add-service .form-control label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.add-service .form-control input,
+.add-service .form-control select {
+    width: 100%;
+    height: 40px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: white;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.add-service .form-control input::placeholder {
+    color: white;
+}
+
+.add-service .btn-block {
+    width: 100%;
+    height: 45px;
+    background-color: #fff;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 700;
+    transition: .5s;
+}
+
+.add-service .btn-block:hover {
+    background: rgb(195, 237, 55);
+}
+
+/* Basic styling for Multiselect container */
+.multiselect-container {
+    font-family: 'Arial', sans-serif;
+    width: 300px; /* Set the desired width */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: black;
+  }
+  
+  /* Styling for selected values */
+  .selected-list {
+    padding: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Styling for each option in the dropdown */
+  .option {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Hover effect for options */
+  .option:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Styling for the checkbox in front of each option */
+  .checkbox {
+    margin-right: 8px;
+  }
+  
+  /* Styling for the search input */
+  .search-input {
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+  }
+  
+  /* Styling for the clear button */
+  .clear-button {
+    padding: 8px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    border: none;
+  }
+  
+  /* Styling for the dropdown arrow */
+  .dropdown-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  
+  /* Styling for the dropdown menu */
+  .dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid #ccc;
+  }
+  
+  /* Styling for the no options message */
+  .no-options {
+    padding: 8px;
+  }
+  
+  /* Styling for the footer */
+  .footer {
+    padding: 8px;
+    border-top: 1px solid #ccc;
+    background-color: #f5f5f5;
+  }
+  

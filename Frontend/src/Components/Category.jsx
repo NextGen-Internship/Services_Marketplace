@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Category.css';
 import { FaSearch } from 'react-icons/fa';
+import { getAllCategories } from '../service/ApiService';
 
 const Category = () => {
-  const categories = [
-    { id: 1, name: 'Painter' },
-    { id: 2, name: 'Wheel Repair' },
-    { id: 3, name: 'TV Repair' },
-    { id: 4, name: 'Computer Repair' },
-    { id: 5, name: 'Computer Test 5' },
-    { id: 6, name: 'Test Wheel' },
-    { id: 7, name: 'Painter Wheel Test' },
-    { id: 8, name: 'Category 8' },
-    { id: 9, name: 'Category 9' },
-    { id: 10, name: 'Category 10' },
-  ];
+  const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const categoriesList = await getAllCategories();
+            setCategories(categoriesList);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
   const [searchQuery, setSearchQuery] = useState('');
 
