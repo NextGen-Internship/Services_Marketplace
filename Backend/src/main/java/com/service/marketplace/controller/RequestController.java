@@ -1,10 +1,8 @@
 package com.service.marketplace.controller;
 
-import com.service.marketplace.dto.request.RequestRequest;
+import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
-import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.service.RequestService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,14 +39,14 @@ public class RequestController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<RequestResponse> createRequest(@RequestBody RequestRequest requestToCreate) {
+    public ResponseEntity<RequestResponse> createRequest(@RequestBody RequestToCreateDto requestToCreate) {
         RequestResponse requestResponse = requestService.createRequest(requestToCreate);
         return ResponseEntity.ok(requestResponse);
     }
 
 
     @PutMapping("/{requestId}")
-    public ResponseEntity<RequestResponse> updateRequest(@PathVariable("requestId") Integer requestId, @RequestBody RequestRequest requestToUpdate) {
+    public ResponseEntity<RequestResponse> updateRequest(@PathVariable("requestId") Integer requestId, @RequestBody RequestToCreateDto requestToUpdate) {
         try {
             RequestResponse updatedRequestResponse = requestService.updateRequest(requestId, requestToUpdate);
             if (updatedRequestResponse == null) {

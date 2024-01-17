@@ -1,6 +1,6 @@
 package com.service.marketplace.service;
 
-import com.service.marketplace.dto.request.RequestRequest;
+import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.mapper.RequestMapper;
 import com.service.marketplace.persistence.entity.Request;
@@ -40,7 +40,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestResponse createRequest(RequestRequest requestToCreate) {
+    public RequestResponse createRequest(RequestToCreateDto requestToCreate) {
         User customer = userRepository.findById(requestToCreate.getCustomerId()).orElse(null);
         com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(requestToCreate.getServiceId()).orElse(null);
         com.service.marketplace.persistence.entity.Request newRequest = requestMapper.requestRequestToRequest(requestToCreate,
@@ -51,7 +51,7 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public RequestResponse updateRequest(Integer requestId, RequestRequest requestToUpdate) {
+    public RequestResponse updateRequest(Integer requestId, RequestToCreateDto requestToUpdate) {
         Request existingRequest = requestRepository.findById(requestId).orElse(null);
         if (existingRequest != null) {
             requestMapper.requestFromRequest(requestToUpdate, existingRequest);

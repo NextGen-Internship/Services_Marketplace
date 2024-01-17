@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class RequestRequest {
+public class RequestToCreateDto {
 
 
     @NotNull(message = "Customer ID cannot be null")
