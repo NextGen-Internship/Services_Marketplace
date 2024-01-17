@@ -46,8 +46,6 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> googleLogin(
             @RequestBody AuthenticationResponse authenticationResponse
     ) throws GeneralSecurityException, IOException {
-
-        System.out.println(authenticationResponse.getToken());
         AuthenticationResponse userResponse = googleService.verifyGoogleToken(authenticationResponse.getToken());
         if (userResponse != null) {
             return ResponseEntity.ok(userResponse);

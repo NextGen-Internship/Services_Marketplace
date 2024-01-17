@@ -26,7 +26,7 @@ export const SignIn = () => {
       // Handle the backend response if needed
       console.log('Backend response:', response.data);
       const jwtToken = response.data.token;
-      localStorage.setItem('Jwt_Token',jwtToken);
+      localStorage.setItem('Jwt_Token', jwtToken);
 
       // Navigate or perform other actions based on your application logic
       navigate('/home-page'); // Redirect to the home page, for example
@@ -40,26 +40,23 @@ export const SignIn = () => {
     console.log(response.credential);
     try {
       console.log('Google Login Response:', response);
-  
-      
-        const googleToken = response.credential
-  
-        console.log('Sending request to /api/auth/google/login:', googleToken);
-  
-        // Send the Google token to your backend using Axios
-        const backendResponse = await axios.post('http://localhost:8080/api/auth/google/login', {
-          token: googleToken,
-        });
-        console.log('Backend Response:', backendResponse.data);
-        // Extract the JWT token from the backend response
-        const jwtToken = backendResponse.data.token;
-  
-        // Save the JWT token in local storage
-        localStorage.setItem('Jwt_Token', jwtToken);
-  
-        // Navigate or perform other actions based on your application logic
-        navigate('/home-page'); // Redirect to the home page, for example
-      
+      const googleToken = response.credential
+      console.log('Sending request to /api/auth/google/login:', googleToken);
+
+      // Send the Google token to your backend using Axios
+      const backendResponse = await axios.post('http://localhost:8080/api/auth/google/login', {
+        token: googleToken,
+      });
+      console.log('Backend Response:', backendResponse.data);
+      // Extract the JWT token from the backend response
+      const jwtToken = backendResponse.data.token;
+
+      // Save the JWT token in local storage
+      localStorage.setItem('Jwt_Token', jwtToken);
+
+      // Navigate or perform other actions based on your application logic
+      navigate('/home-page'); // Redirect to the home page, for example
+
     } catch (error) {
       console.error('Error during Google login:', error);
     }
