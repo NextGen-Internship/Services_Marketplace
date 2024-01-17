@@ -23,7 +23,6 @@ function App() {
           <Route exact path="category-page" element={<Category/>}/>
           <Route exact path="sign-in" element={<SignIn/>}/>
           <Route exact path="sign-up" element={<SignUp/>}/>
-          
         </Routes>
       </Router>
     </GoogleOAuthProvider>

@@ -110,12 +110,6 @@ export const SignIn = () => {
             buttonText="Login with Google"
             cookiePolicy={'single_host_origin'}
           />
-          <button onClick={() => console.log('login with FB click')}>
-            <div className='media-options-login-buttons'>
-              <FaFacebook className='icon' />
-              <span>Login with Facebook</span>
-            </div>
-          </button>
         </div>
       </div>
     </div>

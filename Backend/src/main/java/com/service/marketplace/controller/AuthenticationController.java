@@ -8,6 +8,8 @@ import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.AuthenticationService;
 import com.service.marketplace.service.JwtService;
 import com.service.marketplace.service.GoogleService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,4 +55,5 @@ public class AuthenticationController {
             return ResponseEntity.notFound().build();
         }
     }
+
 }

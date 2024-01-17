@@ -17,7 +17,7 @@ import java.security.GeneralSecurityException;
 
 @Service
 @AllArgsConstructor
-public class GoogleService {
+public class  GoogleService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
