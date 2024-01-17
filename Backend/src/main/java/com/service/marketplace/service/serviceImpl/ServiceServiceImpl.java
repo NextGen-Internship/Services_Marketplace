@@ -44,7 +44,7 @@ public class ServiceServiceImpl implements ServiceService {
                 cityIds.add(city.getId());
             }
 
-            return serviceMapper.serviceToServiceResponse(service, service.getProvider().getId(), service.getCategory().getId(), cityIds);
+            return serviceMapper.serviceToServiceResponse(service);
         } else {
             return null;
         }
@@ -60,7 +60,7 @@ public class ServiceServiceImpl implements ServiceService {
                 provider, category, cities);
 
 
-        return serviceMapper.serviceToServiceResponse(serviceRepository.save(newService), serviceToCreate.getProviderId(), serviceToCreate.getCategoryId(), serviceToCreate.getCityIds());
+        return serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
     }
 
     @Override
@@ -76,8 +76,9 @@ public class ServiceServiceImpl implements ServiceService {
             existingService.setDescription(updatedService.getDescription());
             existingService.setServiceStatus(updatedService.getServiceStatus());
             existingService.setPrice(updatedService.getPrice());
+            existingService.setCities(updatedService.getCities());
 
-            return serviceMapper.serviceToServiceResponse(serviceRepository.save(existingService), serviceToUpdate.getProviderId(), serviceToUpdate.getCategoryId(), serviceToUpdate.getCityIds());
+            return serviceMapper.serviceToServiceResponse(serviceRepository.save(existingService));
         } else {
             return null;
         }
