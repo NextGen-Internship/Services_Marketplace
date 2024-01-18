@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import '../../styles/SignIn.css';
-import { FaUserTie, FaFacebook } from 'react-icons/fa';
+import { FaUserTie } from 'react-icons/fa';
 import { IoIosLock } from 'react-icons/io';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import { googleLogin, postLogin } from '../../service/ApiService';
+
 
 export const SignIn = () => {
   const navigate = useNavigate();
@@ -21,19 +22,14 @@ export const SignIn = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Send login request to the backend
-      const response = await axios.post('http://localhost:8080/api/auth/login', formData);
-      // Handle the backend response if needed
-      console.log('Backend response:', response.data);
-      const jwtToken = response.data.token;
+      const response = await postLogin(formData);
+      console.log('Backend response:', response);
+      const jwtToken = response.token;
       localStorage.setItem('Jwt_Token', jwtToken);
-
-      // Navigate or perform other actions based on your application logic
-      navigate('/home-page'); // Redirect to the home page, for example
+      navigate('/home-page'); 
     } catch (error) {
       console.error('Error during login:', error);
-      // Handle login error, e.g., display an error message to the user
-    }
+    } 
   };
 
   const handleGoogleLogin = async (response) => {
@@ -42,20 +38,11 @@ export const SignIn = () => {
       console.log('Google Login Response:', response);
       const googleToken = response.credential
       console.log('Sending request to /api/auth/google/login:', googleToken);
-
-      // Send the Google token to your backend using Axios
-      const backendResponse = await axios.post('http://localhost:8080/api/auth/google/login', {
-        token: googleToken,
-      });
-      console.log('Backend Response:', backendResponse.data);
-      // Extract the JWT token from the backend response
-      const jwtToken = backendResponse.data.token;
-
-      // Save the JWT token in local storage
+      const backendResponse = await googleLogin(googleToken);
+      console.log('Backend Response:', backendResponse);
+      const jwtToken = backendResponse.token;
       localStorage.setItem('Jwt_Token', jwtToken);
-
-      // Navigate or perform other actions based on your application logic
-      navigate('/home-page'); // Redirect to the home page, for example
+      navigate('/home-page'); 
 
     } catch (error) {
       console.error('Error during Google login:', error);
@@ -110,12 +97,6 @@ export const SignIn = () => {
             buttonText="Login with Google"
             cookiePolicy={'single_host_origin'}
           />
-          <button onClick={() => console.log('login with FB click')}>
-            <div className='media-options-login-buttons'>
-              <FaFacebook className='icon' />
-              <span>Login with Facebook</span>
-            </div>
-          </button>
         </div>
       </div>
     </div>

@@ -4,6 +4,10 @@ const config = {
     getAllCategories: '/v1/categories',
     getAllCities: '/v1/cities/all',
     createService: '/v1/services/create',
+    postLogin: '/api/auth/login',
+    googleLogin: '/api/auth/google/login',
+    postRegister: '/api/auth/register',
+    
 }
 
 

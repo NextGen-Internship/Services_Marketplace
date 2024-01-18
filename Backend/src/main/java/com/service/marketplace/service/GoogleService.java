@@ -31,15 +31,14 @@ public class GoogleService {
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();
 
-            // Here, you can extract user information from the payload
+
             String email = payload.getEmail();
             boolean emailVerified = payload.getEmailVerified();
             try {
                 User existingUser = userRepository.findByEmail(payload.getEmail()).orElseThrow();
-
                 String jwtToken = jwtService.generateToken(existingUser);
                 return new AuthenticationResponse(jwtToken);
-                // Use the constructor with parameters
+
             } catch (Exception e) {
                 //String pictureUrl = (String) payload.get("picture");
                 String familyName = (String) payload.get("family_name");
