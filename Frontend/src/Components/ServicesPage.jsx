@@ -25,58 +25,75 @@ const ServicesPage = () => {
     //         console.error('Error fetching data:', error);
     //       }
     //     };
-    
+
     //     fetchData();
     //   }, []);
 
-      const getServices = async (page, sortingField, sortingDirection) => {
+    const getServices = async (page, sortingField, sortingDirection) => {
         try {
-          const response = await getPaginationServices(page, pageSize, sortingField, sortingDirection);
-          setServices(response.content);
-          setTotalPages(response.totalPages);
-          setTotalElements(response.totalElements);
-          setCurrentPage(response.number);
+            const response = await getPaginationServices(page, pageSize, sortingField, sortingDirection);
+            setServices(response.content);
+            setTotalPages(response.totalPages);
+            setTotalElements(response.totalElements);
+            setCurrentPage(response.number);
         } catch (error) {
-          console.error('Error fetching users:', error);
+            console.error('Error fetching users:', error);
         }
-      };
+    };
 
-      const displayPageable = () => {
+    const displayPageable = () => {
         const previousPage = Math.max(page - 1, 0);
         const nextPage = Math.min(page + 1, totalPages - 1);
     
         return (
-          <div>
-            <button onClick={() => getServices(previousPage, sortingField, sortingDirection)}>Previous</button>
-            <button onClick={() => getServices(nextPage, sortingField, sortingDirection)}>Next</button>
-            <br />
-            <span>{(((currentPage + 1) * pageSize) > totalElements) ? totalElements : ((currentPage + 1) * pageSize)} of {totalElements} elements</span>
-          </div>
-        );
-      };
+            <div>
+                <button onClick={() => getServices(previousPage, sortingField, sortingDirection)}>Previous</button>
     
-      const sort = (field) => {
+                {[...Array(totalPages)].map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => getServices(index, sortingField, sortingDirection)}
+                        className={index === currentPage ? 'active' : ''}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+    
+                <button
+                    onClick={() => getServices(nextPage, sortingField, sortingDirection)}
+                    disabled={page === totalPages - 1} // Disable if on the last page
+                >
+                    Next
+                </button>
+                <br />
+                <span>{(((currentPage + 1) * pageSize) > totalElements) ? totalElements : ((currentPage + 1) * pageSize)} of {totalElements} elements</span>
+            </div>
+        );
+    };
+    
+
+    const sort = (field) => {
         const newSortingDirection = sortingDirection === 'ASC' ? 'DESC' : 'ASC';
         setSortingDirection(newSortingDirection);
         getServices(page, field, newSortingDirection);
-      };
-    
-      useEffect(() => {
-        getServices(page, sortingField, sortingDirection);
-      }, [page, pageSize, sortingField, sortingDirection]);
+    };
 
-      
+    useEffect(() => {
+        getServices(page, sortingField, sortingDirection);
+    }, [page, pageSize, sortingField, sortingDirection]);
+
+
 
     return (
         <div className='page-container'>
-        <div className='filter'>
-            <Filters />
-        </div>
-        <div className='services'>
-            <ServicesPageHeader/>
-            {services.length > 0 ? <ServiceBoxes services={services}/> : 'No Services to Show'}
-            {displayPageable()}
-        </div>
+            <div className='filter'>
+                <Filters />
+            </div>
+            <div className='services'>
+                <ServicesPageHeader />
+                {services.length > 0 ? <ServiceBoxes services={services} /> : 'No Services to Show'}
+                {displayPageable()}
+            </div>
         </div>
     )
 }

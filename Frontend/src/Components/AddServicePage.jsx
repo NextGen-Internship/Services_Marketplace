@@ -6,6 +6,23 @@ import { getAllServices, createService } from '../service/ApiService';
 
 function AddServicePage() {
     const [services, setServices] = useState([]);
+    //     const [user, setUser] = useState(null);
+
+    //   useEffect(() => {
+    //     const fetchData = async () => {
+    //       try {
+    //         const loggedInUser = await getLoggedInUser();
+    //         setUser(loggedInUser);
+
+    //         const services = await getAllServices();
+    //         setServices(services);
+    //       } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //       }
+    //     };
+
+    //     fetchData();
+    //   }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -20,9 +37,11 @@ function AddServicePage() {
         fetchData();
     }, []);
 
-    // add service
     const addService = async (service) => {
         try {
+            // if (user) {
+            //     service.providerId = user.id;
+            //   }
             const newService = await createService(service);
 
             console.log(newService);
@@ -32,11 +51,11 @@ function AddServicePage() {
         }
     };
 
-  return (
-    <div className='AddServicePage'>
-        <AddService onAdd={addService} />
-    </div>
-  )
+    return (
+        <div className='AddServicePage'>
+            <AddService onAdd={addService} />
+        </div>
+    )
 }
 
 export default AddServicePage
