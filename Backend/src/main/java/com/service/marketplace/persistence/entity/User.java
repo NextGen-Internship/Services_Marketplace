@@ -48,12 +48,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "description")
     private String description;
 
+//    @Lob
+//    @Column(name = "picture")
+//    private byte[] picture;
+
     @Column(name = "is_active")
     private boolean isActive = true;
-
-//    @Lob
-//    @Column(name = "picture", nullable = false)
-//    private byte[] picture;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
@@ -61,10 +61,9 @@ public class User extends BaseEntity implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
+        return Set.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
     }
 
     @Override
@@ -94,7 +93,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
 }

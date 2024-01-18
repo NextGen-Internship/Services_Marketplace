@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "request")
 public class Request extends BaseEntity {
@@ -14,7 +15,7 @@ public class Request extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = true)
     @ManyToOne
     private User customer;
 
@@ -25,8 +26,8 @@ public class Request extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_Active")
-    private boolean isActive;
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
     @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne
