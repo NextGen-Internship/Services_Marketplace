@@ -1,29 +1,92 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../styles/SignIn.css';
 import { FaUserTie, FaFacebook } from 'react-icons/fa';
 import { IoIosLock } from 'react-icons/io';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGoogleLogin, GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 export const SignIn = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
-  const responseGoogle = (response) => {
-    console.log(response);
-    // Handle Google login response here if needed
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Send login request to the backend
+      const response = await axios.post('http://localhost:8080/api/auth/login', formData);
+      // Handle the backend response if needed
+      console.log('Backend response:', response.data);
+      const jwtToken = response.data.token;
+      localStorage.setItem('Jwt_Token', jwtToken);
+
+      // Navigate or perform other actions based on your application logic
+      navigate('/home-page'); // Redirect to the home page, for example
+    } catch (error) {
+      console.error('Error during login:', error);
+      // Handle login error, e.g., display an error message to the user
+    }
+  };
+
+  const handleGoogleLogin = async (response) => {
+    console.log(response.credential);
+    try {
+      console.log('Google Login Response:', response);
+      const googleToken = response.credential
+      console.log('Sending request to /api/auth/google/login:', googleToken);
+
+      // Send the Google token to your backend using Axios
+      const backendResponse = await axios.post('http://localhost:8080/api/auth/google/login', {
+        token: googleToken,
+      });
+      console.log('Backend Response:', backendResponse.data);
+      // Extract the JWT token from the backend response
+      const jwtToken = backendResponse.data.token;
+
+      // Save the JWT token in local storage
+      localStorage.setItem('Jwt_Token', jwtToken);
+
+      // Navigate or perform other actions based on your application logic
+      navigate('/home-page'); // Redirect to the home page, for example
+
+    } catch (error) {
+      console.error('Error during Google login:', error);
+    }
   };
 
   return (
     <div className='sign-in'>
       <div>
-        <form action=''>
+        <form onSubmit={handleFormSubmit}>
           <h1>Login</h1>
           <div className='input-box'>
-            <input type='text' placeholder='Username' required />
+            <input
+              type='text'
+              placeholder='Email'
+              name='email'
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
             <FaUserTie className='icon' />
           </div>
           <div className='input-box'>
-            <input type='password' placeholder='Password' required />
+            <input
+              type='password'
+              placeholder='Password'
+              name='password'
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
             <IoIosLock className='icon' />
           </div>
           <div className='remember-forgot'>
@@ -40,9 +103,9 @@ export const SignIn = () => {
           </div>
         </form>
         <div className='media-options'>
-          <GoogleLogin 
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
+          <GoogleLogin
+            onSuccess={handleGoogleLogin}
+            onFailure={handleGoogleLogin}
             clientId="350761079008-0ipa8rk7sumieir1rq4b5ljg3pu78trt.apps.googleusercontent.com"
             buttonText="Login with Google"
             cookiePolicy={'single_host_origin'}
