@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { googleLogin, postLogin } from '../../service/ApiService';
 
+
 export const SignIn = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ export const SignIn = () => {
       navigate('/home-page'); 
     } catch (error) {
       console.error('Error during login:', error);
-    }
+    } 
   };
 
   const handleGoogleLogin = async (response) => {

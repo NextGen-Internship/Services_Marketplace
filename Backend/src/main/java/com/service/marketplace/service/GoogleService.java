@@ -31,6 +31,7 @@ public class GoogleService {
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();
 
+
             String email = payload.getEmail();
             boolean emailVerified = payload.getEmailVerified();
             try {

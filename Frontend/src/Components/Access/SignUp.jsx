@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import '../../styles/SignUp.css'
-import { FaUserPen, FaUserTie } from 'react-icons/fa6';
+import { FaUserPen } from 'react-icons/fa6';
 import { IoIosLock } from 'react-icons/io';
 import { MdOutlineEmail } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { postRegister } from '../../service/ApiService';
 
+
 const SignUp = () => {
-  // State to hold form data
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -17,7 +17,6 @@ const SignUp = () => {
     password: ''
   });
 
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -31,14 +30,10 @@ const SignUp = () => {
 
     try {
       console.log(formData)
-      // Send registration data to the backend
       const response = await postRegister(formData);
-
-      // Handle the backend response if needed
-      console.log('Backend response:', response);
+      console.log('Backend response:', response.data);
       navigate('/sign-in');
 
-      // Redirect or perform other actions based on your application logic
     } catch (error) {
       console.error('Error during registration:', error);
     }
