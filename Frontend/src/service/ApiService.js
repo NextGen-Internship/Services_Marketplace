@@ -102,10 +102,21 @@ const getAllServices = async () => {
     }
   };
 
+  const getPaginationServices = async (page, pageSize, sortingField, sortingDirection) => {
+    try {
+      const response = await axios.get(config.baseUrl + config.getPaginationServices + '/' + page + '/' + pageSize + '/' + sortingField + '/' + sortingDirection);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching services", error);
+      throw error;
+    }
+};
+
 export {
     getAllServices,
     getAllCategories,
     getAllCities,
     createService,
+    getPaginationServices,
 } 
 export default apiService;

@@ -4,6 +4,7 @@ const config = {
     getAllCategories: '/v1/categories',
     getAllCities: '/v1/cities/all',
     createService: '/v1/services/create',
+    getPaginationServices: '/v1/services/getPaginationServices',
 }
 
 

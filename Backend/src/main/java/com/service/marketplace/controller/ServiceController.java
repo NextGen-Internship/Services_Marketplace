@@ -2,12 +2,8 @@ package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
-import com.service.marketplace.persistence.entity.Category;
-import com.service.marketplace.persistence.entity.Service;
-import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.ServiceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,9 +66,11 @@ public class ServiceController {
 
         if (categoryId != null) {
             filteredServices = serviceService.getAllServicesByCategory(categoryId);
-        } else if (providerId != null) {
+        }
+        if (providerId != null) {
             filteredServices = serviceService.getAllServicesByProvider(providerId);
-        } else if (cityId != null) {
+        }
+        if (cityId != null) {
             filteredServices = serviceService.getAllServicesByCity(cityId);
         } else {
             filteredServices = serviceService.getAllServices();
@@ -81,22 +79,9 @@ public class ServiceController {
         return filteredServices.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(filteredServices);
     }
 
-    @GetMapping("/sort/{field}")
-    public ResponseEntity<List<ServiceResponse>> sortServices(@PathVariable("field") String field) {
-        List<ServiceResponse> services = serviceService.sortBasedUponSomeField(field);
-        return ResponseEntity.ok(services);
+    @GetMapping("/getPaginationServices/{page}/{pageSize}/{sortingField}/{sortingDirection}")
+    public Page<ServiceResponse> getServices(@PathVariable("page") Integer page, @PathVariable("pageSize") Integer pageSize,
+                                             @PathVariable("sortingField") String sortingField, @PathVariable("sortingDirection") String sortingDirection) {
+        return serviceService.fetchServices(page, pageSize, sortingField, sortingDirection);
     }
-
-    @GetMapping("/pagination/{offset}/{pageSize}")
-    public ResponseEntity<Page<ServiceResponse>> paginationService(@PathVariable("offset") Integer offset, @PathVariable("pageSize") Integer pageSize) {
-        Page<ServiceResponse> services = serviceService.getServiceWithPagination(offset, pageSize);
-        return ResponseEntity.ok(services);
-    }
-
-    @GetMapping("/paginationAndSorting/{offset}/{pageSize}/{field}")
-    public ResponseEntity<Page<ServiceResponse>> paginationAndSorting(@PathVariable("offset") Integer offset, @PathVariable("pageSize") Integer pageSize, @PathVariable("field") String field) {
-        Page<ServiceResponse> services = serviceService.getServiceWithPaginationAndSorting(offset, pageSize, field);
-        return ResponseEntity.ok(services);
-    }
-
 }

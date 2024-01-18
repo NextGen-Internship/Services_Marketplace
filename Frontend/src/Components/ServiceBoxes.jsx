@@ -11,4 +11,4 @@ const ServiceBoxes = ({ services }) => {
     )
 }
 
-export default ServiceBoxes
+export default ServiceBoxes;

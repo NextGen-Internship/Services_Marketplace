@@ -14,12 +14,12 @@ import com.service.marketplace.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -123,17 +123,12 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public List<ServiceResponse> sortBasedUponSomeField(String field) {
-        return serviceMapper.toServiceResponseList(serviceRepository.findAll(Sort.by(Sort.Direction.ASC, field)));
+    public Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection) {
+        Sort sort = Sort.by(Sort.Direction.valueOf(sortingDirection), sortingField);
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+
+        return serviceMapper.toServiceResponsePage(serviceRepository.findAll(pageable));
     }
 
-    @Override
-    public Page<ServiceResponse> getServiceWithPagination(Integer offset, Integer pageSize) {
-        return serviceMapper.toServiceResponsePage(serviceRepository.findAll(PageRequest.of(offset, pageSize)));
-    }
 
-    @Override
-    public Page<ServiceResponse> getServiceWithPaginationAndSorting(Integer offset, Integer pageSize, String field) {
-        return serviceMapper.toServiceResponsePage(serviceRepository.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.ASC, field))));
-    }
 }
