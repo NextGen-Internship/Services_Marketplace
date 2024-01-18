@@ -11,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "roles")
+
 public class Role extends BaseEntity implements GrantedAuthority {
 
     @Column(name = "name")
@@ -20,5 +21,4 @@ public class Role extends BaseEntity implements GrantedAuthority {
     public String getAuthority() {
         return this.name;
     }
-
 }
