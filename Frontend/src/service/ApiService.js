@@ -112,11 +112,46 @@ const getAllServices = async () => {
     }
 };
 
+  const postLogin = async (formData) => {
+    try {
+      const response = await axios.post(config.baseUrl + config.postLogin , formData);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching services", error);
+      throw error;
+    }
+};
+
+const googleLogin = async (googleToken) => {
+  try {
+    const response = await axios.post(config.baseUrl + config.googleLogin, {
+      token: googleToken,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching services", error);
+    throw error;
+  }
+};
+
+const postRegister = async (formData) => {
+  try {
+    const response = await axios.post(config.baseUrl + config.postRegister , formData);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching services", error);
+    throw error;
+  }
+};
+
 export {
     getAllServices,
     getAllCategories,
     getAllCities,
     createService,
     getPaginationServices,
+    postLogin,
+    googleLogin,
+    postRegister,
 } 
 export default apiService;

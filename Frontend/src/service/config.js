@@ -5,6 +5,9 @@ const config = {
     getAllCities: '/v1/cities/all',
     createService: '/v1/services/create',
     getPaginationServices: '/v1/services/getPaginationServices',
+    postLogin: '/api/auth/login',
+    googleLogin: '/api/auth/google/login',
+    postRegister: '/api/auth/register',
 }
 
 
