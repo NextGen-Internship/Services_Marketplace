@@ -36,6 +36,13 @@ public class ServiceController {
         }
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ServiceResponse>> getServicesByUserId(@PathVariable("userId") Integer userId) {
+        List<ServiceResponse> userServices = serviceService.getServicesByUserId(userId);
+        return ResponseEntity.ok(userServices);
+    }
+
+
     @PostMapping("/create")
     public ResponseEntity<ServiceResponse> createService(@RequestBody ServiceRequest serviceToCreate) {
         ServiceResponse newService = serviceService.createService(serviceToCreate);

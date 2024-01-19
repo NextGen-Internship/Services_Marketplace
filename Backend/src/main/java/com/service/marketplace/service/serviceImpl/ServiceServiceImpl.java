@@ -12,9 +12,13 @@ import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -118,4 +122,19 @@ public class ServiceServiceImpl implements ServiceService {
 
         return serviceMapper.toServiceResponseList(servicesOfCity);
     }
+
+    @Override
+    public List<ServiceResponse> getServicesByUserId(Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(user);
+
+            return serviceMapper.toServiceResponseList(userServices);
+        } else {
+            return Collections.emptyList(); // Handle the case when the user is not found
+        }
+    }
+
+
 }

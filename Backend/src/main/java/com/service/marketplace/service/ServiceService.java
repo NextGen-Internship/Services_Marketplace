@@ -18,4 +18,6 @@ public interface ServiceService {
     List<ServiceResponse> getAllServicesByCategory(Integer categoryId);
     List<ServiceResponse> getAllServicesByProvider(Integer providerId);
     List<ServiceResponse> getAllServicesByCity(Integer cityId);
+
+    List<ServiceResponse> getServicesByUserId(Integer userId);
 }

@@ -2,6 +2,9 @@ import React, { useState, useEffect }  from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./Navbar.jsx"
 import '../styles/Profile.css';
+import { decode } from 'jsonwebtoken'; 
+import axios from 'axios';
+
 
 const Profile = () => {
     const [showPersonalInfo, setShowPersonalInfo] = useState(false);
@@ -14,8 +17,55 @@ const Profile = () => {
         lastName: '',
         email: '',
         phoneNumber: '',
-        imageUrl: '' 
+        imageUrl: '',
+        isProvider: false
     });
+
+    useEffect(() => {
+        const jwtToken = localStorage.getItem('Jwt_Token');
+    
+        if (!jwtToken) {
+          navigate('/login');
+        } else {
+          const decodedToken = decode(jwtToken);
+    
+          setUser({
+            firstName: decodedToken.firstName,
+            lastName: decodedToken.lastName,
+            email: decodedToken.email,
+            phoneNumber: decodedToken.phoneNumber,
+            imageUrl: decodedToken.imageUrl,
+            isProvider: decodedToken.isProvider, // Set isProvider based on decoded token
+          });
+    
+          // Fetch user's services if they are a provider
+          if (decodedToken.isProvider) {
+            fetchUserServices();
+          }
+        }
+      }, [navigate]);
+
+      const fetchUserServices = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3000/v1/services/user/${user.id}`, {
+            // Adjust the URL and options as needed for your API
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('Jwt_Token')}`,
+            },
+          });
+    
+          if (response.status === 200) {
+            const userServices = response.data;
+            // Handle the fetched services data as needed
+            console.log('User Services:', userServices);
+          } else {
+            console.error('Failed to fetch user services');
+          }
+        } catch (error) {
+          console.error('Error fetching user services:', error);
+        }
+      };
+    
 
     const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
@@ -39,19 +89,24 @@ const Profile = () => {
         setEditMode(false);
     };
 
-    
-
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            const userData = {
-                
-            };
-            setUser(userData);
-        };
-
-        fetchUserData();
-    }, []);
+        const jwtToken = localStorage.getItem('Jwt_Token');
+    
+        if (!jwtToken) {
+          navigate('/login');
+        } else {
+          const decodedToken = decode(jwtToken);
+              setUser({
+            firstName: decodedToken.firstName,
+            lastName: decodedToken.lastName,
+            email: decodedToken.email,
+            phoneNumber: decodedToken.phoneNumber,
+            imageUrl: decodedToken.imageUrl,
+          });
+        }
+      }, [navigate]);
 
     const handlePersonalInfoToggle = () => {
         setShowPersonalInfo(!showPersonalInfo);
@@ -72,6 +127,10 @@ const Profile = () => {
     const handleEditProfile = () => {
         navigate('/edit-information'); 
     };
+
+    if (isLoading) {
+        return <p>Loading...</p>; // Show a loading message while fetching data
+      }
 
     return (
         <div className="profile-container">
