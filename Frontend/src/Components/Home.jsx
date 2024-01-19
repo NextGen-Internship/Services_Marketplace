@@ -37,7 +37,7 @@ const Home = () => {
         <h1>Category</h1>
         <div className="content-box">
           <div className="card">
-            {/* Your category content here */}
+           
           </div>
           <div className="card">
             {/* Your category content here */}
@@ -57,6 +57,7 @@ const Home = () => {
 
           {/* Add more cards as needed */}
         </div>
+        <button className='view-more-btn' type='Submit'>View More</button>
       </div>
 
       <div className='home-service'>
@@ -82,6 +83,7 @@ const Home = () => {
           </div>
           {/* Add more cards as needed */}
         </div>
+        <button className='view-more-btn' type='Submit'>View More</button>
       </div>
     </div>
 
