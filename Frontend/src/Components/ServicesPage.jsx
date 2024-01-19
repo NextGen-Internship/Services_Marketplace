@@ -1,33 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactPaginate from 'react-paginate';
 import ServicesPageHeader from './ServicesPageHeader';
 import ServiceBoxes from './ServiceBoxes';
-import { useState, useEffect } from 'react';
-import { getAllServices, getPaginationServices } from '../service/ApiService';
+import { getPaginationServices } from '../service/ApiService';
 import Filters from './Filters';
-import '../styles/ServicesPage.css'
+import '../styles/ServicesPage.css';
 
 const ServicesPage = () => {
+    const isNavigationEvent = !sessionStorage.getItem('PageNumber');
+    const storedPage = isNavigationEvent ? 0 : sessionStorage.getItem('PageNumber');
+
     const [services, setServices] = useState([]);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(Number(storedPage));
     const [pageSize, setPageSize] = useState(5);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const [sortingField, setSortingField] = useState('updatedAt');
     const [sortingDirection, setSortingDirection] = useState('DESC');
-    const [currentPage, setCurrentPage] = useState(0);
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //       try {
-    //         const servicesList = await getAllServices();
-    //         setServices(servicesList);
-    //       } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //       }
-    //     };
-
-    //     fetchData();
-    //   }, []);
 
     const getServices = async (page, sortingField, sortingDirection) => {
         try {
@@ -35,54 +24,25 @@ const ServicesPage = () => {
             setServices(response.content);
             setTotalPages(response.totalPages);
             setTotalElements(response.totalElements);
-            setCurrentPage(response.number);
+            setPage(response.number);
+
+            sessionStorage.setItem('PageNumber', response.number);
         } catch (error) {
             console.error('Error fetching users:', error);
         }
     };
 
-    const displayPageable = () => {
-        const previousPage = Math.max(page - 1, 0);
-        const nextPage = Math.min(page + 1, totalPages - 1);
-    
-        return (
-            <div>
-                <button onClick={() => getServices(previousPage, sortingField, sortingDirection)}>Previous</button>
-    
-                {[...Array(totalPages)].map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => getServices(index, sortingField, sortingDirection)}
-                        className={index === currentPage ? 'active' : ''}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
-    
-                <button
-                    onClick={() => getServices(nextPage, sortingField, sortingDirection)}
-                    disabled={page === totalPages - 1} // Disable if on the last page
-                >
-                    Next
-                </button>
-                <br />
-                <span>{(((currentPage + 1) * pageSize) > totalElements) ? totalElements : ((currentPage + 1) * pageSize)} of {totalElements} elements</span>
-            </div>
-        );
-    };
-    
+    useEffect(() => {
+        getServices(page, sortingField, sortingDirection);
+    }, [sortingField, sortingDirection]);
 
-    const sort = (field) => {
-        const newSortingDirection = sortingDirection === 'ASC' ? 'DESC' : 'ASC';
-        setSortingDirection(newSortingDirection);
-        getServices(page, field, newSortingDirection);
+    const handlePageChange = ({ selected }) => {
+        setPage(selected);
     };
 
     useEffect(() => {
         getServices(page, sortingField, sortingDirection);
     }, [page, pageSize, sortingField, sortingDirection]);
-
-
 
     return (
         <div className='page-container'>
@@ -90,12 +50,19 @@ const ServicesPage = () => {
                 <Filters />
             </div>
             <div className='services'>
-                <ServicesPageHeader />
                 {services.length > 0 ? <ServiceBoxes services={services} /> : 'No Services to Show'}
-                {displayPageable()}
+                <ReactPaginate
+                    pageCount={totalPages}
+                    pageRangeDisplayed={2}
+                    marginPagesDisplayed={1}
+                    onPageChange={handlePageChange}
+                    containerClassName="pagination"
+                    activeClassName="active"
+                    initialPage={page}
+                />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ServicesPage;

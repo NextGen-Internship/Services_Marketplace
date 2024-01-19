@@ -29,36 +29,44 @@ function Navbar({ clicked, isClicked }) {
     }
   };
 
+  const handlePagination = async () => {
+    try {
+        sessionStorage.removeItem('PageNumber');
+      } catch (error) {
+        console.error('Error during logout:', error);
+      }
+  }
+
   return (
     <div className="Nav">
       <ul className="NavbarWrapper">
         <li className="NavLogo">
-          <Link className="Link" to="/">
+          <Link className="Link" to="/" onClick={handlePagination}>
             Service Marketplace
           </Link>
         </li>
         <li className="NavElements">
-          <NavLink className="Link" to="/home-page">
+          <NavLink className="Link" to="/home-page" onClick={handlePagination}>
             Home
           </NavLink>
         </li>
         <li className="NavElements">
-          <NavLink className="Link" to="/category-page">
+          <NavLink className="Link" to="/category-page" onClick={handlePagination}>
             Categories
           </NavLink>
         </li>
         <li className="NavElements">
-          <NavLink className="Link" to="/profile">
+          <NavLink className="Link" to="/profile" onClick={handlePagination}>
             Profile
           </NavLink>
         </li>
         <li className="NavElements">
-          <NavLink className="Link" to="/services">
+          <NavLink className="Link" to="/services" onClick={handlePagination}>
             Services
           </NavLink>
         </li>
         <li className="NavElements">
-          <NavLink className="Link" to="/add-service-page">
+          <NavLink className="Link" to="/add-service-page" onClick={handlePagination}>
             Add Service
           </NavLink>
         </li>
