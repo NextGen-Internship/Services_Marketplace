@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import FilterElement from './FilterElement';
 import { getAllCategories, getAllCities } from '../service/ApiService';
 
-const Filters = () => {
+const Filters = ({ applyFilters }) => {
     const [categories, setCategories] = useState([]);
     const [cities, setCities] = useState([]);
 
@@ -43,7 +43,7 @@ const Filters = () => {
             <h2>Filter</h2>
             <FilterElement title='Cities' data={cities} />
             <FilterElement title='Categories' data={categories} />
-            <button onClick={console.log('click')}>Apply</button>
+            <button onClick={applyFilters}>Apply</button>
         </div>
     )
 }

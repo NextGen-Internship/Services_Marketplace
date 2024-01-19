@@ -47,7 +47,7 @@ const ServicesPage = () => {
     return (
         <div className='page-container'>
             <div className='filter'>
-                <Filters />
+                <Filters /*applyFilters={}*//>
             </div>
             <div className='services'>
                 {services.length > 0 ? <ServiceBoxes services={services} /> : 'No Services to Show'}

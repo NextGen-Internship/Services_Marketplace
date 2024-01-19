@@ -26,7 +26,7 @@ const ServiceBox = ({ service }) => {
         };
     
         fetchData();
-      }, [cities]);
+      }, []);
 
       const getCitiesNames = (service, cities) => {
         const serviceCities = service.cityIds.map((cityId) => {

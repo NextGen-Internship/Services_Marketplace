@@ -44,7 +44,7 @@ const AddService = ({ onAdd }) => {
     };
 
     fetchData();
-  }, [cities]);
+  }, []);
 
   const handleChange = (event) => {
     setServiceCategory(event.target.value);
@@ -102,7 +102,6 @@ const AddService = ({ onAdd }) => {
     setServiceDescription('');
     setServicePrice('');
     setServiceCategory('');
-    setCities([]);
     setChosen([]); 
   };
 

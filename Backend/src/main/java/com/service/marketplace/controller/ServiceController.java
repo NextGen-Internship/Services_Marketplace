@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -62,7 +63,7 @@ public class ServiceController {
             @RequestParam(required = false) Integer providerId,
             @RequestParam(required = false) Integer cityId) {
 
-        List<ServiceResponse> filteredServices;
+        List<ServiceResponse> filteredServices = new ArrayList<>();
 
         if (categoryId != null) {
             filteredServices = serviceService.getAllServicesByCategory(categoryId);
@@ -72,8 +73,6 @@ public class ServiceController {
         }
         if (cityId != null) {
             filteredServices = serviceService.getAllServicesByCity(cityId);
-        } else {
-            filteredServices = serviceService.getAllServices();
         }
 
         return filteredServices.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(filteredServices);
