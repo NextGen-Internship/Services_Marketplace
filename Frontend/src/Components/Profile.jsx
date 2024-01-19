@@ -27,8 +27,10 @@ const Profile = () => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
 
-    const handleEditToggle = () => setIsEditing(!isEditing);
-
+    const handleEditToggle = () => {
+        setEditMode(!editMode);
+      };
+      
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
@@ -36,6 +38,8 @@ const Profile = () => {
         console.log('Saving profile:', user);
         setEditMode(false);
     };
+
+    
 
 
     useEffect(() => {
@@ -85,26 +89,67 @@ const Profile = () => {
             </div>
 
             {showPersonalInfo && (
-                <div className="personal-info">
-                    {editMode ? (
-                        <>
-                            <input type="text" name="firstName" value={user.firstName} onChange={handleInputChange} />
-                            <input type="text" name="lastName" value={user.lastName} onChange={handleInputChange} />
-                            <input type="email" name="email" value={user.email} onChange={handleInputChange} />
-                            <input type="text" name="phoneNumber" value={user.phoneNumber} onChange={handleInputChange} />
-                            <button onClick={handleSaveProfile}>Save</button>
-                        </>
-                    ) : (
-                        <>
-                            <p>First Name: {user.firstName}</p>
-                            <p>Last Name: {user.lastName}</p>
-                            <p>Email: {user.email}</p>
-                            <p>Phone: {user.phoneNumber}</p>
-                            <button onClick={handleEditToggle}>Edit Profile</button>
-                        </>
-                    )}
-                </div>
-            )}
+  <div className="personal-info">
+    {editMode ? (
+      <>
+        <div className="input-container">
+          <label>
+            First Name:
+            <input
+              type="text"
+              name="firstName"
+              value={user.firstName}
+              onChange={handleInputChange}
+            />
+          </label>
+        </div>
+        <div className="input-container">
+          <label>
+            Last Name:
+            <input
+              type="text"
+              name="lastName"
+              value={user.lastName}
+              onChange={handleInputChange}
+            />
+          </label>
+        </div>
+        <div className="input-container">
+          <label>
+            Email:
+            <input
+              type="email"
+              name="email"
+              value={user.email}
+              onChange={handleInputChange}
+            />
+          </label>
+        </div>
+        <div className="input-container">
+          <label>
+            Phone:
+            <input
+              type="text"
+              name="phoneNumber"
+              value={user.phoneNumber}
+              onChange={handleInputChange}
+            />
+          </label>
+        </div>
+        <button className="save-button" onClick={handleSaveProfile}>Save</button>
+      </>
+    ) : (
+      <>
+        <p>First Name: {user.firstName}</p>
+        <p>Last Name: {user.lastName}</p>
+        <p>Email: {user.email}</p>
+        <p>Phone: {user.phoneNumber}</p>
+        <button className="edit-button" onClick={handleEditToggle}>Edit Information</button>
+      </>
+    )}
+  </div>
+)}
+
 
             {showServices && (
                 <div className="user-services">
