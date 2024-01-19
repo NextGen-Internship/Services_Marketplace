@@ -6,7 +6,6 @@ import com.service.marketplace.dto.request.RegisterRequest;
 import com.service.marketplace.dto.response.AuthenticationResponse;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -43,13 +39,12 @@ public class AuthenticationService {
                 .isActive(true)
                 .build();
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return null;
     }
 
     public AuthenticationResponse login(AuthenticationRequest request) {
         authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();

@@ -27,7 +27,7 @@ function App() {
           <Route exact path="sign-in" element={<SignIn/>}/>
           <Route exact path="sign-up" element={<SignUp/>}/>
           <Route exact path="profile" element={<Profile/>}/>
-          
+      
         </Routes>
       </Router>
     </GoogleOAuthProvider>
