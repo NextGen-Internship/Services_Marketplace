@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "files")
 public class Files extends BaseEntity {
 
