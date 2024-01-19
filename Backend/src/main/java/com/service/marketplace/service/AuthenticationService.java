@@ -6,7 +6,6 @@ import com.service.marketplace.dto.request.RegisterRequest;
 import com.service.marketplace.dto.response.AuthenticationResponse;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         Role role = roleRepository.findByName("CUSTOMER").orElseThrow();
-        List<Role> roles = new ArrayList<>();
+        Set<Role> roles = new HashSet<>();
         roles.add(role);
         var user = User.builder()
                 .firstName(request.getFirstName())
@@ -38,15 +36,15 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
+                .isActive(true)
                 .build();
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return null;
     }
 
     public AuthenticationResponse login(AuthenticationRequest request) {
         authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();

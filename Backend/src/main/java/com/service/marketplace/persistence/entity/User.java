@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "phone_number", unique = true)
-    private int phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "experience")
     private int experience;
@@ -47,22 +48,22 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "description")
     private String description;
 
-    @Lob
-    @Column(name = "picture")
-    private byte[] picture;
+//    @Lob
+//    @Column(name = "picture")
+//    private byte[] picture;
+
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
-
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
+        return Set.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
     }
 
     @Override
@@ -94,6 +95,7 @@ public class User extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
 
 
