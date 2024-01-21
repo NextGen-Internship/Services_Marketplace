@@ -6,6 +6,7 @@ import com.service.marketplace.mapper.UserMapper;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.enums.UserRole;
+import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.UserService;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    private final RoleRepository roleRepository;
 
     @Override
     public List<UserResponse> getAllUsers() {
@@ -60,12 +62,15 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(userId).orElse(null);
 
         if (existingUser != null) {
-            //existingUser.setRole(role);
-            Set<Role> newRoles = new HashSet<>();
-            newRoles.addAll(existingUser.getRoles());
-            newRoles.add(new Role(role.name()));
+            Set<Role> userRoles = existingUser.getRoles();
 
-            existingUser.setRoles(newRoles);
+            if (roleRepository.findByName(role.name()).isPresent()) {
+                userRoles.add(roleRepository.findByName(role.name()).get());
+            } else {
+                userRoles.add(new Role(role.name()));
+            }
+
+            existingUser.setRoles(userRoles);
             User updatedUser = userRepository.save(existingUser);
             return userMapper.userToUserResponse(updatedUser);
         } else {
