@@ -7,6 +7,7 @@ const config = {
     postLogin: '/api/auth/login',
     googleLogin: '/api/auth/google/login',
     postRegister: '/api/auth/register',
+    getUserById: '/v1/users'
     
 }
 

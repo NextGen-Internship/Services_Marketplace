@@ -134,6 +134,17 @@ const postRegister = async (formData) => {
   }
 };
 
+const getUserById = async (userId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getUserById}/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user data", error);
+    throw error;
+  }
+};
+
+
 export {
     getAllServices,
     getAllCategories,
@@ -142,5 +153,6 @@ export {
     postLogin,
     googleLogin,
     postRegister,
+    getUserById,
 } 
 export default apiService;

@@ -2,9 +2,8 @@ import React, { useState, useEffect }  from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { decode } from 'jsonwebtoken'; 
-import axios from 'axios';
-
+import { getUserById } from '../service/ApiService.js';
+import {jwtDecode} from "jwt-decode";
 
 const Profile = () => {
     const [showPersonalInfo, setShowPersonalInfo] = useState(false);
@@ -17,55 +16,8 @@ const Profile = () => {
         lastName: '',
         email: '',
         phoneNumber: '',
-        imageUrl: '',
-        isProvider: false
+        imageUrl: '' 
     });
-
-    useEffect(() => {
-        const jwtToken = localStorage.getItem('Jwt_Token');
-    
-        if (!jwtToken) {
-          navigate('/login');
-        } else {
-          const decodedToken = decode(jwtToken);
-    
-          setUser({
-            firstName: decodedToken.firstName,
-            lastName: decodedToken.lastName,
-            email: decodedToken.email,
-            phoneNumber: decodedToken.phoneNumber,
-            imageUrl: decodedToken.imageUrl,
-            isProvider: decodedToken.isProvider, // Set isProvider based on decoded token
-          });
-    
-          // Fetch user's services if they are a provider
-          if (decodedToken.isProvider) {
-            fetchUserServices();
-          }
-        }
-      }, [navigate]);
-
-      const fetchUserServices = async () => {
-        try {
-          const response = await axios.get(`http://localhost:3000/v1/services/user/${user.id}`, {
-            // Adjust the URL and options as needed for your API
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('Jwt_Token')}`,
-            },
-          });
-    
-          if (response.status === 200) {
-            const userServices = response.data;
-            // Handle the fetched services data as needed
-            console.log('User Services:', userServices);
-          } else {
-            console.error('Failed to fetch user services');
-          }
-        } catch (error) {
-          console.error('Error fetching user services:', error);
-        }
-      };
-    
 
     const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
@@ -77,10 +29,8 @@ const Profile = () => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
 
-    const handleEditToggle = () => {
-        setEditMode(!editMode);
-      };
-      
+    const handleEditToggle = () => setIsEditing(!isEditing);
+
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
@@ -89,24 +39,33 @@ const Profile = () => {
         setEditMode(false);
     };
 
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const jwtToken = localStorage.getItem('Jwt_Token');
+        const fetchUserData = async () => {
+            const localToken = localStorage['Jwt_Token'];
+            const decodedToken = jwtDecode(localToken);
+            const userId = decodedToken['jti'];
+
+            if (!userId) {
+                console.error('No user ID found');
+                navigate('/login');
+                return;
+            }
     
-        if (!jwtToken) {
-          navigate('/login');
-        } else {
-          const decodedToken = decode(jwtToken);
-              setUser({
-            firstName: decodedToken.firstName,
-            lastName: decodedToken.lastName,
-            email: decodedToken.email,
-            phoneNumber: decodedToken.phoneNumber,
-            imageUrl: decodedToken.imageUrl,
-          });
-        }
-      }, [navigate]);
+            try {
+                const userData = await getUserById(userId);
+                console.log('User data:');
+                console.log(userData);
+                setUser(userData);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                // Optionally, handle errors, like showing a message to the user
+            }
+        };
+    
+        fetchUserData();
+    }, [navigate]);
+
 
     const handlePersonalInfoToggle = () => {
         setShowPersonalInfo(!showPersonalInfo);
@@ -128,13 +87,9 @@ const Profile = () => {
         navigate('/edit-information'); 
     };
 
-    if (isLoading) {
-        return <p>Loading...</p>; // Show a loading message while fetching data
-      }
-
     return (
         <div className="profile-container">
-            
+
             <h2 className="profile-title">About me</h2>
             <img 
                 src={user.imageUrl || defaultImageUrl} 
@@ -148,67 +103,38 @@ const Profile = () => {
             </div>
 
             {showPersonalInfo && (
-  <div className="personal-info">
-    {editMode ? (
-      <>
-        <div className="input-container">
-          <label>
-            First Name:
-            <input
-              type="text"
-              name="firstName"
-              value={user.firstName}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
-        <div className="input-container">
-          <label>
-            Last Name:
-            <input
-              type="text"
-              name="lastName"
-              value={user.lastName}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
-        <div className="input-container">
-          <label>
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={user.email}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
-        <div className="input-container">
-          <label>
-            Phone:
-            <input
-              type="text"
-              name="phoneNumber"
-              value={user.phoneNumber}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
-        <button className="save-button" onClick={handleSaveProfile}>Save</button>
-      </>
-    ) : (
-      <>
-        <p>First Name: {user.firstName}</p>
-        <p>Last Name: {user.lastName}</p>
-        <p>Email: {user.email}</p>
-        <p>Phone: {user.phoneNumber}</p>
-        <button className="edit-button" onClick={handleEditToggle}>Edit Information</button>
-      </>
-    )}
-  </div>
+    <div className="personal-info">
+        {editMode ? (
+            <>
+                <div className="input-group">
+                    <label>First Name:</label>
+                    <input type="text" name="firstName" value={user.firstName} onChange={handleInputChange} />
+                </div>
+                <div className="input-group">
+                    <label>Last Name:</label>
+                    <input type="text" name="lastName" value={user.lastName} onChange={handleInputChange} />
+                </div>
+                <div className="input-group">
+                    <label>Email:</label>
+                    <input type="email" name="email" value={user.email} onChange={handleInputChange} />
+                </div>
+                <div className="input-group">
+                    <label>Phone:</label>
+                    <input type="text" name="phoneNumber" value={user.phoneNumber} onChange={handleInputChange} />
+                </div>
+                <button className='save-button'onClick={handleSaveProfile}>Save</button>
+            </>
+        ) : (
+            <>
+                <p>First Name: {user.firstName}</p>
+                <p>Last Name: {user.lastName}</p>
+                <p>Email: {user.email}</p>
+                <p>Phone: {user.phoneNumber}</p>
+                <button className='edit-button' onClick={() => setEditMode(true)}>Edit Information</button>
+            </>
+        )}
+    </div>
 )}
-
 
             {showServices && (
                 <div className="user-services">

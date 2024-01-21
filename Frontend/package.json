@@ -9,8 +9,9 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.5",
     "body-parser": "^1.20.2",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "express": "^4.18.2",
-    "fsevents": "^2.3.3",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "multiselect-react-dropdown": "^2.0.25",
@@ -22,7 +23,12 @@
     "react-router-dom": "^6.21.1",
     "react-scripts": "^5.0.1",
     "react-select": "^5.8.0",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5",
     "web-vitals": "^2.1.4"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -47,5 +53,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   }
 }
