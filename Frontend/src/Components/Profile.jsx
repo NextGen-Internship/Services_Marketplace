@@ -43,6 +43,9 @@ const Profile = () => {
         }
     
         const decodedToken = jwtDecode(localToken);
+
+        console.log(decodedToken);
+
         const userId = decodedToken['jti'];
         //console.log(userId);
     

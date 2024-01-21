@@ -4,6 +4,7 @@ import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.dto.response.UserUpdateResponse;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.UserRole;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
@@ -23,4 +24,6 @@ public interface UserMapper {
 
 
     UserResponse userToUserResponse(User user);
+
+    User userRoleToUser(UserRole role);
 }

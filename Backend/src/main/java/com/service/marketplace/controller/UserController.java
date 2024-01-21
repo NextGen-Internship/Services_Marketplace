@@ -4,6 +4,7 @@ import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.mapper.UserMapper;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,21 @@ public class UserController {
         try {
             UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
 
+            if (updatedUser == null) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(updatedUser);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    @PutMapping("/{userId}/role")
+    public ResponseEntity<UserResponse> updateUserRole(@PathVariable("userId") Integer userId,
+                                                       @RequestParam("role") UserRole role) {
+        try {
+            UserResponse updatedUser = userService.updateUserRole(userId, role);
             if (updatedUser == null) {
                 return ResponseEntity.notFound().build();
             } else {

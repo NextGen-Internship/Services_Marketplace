@@ -3,7 +3,9 @@ package com.service.marketplace.service.impl;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.mapper.UserMapper;
+import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.UserService;
 import lombok.Data;
@@ -11,7 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -44,6 +48,24 @@ public class UserServiceImpl implements UserService {
 
         if (existingUser != null) {
             userMapper.updateUserFromRequest(userToUpdate, existingUser);
+            User updatedUser = userRepository.save(existingUser);
+            return userMapper.userToUserResponse(updatedUser);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public UserResponse updateUserRole(Integer userId, UserRole role) {
+        User existingUser = userRepository.findById(userId).orElse(null);
+
+        if (existingUser != null) {
+            //existingUser.setRole(role);
+            Set<Role> newRoles = new HashSet<>();
+            newRoles.addAll(existingUser.getRoles());
+            newRoles.add(new Role(role.name()));
+
+            existingUser.setRoles(newRoles);
             User updatedUser = userRepository.save(existingUser);
             return userMapper.userToUserResponse(updatedUser);
         } else {
