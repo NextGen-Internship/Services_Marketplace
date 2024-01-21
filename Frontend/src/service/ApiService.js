@@ -144,6 +144,34 @@ const getUserById = async (userId) => {
   }
 };
 
+const getUserByIdTest = async (userId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getUserById}/${userId}`).then(e => {
+      console.log("REsponse test: ", e)
+    })
+  } catch (error) {
+    console.error("Error fetching user data", error);
+    throw error;
+  }
+};
+
+
+const updateUser = async (userId, userData) => {
+  try {
+      const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userId}`, userData, {
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+          }
+      });
+      return response.data;
+  } catch (error) {
+      console.error("Error updating user data", error);
+      throw error;
+  }
+};
+
+
 
 export {
     getAllServices,
@@ -154,5 +182,7 @@ export {
     googleLogin,
     postRegister,
     getUserById,
+    updateUser,
+    getUserByIdTest
 } 
 export default apiService;

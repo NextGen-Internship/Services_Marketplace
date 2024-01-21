@@ -2,7 +2,7 @@ import React, { useState, useEffect }  from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById } from '../service/ApiService.js';
+import { getUserById, updateUser, getUserByIdTest } from '../service/ApiService.js';
 import {jwtDecode} from "jwt-decode";
 
 const Profile = () => {
@@ -34,10 +34,42 @@ const Profile = () => {
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
-    const handleSaveProfile = () => {
-        console.log('Saving profile:', user);
-        setEditMode(false);
+    const handleSaveProfile = async () => {
+        const localToken = localStorage.getItem('Jwt_Token');
+        if (!localToken) {
+            console.error('No token found');
+            navigate('/login');
+            return;
+        }
+    
+        const decodedToken = jwtDecode(localToken);
+        const userId = decodedToken['jti'];
+        //console.log(userId);
+    
+        if (!userId) {
+            console.error('No user ID found');
+            navigate('/login');
+            return;
+        }
+    
+        const updatedUserData = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+        };
+        //console.log(updatedUserData);
+    
+        try {
+            const updatedUser = await updateUser(userId, updatedUserData);
+            console.log('Profile updated successfully:', updatedUser);
+            setUser(updatedUser); 
+            setEditMode(false); 
+        } catch (error) {
+            console.error('Error updating profile:', error);
+        }
     };
+    
 
 
     useEffect(() => {
@@ -54,6 +86,7 @@ const Profile = () => {
     
             try {
                 const userData = await getUserById(userId);
+                const testData = await getUserByIdTest(userId);
                 console.log('User data:');
                 console.log(userData);
                 setUser(userData);
