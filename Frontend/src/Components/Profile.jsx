@@ -149,6 +149,10 @@ const Profile = () => {
     fetchUserData();
   }, [navigate]);
 
+  const becomeProviderButton = user.role !== 'provider' && (
+    <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
+  );
+
 
   const handlePersonalInfoToggle = () => {
     setShowPersonalInfo(!showPersonalInfo);
@@ -188,7 +192,7 @@ const Profile = () => {
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         <button onClick={handleServicesToggle}>My Services</button>
-        <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
+        {becomeProviderButton} 
       </div>
 
       {showPersonalInfo && (
