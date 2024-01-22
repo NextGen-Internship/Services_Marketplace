@@ -1,5 +1,6 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import com.service.marketplace.service.ServiceService;
@@ -58,18 +59,8 @@ public class ServiceController {
     }
 
     @GetMapping("/filter")
-    public Page<ServiceResponse> getFilteredServices(
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(required = false) List<Integer> categoryIds,
-            @RequestParam(required = false) List<Integer> providerIds,
-            @RequestParam(required = false) List<Integer> cityIds,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "5") Integer pageSize,
-            @RequestParam(defaultValue = "updatedAt") String sortingField,
-            @RequestParam(defaultValue = "asc") String sortingDirection) {
-
-        return serviceService.filterServices(minPrice, maxPrice, categoryIds, providerIds, cityIds, page, pageSize, sortingField, sortingDirection);
+    public Page<ServiceResponse> getFilteredServices(ServiceFilterRequest serviceFilterRequest) {
+        return serviceService.filterServices(serviceFilterRequest);
     }
 
     @GetMapping("/getPaginationServices/{page}/{pageSize}/{sortingField}/{sortingDirection}")

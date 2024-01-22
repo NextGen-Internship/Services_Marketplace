@@ -27,12 +27,10 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
             "WHERE (:minPrice IS NULL OR s.price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR s.price <= :maxPrice) " +
             "AND (:categoryIds IS NULL OR s.category.id IN :categoryIds) " +
-            "AND (:providerIds IS NULL OR s.provider.id IN :providerIds) " +
             "AND (:cityIds IS NULL OR EXISTS (SELECT c FROM s.cities c WHERE c.id IN :cityIds))")
     Page<Service> filterServices(@Param("minPrice") BigDecimal minPrice,
                                  @Param("maxPrice") BigDecimal maxPrice,
                                  @Param("categoryIds") List<Integer> categoryIds,
-                                 @Param("providerIds") List<Integer> providerIds,
                                  @Param("cityIds") List<Integer> cityIds,
                                  Pageable pageable);
 }

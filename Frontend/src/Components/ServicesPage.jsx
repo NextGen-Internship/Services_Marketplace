@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import ServicesPageHeader from './ServicesPageHeader';
 import ServiceBoxes from './ServiceBoxes';
-import { getPaginationServices } from '../service/ApiService';
+import { getPaginationServices, getPaginationFilteredServices } from '../service/ApiService';
 import Filters from './Filters';
 import '../styles/ServicesPage.css';
 
@@ -44,10 +44,24 @@ const ServicesPage = () => {
         getServices(page, sortingField, sortingDirection);
     }, [page, pageSize, sortingField, sortingDirection]);
 
+    const getFilteredServices = async (serviceFilterRequest) => {
+        try {
+            const response = await getPaginationFilteredServices(serviceFilterRequest);
+            setServices(response.content);
+            setTotalPages(response.totalPages);
+            setTotalElements(response.totalElements);
+            setPage(response.number);
+
+            sessionStorage.setItem('PageNumber', response.number);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        }
+    }
+
     return (
         <div className='page-container'>
             <div className='filter'>
-                <Filters /*applyFilters={}*//>
+                <Filters applyFilters={getFilteredServices} />
             </div>
             <div className='services'>
                 {services.length > 0 ? <ServiceBoxes services={services} /> : 'No Services to Show'}

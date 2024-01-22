@@ -1,5 +1,6 @@
 package com.service.marketplace.service.serviceImpl;
 
+import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import com.service.marketplace.mapper.ServiceMapper;
@@ -102,13 +103,18 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public Page<ServiceResponse> filterServices(BigDecimal minPrice, BigDecimal maxPrice, List<Integer> categoryIds,
-                                                List<Integer> providerIds, List<Integer> cityIds, Integer page, Integer pageSize,
-                                                String sortingField, String sortingDirection) {
+    public Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest) {
+        Pageable pageable = PageRequest.of(serviceFilterRequest.getPage(), serviceFilterRequest.getPageSize(), Sort.by(Sort.Direction.fromString(serviceFilterRequest.getSortingDirection()), serviceFilterRequest.getSortingField()));
+        List<Integer> categoryIds = serviceFilterRequest.getCategoryIds();
+        List<Integer> cityIds = serviceFilterRequest.getCityIds();
 
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.fromString(sortingDirection), sortingField));
         Page<com.service.marketplace.persistence.entity.Service> filteredServices = serviceRepository.filterServices(
-                minPrice, maxPrice, categoryIds, providerIds, cityIds, pageable);
+                serviceFilterRequest.getMinPrice(),
+                serviceFilterRequest.getMaxPrice(),
+                categoryIds.isEmpty() ? null : categoryIds,
+                cityIds.isEmpty() ? null : cityIds,
+                pageable
+        );
 
         return serviceMapper.toServiceResponsePage(filteredServices);
     }

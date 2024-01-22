@@ -1,5 +1,6 @@
 package com.service.marketplace.service;
 
+import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import org.springframework.data.domain.Page;
@@ -20,5 +21,5 @@ public interface ServiceService {
 
     Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection);
 
-    Page<ServiceResponse> filterServices(BigDecimal minPrice, BigDecimal maxPrice, List<Integer> categoryIds, List<Integer> providerIds, List<Integer> cityIds, Integer page, Integer pageSize, String sortingField, String sortingDirection);
+    Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest);
 }

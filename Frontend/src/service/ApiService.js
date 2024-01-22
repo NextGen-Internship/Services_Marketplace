@@ -112,12 +112,21 @@ const getPaginationServices = async (page, pageSize, sortingField, sortingDirect
     }
 };
 
-const getPaginationFilteredServices = async (minPrice, maxPrice, categoryIds, providerIds, cityIds, page, pageSize, sortingField, sortingDirection) => {
+const getPaginationFilteredServices = async (serviceFilterRequest) => {
     try {
-        const response = await axios.get(config.baseUrl + config.getPaginationFilteredServices + '?' + 'minPrice=' + minPrice 
-                                        + '&maxPrice=' + maxPrice + '&categoryIds=' + categoryIds + '&providerIds=' + providerIds 
-                                        + '&cityIds=' + cityIds + '&page=' + page + '&pageSize=' + pageSize + '&sortingField=' + sortingField 
-                                        + '&sortingDirection=' + sortingDirection);
+        const queryParams = new URLSearchParams({
+            minPrice: serviceFilterRequest.minPrice,
+            maxPrice: serviceFilterRequest.maxPrice,
+            categoryIds: serviceFilterRequest.categoryIds,
+            cityIds: serviceFilterRequest.cityIds,
+            page: serviceFilterRequest.page,
+            pageSize: serviceFilterRequest.pageSize,
+            sortingField: serviceFilterRequest.sortingField,
+            sortingDirection: serviceFilterRequest.sortingDirection,
+        });
+
+        const response = await axios.get(config.baseUrl + config.getPaginationFilteredServices + '?' + queryParams);
+
         return response.data;
     } catch (error) {
         console.error("Error fetching services", error);
