@@ -1,5 +1,6 @@
 package com.service.marketplace.service;
 
+import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.persistence.enums.UserRole;
@@ -12,5 +13,5 @@ public interface UserService {
     UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate);
     boolean deleteUserById(Integer userId);
 
-    UserResponse updateUserRole(Integer userId, UserRole role);
+    UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest);
 }

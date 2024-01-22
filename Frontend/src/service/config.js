@@ -8,8 +8,8 @@ const config = {
     googleLogin: '/api/auth/google/login',
     postRegister: '/api/auth/register',
     getUserById: '/v1/users',
-    updateUser: '/v1/users'
-    
+    updateUser: '/v1/users',
+    updateUserRole: '/v1/users/{userId}/role',
 }
 
 

@@ -1,5 +1,6 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.mapper.UserMapper;
@@ -59,11 +60,11 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    @PutMapping("/{userId}/role")
+    @PutMapping("/role/{userId}")
     public ResponseEntity<UserResponse> updateUserRole(@PathVariable("userId") Integer userId,
-                                                       @RequestParam("role") UserRole role) {
+                                                       @RequestBody SetProviderRequest providerRequest) {
         try {
-            UserResponse updatedUser = userService.updateUserRole(userId, role);
+            UserResponse updatedUser = userService.updateUserRole(userId, providerRequest);
             if (updatedUser == null) {
                 return ResponseEntity.notFound().build();
             } else {

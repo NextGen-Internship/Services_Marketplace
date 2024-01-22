@@ -2,7 +2,7 @@ import React, { useState, useEffect }  from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, getUserByIdTest } from '../service/ApiService.js';
+import { getUserById, updateUser, getUserByIdTest, updateUserRole } from '../service/ApiService.js';
 import {jwtDecode} from "jwt-decode";
 
 const Profile = () => {
@@ -72,8 +72,50 @@ const Profile = () => {
             console.error('Error updating profile:', error);
         }
     };
+
+    const handleImageChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+              setUser({ ...user, imageUrl: reader.result });
+          };
+          reader.readAsDataURL(file);
+      }
+  };
     
 
+    const handleBecomeProvider = async (newRole) => {
+      setShowServices(false);
+      setShowPersonalInfo(false); 
+      console.log('Request to become a provider sent');
+
+      const localToken = localStorage.getItem('Jwt_Token');
+     if (!localToken) {
+         console.error('No token found');
+         navigate('/login');
+         return;
+     }
+ 
+     const decodedToken = jwtDecode(localToken);
+     const userId = decodedToken['jti'];
+     if (!userId) {
+         console.error('No user ID found');
+         navigate('/login');
+         return;
+     }
+ 
+     try {
+         const response = await updateUserRole(userId, newRole);
+         console.log("Request data:", { userId, newRole });
+
+         console.log('User role updated successfully:', response);
+         //if(response.newToken) {
+         // localStorage.setItem('Jwt_Token', response.newToken);
+      }  catch (error) {
+         console.error('Error updating user role:', error);
+     }
+ };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -95,7 +137,6 @@ const Profile = () => {
                 setUser(userData);
             } catch (error) {
                 console.error('Error fetching user data:', error);
-                // Optionally, handle errors, like showing a message to the user
             }
         };
     
@@ -113,11 +154,12 @@ const Profile = () => {
         setShowPersonalInfo(false); 
     };
 
-    const handleBecomeProvider = () => {
-        setShowServices(false);
-        setShowPersonalInfo(false); 
-        console.log('Request to become a provider sent');
-    };
+    // const handleBecomeProvider = () => {
+    //     setShowServices(false);
+    //     setShowPersonalInfo(false); 
+    //     console.log('Request to become a provider sent');
+    //     localStorage.removeItem['Jwt_Token'];
+    // };
 
     const handleEditProfile = () => {
         navigate('/edit-information'); 
@@ -135,7 +177,7 @@ const Profile = () => {
             <div className="profile-buttons">
                 <button onClick={handlePersonalInfoToggle}>Personal Information</button>
                 <button onClick={handleServicesToggle}>My Services</button>
-                <button onClick={handleBecomeProvider}>Become a Provider</button>
+                <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
             </div>
 
             {showPersonalInfo && (
@@ -158,6 +200,13 @@ const Profile = () => {
                     <label>Phone:</label>
                     <input type="text" name="phoneNumber" value={user.phoneNumber} onChange={handleInputChange} />
                 </div>
+                <div className="input-group">
+                                <label>Profile Picture:</label>
+                                <input type="file" onChange={handleImageChange} accept="image/*" />
+                                {user.imageUrl && (
+                                    <img src={user.imageUrl} alt="Profile Preview" className="profile-preview-image" />
+                                )}
+                            </div>
                 <button className='save-button'onClick={handleSaveProfile}>Save</button>
             </>
         ) : (

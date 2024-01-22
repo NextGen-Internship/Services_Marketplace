@@ -33,7 +33,7 @@ axios.interceptors.response.use(
 );
 
 const apiService = {
-  getAllServices: async () => {},
+  getAllServices: async () => { },
   googleLogin: async () => {
     try {
       const response = await axios.post(
@@ -55,61 +55,61 @@ const apiService = {
 };
 
 const getAllServices = async () => {
-    try {
-      const response = await axios.get(config.baseUrl + config.getAllServices);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching services", error);
-      throw error;
-    }
+  try {
+    const response = await axios.get(config.baseUrl + config.getAllServices);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching services", error);
+    throw error;
+  }
 };
 
-  const getAllCategories = async () => {
-    try {
-      const response = await axios.get(config.baseUrl + config.getAllCategories);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching categories", error);
-      throw error;
-    }
-  };
+const getAllCategories = async () => {
+  try {
+    const response = await axios.get(config.baseUrl + config.getAllCategories);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching categories", error);
+    throw error;
+  }
+};
 
-  const getAllCities = async () => {
-    try {
-      const response = await axios.get(config.baseUrl + config.getAllCities);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching cities", error);
-      throw error;
-    }
-  };
+const getAllCities = async () => {
+  try {
+    const response = await axios.get(config.baseUrl + config.getAllCities);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching cities", error);
+    throw error;
+  }
+};
 
- const createService = async (serviceData) => {
-    try {
-      const response = await axios.post(
-        config.baseUrl + config.createService,
-        serviceData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error creating service", error);
-      throw error;
-    }
-  };
+const createService = async (serviceData) => {
+  try {
+    const response = await axios.post(
+      config.baseUrl + config.createService,
+      serviceData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating service", error);
+    throw error;
+  }
+};
 
-  const postLogin = async (formData) => {
-    try {
-      const response = await axios.post(config.baseUrl + config.postLogin , formData);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching services", error);
-      throw error;
-    }
+const postLogin = async (formData) => {
+  try {
+    const response = await axios.post(config.baseUrl + config.postLogin, formData);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching services", error);
+    throw error;
+  }
 };
 
 const googleLogin = async (googleToken) => {
@@ -126,7 +126,7 @@ const googleLogin = async (googleToken) => {
 
 const postRegister = async (formData) => {
   try {
-    const response = await axios.post(config.baseUrl + config.postRegister , formData);
+    const response = await axios.post(config.baseUrl + config.postRegister, formData);
     return response.data;
   } catch (error) {
     console.error("Error fetching services", error);
@@ -158,31 +158,47 @@ const getUserByIdTest = async (userId) => {
 
 const updateUser = async (userId, userData) => {
   try {
-      const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userId}`, userData, {
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-          }
-      });
-      return response.data;
+    const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userId}`, userData, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
   } catch (error) {
-      console.error("Error updating user data", error);
-      throw error;
+    console.error("Error updating user data", error);
+    throw error;
   }
 };
 
-
+const updateUserRole = async (userId, newRole) => {
+  try {
+    const url = `${config.baseUrl}${config.getUserById}/${userId}/role?role=${encodeURIComponent(newRole)}`;
+    const response = await axios.put(url, {}, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user role", error);
+    throw error;
+  }
+};
 
 export {
-    getAllServices,
-    getAllCategories,
-    getAllCities,
-    createService,
-    postLogin,
-    googleLogin,
-    postRegister,
-    getUserById,
-    updateUser,
-    getUserByIdTest
-} 
+  getAllServices,
+  getAllCategories,
+  getAllCities,
+  createService,
+  postLogin,
+  googleLogin,
+  postRegister,
+  getUserById,
+  updateUser,
+  getUserByIdTest,
+  updateUserRole
+}
 export default apiService;

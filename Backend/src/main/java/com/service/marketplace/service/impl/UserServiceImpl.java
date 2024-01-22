@@ -1,5 +1,6 @@
 package com.service.marketplace.service.impl;
 
+import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.mapper.UserMapper;
@@ -58,24 +59,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUserRole(Integer userId, UserRole role) {
+    public UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest) {
         User existingUser = userRepository.findById(userId).orElse(null);
 
-        if (existingUser != null) {
-            Set<Role> userRoles = existingUser.getRoles();
+        String roleName = providerRequest.getRole();
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new IllegalArgumentException("Role not found: " + roleName));
 
-            if (roleRepository.findByName(role.name()).isPresent()) {
-                userRoles.add(roleRepository.findByName(role.name()).get());
-            } else {
-                userRoles.add(new Role(role.name()));
-            }
-
-            existingUser.setRoles(userRoles);
+        if (!existingUser.getRoles().contains(role)) {
+            existingUser.getRoles().add(role);
             User updatedUser = userRepository.save(existingUser);
             return userMapper.userToUserResponse(updatedUser);
-        } else {
-            return null;
         }
+
+        return userMapper.userToUserResponse(existingUser);
     }
 
 
