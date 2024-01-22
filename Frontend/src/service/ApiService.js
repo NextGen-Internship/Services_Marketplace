@@ -173,14 +173,14 @@ const updateUser = async (userId, userData) => {
 
 const updateUserRole = async (userId, newRole) => {
   try {
-    const url = `${config.baseUrl}${config.getUserById}/${userId}/role?role=${encodeURIComponent(newRole)}`;
-    const response = await axios.put(url, {}, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-        }
+
+    const providerRequestBody = { role: newRole }; 
+    const response = await axios.put(`${config.baseUrl}${config.getUserById}/role/${userId}`, providerRequestBody, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
       }
-    );
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating user role", error);

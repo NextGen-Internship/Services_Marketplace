@@ -9,7 +9,7 @@ const config = {
     postRegister: '/api/auth/register',
     getUserById: '/v1/users',
     updateUser: '/v1/users',
-    updateUserRole: '/v1/users/{userId}/role',
+    updateUserRole: '/v1/users/role',
 }
 
 
