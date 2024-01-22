@@ -4,36 +4,15 @@ import ViewMoreBtn from './ViewMoreBtn';
 import { getAllCities } from '../service/ApiService';
 import moment from 'moment';
 
-const ServiceBox = ({ service }) => {
-    const [cities, setCities] = useState([]);
+const ServiceBox = ({ service, cities }) => {
     const formattedDate = moment(service.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
 
-
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await getAllCities();
-    
-            const citiesWithLabel = response.map((city) => ({
-              id: city.id,
-              name: city.name,
-            }));
-    
-            setCities(citiesWithLabel);
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-    
-        fetchData();
-      }, []);
-
-      const getCitiesNames = (service, cities) => {
+    const getCitiesNames = (service, cities) => {
         const serviceCities = service.cityIds.map((cityId) => {
             const city = cities.find((city) => city.id === cityId);
             return city ? city.name : null;
         });
-    
+
         return serviceCities.filter(Boolean).join(', ');
     };
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import ServicesPageHeader from './ServicesPageHeader';
 import ServiceBoxes from './ServiceBoxes';
-import { getPaginationServices, getPaginationFilteredServices } from '../service/ApiService';
+import { getPaginationServices, getPaginationFilteredServices, getAllCities, getAllCategories } from '../service/ApiService';
 import Filters from './Filters';
 import '../styles/ServicesPage.css';
 
@@ -17,6 +17,47 @@ const ServicesPage = () => {
     const [totalElements, setTotalElements] = useState(0);
     const [sortingField, setSortingField] = useState('updatedAt');
     const [sortingDirection, setSortingDirection] = useState('DESC');
+    const [cities, setCities] = useState([]);
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await getAllCities();
+
+                const citiesWithLabel = response.map((city) => ({
+                    id: city.id,
+                    name: city.name,
+                }));
+
+                setCities(citiesWithLabel);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const categoryList = await getAllCategories();
+
+                const categoriesWithLabel = categoryList.map((category) => ({
+                    id: category.id,
+                    name: category.name,
+                }));
+
+                setCategories(categoriesWithLabel);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
 
     const getServices = async (page, sortingField, sortingDirection) => {
         try {
@@ -33,6 +74,14 @@ const ServicesPage = () => {
     };
 
     useEffect(() => {
+        // const storedPage = isNavigationEvent ? 0 : sessionStorage.getItem('PageNumber');
+        // const storedFilterParams = JSON.parse(sessionStorage.getItem('FilterParams'));
+
+        // if (storedFilterParams && storedPage) {
+        //     getFilteredServices(storedFilterParams);
+        // } else {
+        //     getServices(page, sortingField, sortingDirection);
+        // }
         getServices(page, sortingField, sortingDirection);
     }, [sortingField, sortingDirection]);
 
@@ -53,6 +102,7 @@ const ServicesPage = () => {
             setPage(response.number);
 
             sessionStorage.setItem('PageNumber', response.number);
+            sessionStorage.setItem('FilterParams', JSON.stringify(serviceFilterRequest));
         } catch (error) {
             console.error('Error fetching services:', error);
         }
@@ -61,10 +111,10 @@ const ServicesPage = () => {
     return (
         <div className='page-container'>
             <div className='filter'>
-                <Filters applyFilters={getFilteredServices} />
+                <Filters applyFilters={getFilteredServices} cities={cities} categories={categories} />
             </div>
             <div className='services'>
-                {services.length > 0 ? <ServiceBoxes services={services} /> : 'No Services to Show'}
+                {services.length > 0 ? <ServiceBoxes services={services} cities={cities} /> : 'No Services to Show'}
                 <ReactPaginate
                     pageCount={totalPages}
                     pageRangeDisplayed={2}

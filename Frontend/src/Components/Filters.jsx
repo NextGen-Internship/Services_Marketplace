@@ -4,50 +4,10 @@ import { getAllCategories, getAllCities } from '../service/ApiService';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
-const Filters = ({ applyFilters }) => {
-    const [categories, setCategories] = useState([]);
-    const [cities, setCities] = useState([]);
+const Filters = ({ applyFilters, cities, categories }) => {
     const [priceRange, setPriceRange] = useState([0, 1000]);
     const [selectedCities, setSelectedCities] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const categoryList = await getAllCategories();
-
-                const categoriesWithLabel = categoryList.map((category) => ({
-                    id: category.id,
-                    name: category.name,
-                }));
-
-                setCategories(categoriesWithLabel);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await getAllCities();
-
-                const citiesWithLabel = response.map((city) => ({
-                    id: city.id,
-                    name: city.name,
-                }));
-
-                setCities(citiesWithLabel);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, []);
 
     const handlePriceRangeChange = (value) => {
         setPriceRange(value);
