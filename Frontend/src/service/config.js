@@ -9,6 +9,7 @@ const config = {
     postLogin: '/api/auth/login',
     googleLogin: '/api/auth/google/login',
     postRegister: '/api/auth/register',
+    getUsers: '/v1/users',
 }
 
 export default config;

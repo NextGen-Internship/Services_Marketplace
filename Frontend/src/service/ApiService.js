@@ -84,6 +84,16 @@ const getAllCities = async () => {
     }
 };
 
+const getUserById = async (userId) => {
+    try {
+        const response = await axios.get(config.baseUrl + config.getUsers + '/' + userId);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching cities", error);
+        throw error;
+    }
+}
+
 const createService = async (serviceData) => {
     try {
         const response = await axios.post(
@@ -176,5 +186,6 @@ export {
     postLogin,
     googleLogin,
     postRegister,
+    getUserById
 }
 export default apiService;
