@@ -51,6 +51,8 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "picture")
     private String picture;
 
+    @Column(name = "media_key")
+    private String mediaKey;
 
     @Column(name = "is_active")
     private boolean isActive = true;

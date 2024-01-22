@@ -1,2 +1,2 @@
 ALTER TABLE user
-add column media_key varchar(255);
+add column media_key varchar(1000);

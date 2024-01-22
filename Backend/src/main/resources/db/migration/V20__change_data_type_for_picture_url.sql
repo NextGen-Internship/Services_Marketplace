@@ -1,2 +1,2 @@
 ALTER TABLE user
-MODIFY COLUMN picture varchar(255);
+MODIFY COLUMN picture varchar(1000);
