@@ -54,7 +54,7 @@ const AddService = ({ onAdd }) => {
 
       if (!localToken) {
         console.error('No JWT token found');
-        navigate('/sign-up');
+        navigate('/sign-in');
         return;
       }
 
@@ -64,7 +64,7 @@ const AddService = ({ onAdd }) => {
 
       if (!userId || !userRole) {
         console.error('No user ID or role found');
-        navigate('/sign-up');
+        navigate('/sign-in');
         return;
       }
 

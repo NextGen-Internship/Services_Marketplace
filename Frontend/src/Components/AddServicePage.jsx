@@ -6,23 +6,6 @@ import { getAllServices, createService } from '../service/ApiService';
 
 function AddServicePage() {
     const [services, setServices] = useState([]);
-    //     const [user, setUser] = useState(null);
-
-    //   useEffect(() => {
-    //     const fetchData = async () => {
-    //       try {
-    //         const loggedInUser = await getLoggedInUser();
-    //         setUser(loggedInUser);
-
-    //         const services = await getAllServices();
-    //         setServices(services);
-    //       } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //       }
-    //     };
-
-    //     fetchData();
-    //   }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,9 +22,6 @@ function AddServicePage() {
 
     const addService = async (service) => {
         try {
-            // if (user) {
-            //     service.providerId = user.id;
-            //   }
             const newService = await createService(service);
 
             console.log(newService);
