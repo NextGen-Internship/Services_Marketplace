@@ -1,18 +1,19 @@
 package com.service.marketplace.service;
 
 import com.service.marketplace.dto.request.CategoryRequest;
+import com.service.marketplace.dto.response.CategoryResponse;
 import com.service.marketplace.persistence.entity.Category;
 
 import java.util.List;
 
 public interface CategoryService {
-    List<Category> getAllCategories();
+    List<CategoryResponse> getAllCategories();
 
-    Category getCategoryById(Integer categoryId);
+    CategoryResponse getCategoryById(Integer categoryId);
 
-    Category createCategory(CategoryRequest categoryToCreate);
+    CategoryResponse createCategory(CategoryRequest categoryToCreate);
 
-    Category updateCategory(Integer categoryId, CategoryRequest categoryToUpdate);
+    CategoryResponse updateCategory(Integer categoryId, CategoryRequest categoryToUpdate);
 
     void deleteCategoryById(Integer categoryId);
 }

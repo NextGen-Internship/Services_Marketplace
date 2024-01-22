@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,41 +94,23 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public List<ServiceResponse> getAllServicesByCategory(Integer categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        List<com.service.marketplace.persistence.entity.Service> servicesOfCategory = serviceRepository.findByCategory(category);
-
-        return serviceMapper.toServiceResponseList(servicesOfCategory);
-    }
-
-    @Override
-    public List<ServiceResponse> getAllServicesByProvider(Integer providerId) {
-        User provider = userRepository.findById(providerId).orElse(null);
-        List<com.service.marketplace.persistence.entity.Service> servicesOfProvider = serviceRepository.findByProvider(provider);
-
-        return serviceMapper.toServiceResponseList(servicesOfProvider);
-    }
-
-    @Override
-    public List<ServiceResponse> getAllServicesByCity(Integer cityId) {
-        City city = cityRepository.findById(cityId).orElse(null);
-        List<City> cities = new ArrayList<>();
-
-        if (city != null) {
-            cities.add(city);
-        }
-
-        List<com.service.marketplace.persistence.entity.Service> servicesOfCity = serviceRepository.findByCitiesUsingQuery(cities);
-
-        return serviceMapper.toServiceResponseList(servicesOfCity);
-    }
-
-    @Override
     public Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection) {
         Sort sort = Sort.by(Sort.Direction.valueOf(sortingDirection), sortingField);
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
         return serviceMapper.toServiceResponsePage(serviceRepository.findAll(pageable));
+    }
+
+    @Override
+    public Page<ServiceResponse> filterServices(BigDecimal minPrice, BigDecimal maxPrice, List<Integer> categoryIds,
+                                                List<Integer> providerIds, List<Integer> cityIds, Integer page, Integer pageSize,
+                                                String sortingField, String sortingDirection) {
+
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.fromString(sortingDirection), sortingField));
+        Page<com.service.marketplace.persistence.entity.Service> filteredServices = serviceRepository.filterServices(
+                minPrice, maxPrice, categoryIds, providerIds, cityIds, pageable);
+
+        return serviceMapper.toServiceResponsePage(filteredServices);
     }
 
 

@@ -26,7 +26,6 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable("userId") Integer userId) {
         UserResponse userResponse = userService.getUserById(userId);
@@ -37,7 +36,6 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
     @Valid
     @PutMapping("/{userId}")

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -58,24 +58,18 @@ public class ServiceController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<ServiceResponse>> getFilteredServices(
-            @RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false) Integer providerId,
-            @RequestParam(required = false) Integer cityId) {
+    public Page<ServiceResponse> getFilteredServices(
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) List<Integer> categoryIds,
+            @RequestParam(required = false) List<Integer> providerIds,
+            @RequestParam(required = false) List<Integer> cityIds,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer pageSize,
+            @RequestParam(defaultValue = "updatedAt") String sortingField,
+            @RequestParam(defaultValue = "asc") String sortingDirection) {
 
-        List<ServiceResponse> filteredServices = new ArrayList<>();
-
-        if (categoryId != null) {
-            filteredServices = serviceService.getAllServicesByCategory(categoryId);
-        }
-        if (providerId != null) {
-            filteredServices = serviceService.getAllServicesByProvider(providerId);
-        }
-        if (cityId != null) {
-            filteredServices = serviceService.getAllServicesByCity(cityId);
-        }
-
-        return filteredServices.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(filteredServices);
+        return serviceService.filterServices(minPrice, maxPrice, categoryIds, providerIds, cityIds, page, pageSize, sortingField, sortingDirection);
     }
 
     @GetMapping("/getPaginationServices/{page}/{pageSize}/{sortingField}/{sortingDirection}")

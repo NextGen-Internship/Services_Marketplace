@@ -1,6 +1,7 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.CategoryRequest;
+import com.service.marketplace.dto.response.CategoryResponse;
 import com.service.marketplace.mapper.CategoryMapper;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.repository.CategoryRepository;
@@ -17,31 +18,33 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categoryMapper.toCategoryResponseList(categories);
     }
 
     @Override
-    public Category getCategoryById(Integer categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElse(null);
+    public CategoryResponse getCategoryById(Integer categoryId) {
+        CategoryResponse category = categoryMapper.categoryToCategoryResponse(categoryRepository.findById(categoryId).orElse(null));
 
         return category;
     }
 
     @Override
-    public Category createCategory(CategoryRequest categoryToCreate) {
+    public CategoryResponse createCategory(CategoryRequest categoryToCreate) {
         Category newCategory = categoryMapper.categoryRequestToCategory(categoryToCreate);
-        return categoryRepository.save(newCategory);
+        return categoryMapper.categoryToCategoryResponse(categoryRepository.save(newCategory));
     }
 
     @Override
-    public Category updateCategory(Integer categoryId, CategoryRequest categoryToUpdate) {
+    public CategoryResponse updateCategory(Integer categoryId, CategoryRequest categoryToUpdate) {
         Category existingCategory = categoryRepository.findById(categoryId).orElse(null);
 
         if (existingCategory != null) {
-            existingCategory = categoryMapper.categoryRequestToCategory(categoryToUpdate);
+            existingCategory.setName(categoryToUpdate.getName());
+            existingCategory.setDescription(categoryToUpdate.getDescription());
 
-            return categoryRepository.save(existingCategory);
+            return categoryMapper.categoryToCategoryResponse(categoryRepository.save(existingCategory));
         } else {
             return null;
         }

@@ -4,6 +4,7 @@ import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ServiceService {
@@ -17,11 +18,7 @@ public interface ServiceService {
 
     void deleteServiceById(Integer serviceId);
 
-    List<ServiceResponse> getAllServicesByCategory(Integer categoryId);
-
-    List<ServiceResponse> getAllServicesByProvider(Integer providerId);
-
-    List<ServiceResponse> getAllServicesByCity(Integer cityId);
-
     Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection);
+
+    Page<ServiceResponse> filterServices(BigDecimal minPrice, BigDecimal maxPrice, List<Integer> categoryIds, List<Integer> providerIds, List<Integer> cityIds, Integer page, Integer pageSize, String sortingField, String sortingDirection);
 }
