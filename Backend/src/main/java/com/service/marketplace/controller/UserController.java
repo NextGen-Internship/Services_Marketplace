@@ -60,6 +60,8 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @Valid
     @PutMapping("/role/{userId}")
     public ResponseEntity<UserResponse> updateUserRole(@PathVariable("userId") Integer userId,
                                                        @RequestBody SetProviderRequest providerRequest) {
