@@ -16,7 +16,8 @@ const Profile = () => {
     lastName: '',
     email: '',
     phoneNumber: '',
-    imageUrl: ''
+    imageUrl: '',
+    role: ''
   });
 
   const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
@@ -112,6 +113,9 @@ const Profile = () => {
       console.log("Request data:", { userId, newRole });
 
       console.log('User role updated successfully:', response);
+
+      setUser(prevUser => ({ ...prevUser, role: newRole }));
+
       //if(response.newToken) {
       // localStorage.setItem('Jwt_Token', response.newToken);
     } catch (error) {
@@ -133,14 +137,14 @@ const Profile = () => {
 
       try {
         const userData = await getUserById(userId);
-        const testData = await getUserByIdTest(userId);
+        setUser(userData);
         console.log('User data:');
         console.log(userData);
-        setUser(userData);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
+    console.log('Fetched user role:', user.role);
 
     fetchUserData();
   }, [navigate]);
@@ -152,6 +156,11 @@ const Profile = () => {
   };
 
   const handleServicesToggle = () => {
+    console.log('Current user role:', user.role);
+    if (user.role !== 'provider') {
+      console.log('Only providers can see their services');
+      return;
+    }
     setShowServices(!showServices);
     setShowPersonalInfo(false);
   };
