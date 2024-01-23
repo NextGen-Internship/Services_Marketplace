@@ -4,24 +4,18 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Objects;
@@ -36,18 +30,17 @@ public class StorageService {
     @Value("${cloud.aws.bucket.name}")
     private String bucketName;
 
+    @Value("${cloud.aws.presigned-url.expiration}")
+    private long expirationPresigned;
 
     public String uploadFile(MultipartFile file, int userId) {
         File fileObj = convertMultipartFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        System.out.println(bucketName);
 
-        Date expiration = new Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000));
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, fileName)
-                .withMethod(HttpMethod.GET)
-                .withExpiration(expiration);
-        URL preSignedUrl = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+        URL preSignedUrl = generatePreSignedUrl(bucketName, fileName);
 
         User user = userRepository.findById(userId).orElse(null);
         user.setPicture(String.valueOf(preSignedUrl));
@@ -59,6 +52,35 @@ public class StorageService {
         return preSignedUrl.toString();
     }
 
+    public URL generatePreSignedUrl(String bucketName, String fileName) {
+        Date expiration = new Date(System.currentTimeMillis() + expirationPresigned);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, fileName)
+                .withMethod(HttpMethod.GET)
+                .withExpiration(expiration);
+        return s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+
+    }
+
+    public boolean isPresignedUrlExpired(URL presignedUrl) {
+        Date expirationTime = new Date(presignedUrl.getQuery().contains("X-Amz-Expires=") ?
+                Long.parseLong(presignedUrl.getQuery().split("X-Amz-Expires=")[1].split("&")[0]) * 1000 :
+                0);
+        return expirationTime.before(new Date());
+    }
+
+    public String getPicture(int userId) throws MalformedURLException {
+        User user = userRepository.findById(userId).orElse(null);
+        URL presignedUrl = user.getPicture() != null ? new URL(user.getPicture()) : null;
+        if (presignedUrl != null && isPresignedUrlExpired(presignedUrl)) {
+            String mediaKey = user.getMediaKey();
+            URL newPresignedUrl = generatePreSignedUrl(bucketName, mediaKey);
+            user.setPicture(String.valueOf(newPresignedUrl));
+            userRepository.save(user);
+            return newPresignedUrl.toString();
+        } else {
+            return presignedUrl.toString();
+        }
+    }
 
     public String deleteFile(String fileName) {
         s3Client.deleteObject(bucketName, fileName);
@@ -74,6 +96,4 @@ public class StorageService {
         }
         return convertedFile;
     }
-
-
 }

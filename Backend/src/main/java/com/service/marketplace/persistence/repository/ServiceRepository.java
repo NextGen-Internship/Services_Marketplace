@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Integer> {
     List<Service> findByCategory(Category category);
+
     List<Service> findByProvider(User user);
 
     @Query("SELECT s FROM Service s JOIN s.cities c WHERE c IN :cities")

@@ -1,11 +1,9 @@
 package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.CategoryRequest;
-import com.service.marketplace.dto.response.CategoryResponse;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.service.CategoryService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
