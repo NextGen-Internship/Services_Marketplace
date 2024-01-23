@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import '../styles/Navbar.css';
 import { GiHamburgerMenu } from 'react-icons/gi';
@@ -8,9 +8,10 @@ import { jwtDecode } from "jwt-decode";
 function Navbar({ clicked, isClicked }) {
     const navigate = useNavigate();
     const userRole = localStorage.getItem('Jwt_Token') ? jwtDecode(localStorage.getItem('Jwt_Token'))?.role : null;
+    const [token, setToken] = useState('');
 
     useEffect(() => {
-        const token = localStorage.getItem('Jwt_Token');
+        setToken(localStorage.getItem('Jwt_Token'));
         if (token) {
             navigate('/home-page');
         }
