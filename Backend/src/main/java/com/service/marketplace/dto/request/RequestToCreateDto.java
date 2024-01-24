@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RequestToCreateDto {
 
-
     @NotNull(message = "Customer ID cannot be null")
     private Integer customerId;
 

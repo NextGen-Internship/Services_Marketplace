@@ -1,15 +1,14 @@
 package com.service.marketplace.service;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.service.marketplace.dto.response.AuthenticationResponse;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.UserRepository;
-import com.service.marketplace.service.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

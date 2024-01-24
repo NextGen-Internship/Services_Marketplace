@@ -27,6 +27,7 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(service.register(request));
     }
+
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
@@ -34,6 +35,7 @@ public class AuthenticationController {
         AuthenticationResponse authenticationResponse = service.login(request);
         return ResponseEntity.ok(authenticationResponse);
     }
+
     @PostMapping("/google/login")
     public ResponseEntity<AuthenticationResponse> googleLogin(
             @RequestBody AuthenticationResponse authenticationResponse
