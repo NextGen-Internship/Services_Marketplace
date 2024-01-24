@@ -29,6 +29,13 @@
     font-weight: 200;
     padding: 10px 20px ;
 }
+
+/* .UserIcon {
+    font-size: 30px;
+    margin-right: 5px;
+    display: flex; 
+    align-items: center;
+} */
 .NavButton{
     float: right;
     background-color: #c2c1c1d4;

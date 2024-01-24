@@ -4,6 +4,7 @@ import '../styles/Navbar.css';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { ImCross } from 'react-icons/im';
 import { jwtDecode } from "jwt-decode";
+import { CgProfile } from "react-icons/cg";
 
 function Navbar({ clicked, isClicked }) {
     const navigate = useNavigate();
@@ -58,11 +59,6 @@ function Navbar({ clicked, isClicked }) {
                     </NavLink>
                 </li>
                 <li className="NavElements">
-                    <NavLink className="Link" to="/profile" onClick={handlePagination}>
-                        Profile
-                    </NavLink>
-                </li>
-                <li className="NavElements">
                     <NavLink className="Link" to="/services" onClick={handlePagination}>
                         Services
                     </NavLink>
@@ -76,11 +72,18 @@ function Navbar({ clicked, isClicked }) {
                 )}
 
                 {localStorage.getItem('Jwt_Token') ? (
-                    <li className="NavButton">
+                    <>
+                    <li className="Profile-Button">
+                    <NavLink className="Link" to="/profile" onClick={handlePagination}>
+                    <CgProfile className="UserIcon"/>
+                    </NavLink>
+                   </li>
+                <li className="NavButton">
                         <NavLink className="BtnLink" onClick={handleLogout}>
                             Logout
                         </NavLink>
                     </li>
+                    </>
                 ) : (
                     <>
                         <li className="NavButton">
