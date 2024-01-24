@@ -10,6 +10,7 @@ const Profile = () => {
   const [showServices, setShowServices] = useState(false);
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
+  const [previewVisible, setPreviewVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
@@ -95,6 +96,8 @@ const Profile = () => {
         }
 
         const imageUrl = await uploadUserPicture(userId, file);
+        setPreviewVisible(true);
+        setIsEditingPicture(false);
         setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
         console.log('Profile picture updated successfully');
       } catch (error) {
@@ -174,12 +177,14 @@ const Profile = () => {
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
     setEditMode(false);
+    setPreviewVisible(false);
   };
 
 
   const handlePersonalInfoToggle = () => {
     setShowPersonalInfo(!showPersonalInfo);
     setShowServices(false);
+    setPreviewVisible(false);
   };
 
   const handleServicesToggle = () => {
@@ -190,6 +195,7 @@ const Profile = () => {
     }
     setShowServices(!showServices);
     setShowPersonalInfo(false);
+    setPreviewVisible(false);
   };
 
   const handleBecomeProvider = () => {
@@ -197,6 +203,7 @@ const Profile = () => {
     setShowPersonalInfo(false);
     console.log('Request to become a provider sent');
     //localStorage.removeItem['Jwt_Token'];
+    setPreviewVisible(false);
   };
 
   const handleEditProfile = () => {
