@@ -10,6 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,4 +47,8 @@ public interface ServiceMapper {
     ServiceResponse serviceToServiceResponse(Service service);
 
     List<ServiceResponse> toServiceResponseList(List<Service> services);
+
+    default Page<ServiceResponse> toServiceResponsePage(Page<Service> page) {
+        return page.map(this::serviceToServiceResponse);
+    }
 }

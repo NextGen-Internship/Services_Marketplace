@@ -4,6 +4,7 @@ import com.service.marketplace.persistence.enums.ServiceStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,4 +17,5 @@ public class ServiceResponse {
     private Integer providerId;
     private Integer categoryId;
     private List<Integer> cityIds;
+    private LocalDateTime updatedAt;
 }

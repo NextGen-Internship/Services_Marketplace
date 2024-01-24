@@ -4,10 +4,10 @@
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 15px; /* Adjust the padding as needed */
+    padding: 15px;
     text-align: center;
     margin: 10px;
-    width: calc(25% - 20px); /* Adjust the width and margins as needed */
+    width: calc(25% - 20px);
   }
   
   /* Adjustments for smaller screens */

@@ -1,8 +1,11 @@
 package com.service.marketplace.service;
 
+import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
+import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ServiceService {
@@ -16,9 +19,7 @@ public interface ServiceService {
 
     void deleteServiceById(Integer serviceId);
 
-    List<ServiceResponse> getAllServicesByCategory(Integer categoryId);
+    Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection);
 
-    List<ServiceResponse> getAllServicesByProvider(Integer providerId);
-
-    List<ServiceResponse> getAllServicesByCity(Integer cityId);
+    Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest);
 }

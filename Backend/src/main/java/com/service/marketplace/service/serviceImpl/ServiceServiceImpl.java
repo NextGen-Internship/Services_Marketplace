@@ -1,5 +1,6 @@
 package com.service.marketplace.service.serviceImpl;
 
+import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import com.service.marketplace.mapper.ServiceMapper;
@@ -12,8 +13,13 @@ import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,32 +95,29 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public List<ServiceResponse> getAllServicesByCategory(Integer categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        List<com.service.marketplace.persistence.entity.Service> servicesOfCategory = serviceRepository.findByCategory(category);
+    public Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection) {
+        Sort sort = Sort.by(Sort.Direction.valueOf(sortingDirection), sortingField);
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
 
-        return serviceMapper.toServiceResponseList(servicesOfCategory);
+        return serviceMapper.toServiceResponsePage(serviceRepository.findAll(pageable));
     }
 
     @Override
-    public List<ServiceResponse> getAllServicesByProvider(Integer providerId) {
-        User provider = userRepository.findById(providerId).orElse(null);
-        List<com.service.marketplace.persistence.entity.Service> servicesOfProvider = serviceRepository.findByProvider(provider);
+    public Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest) {
+        Pageable pageable = PageRequest.of(serviceFilterRequest.getPage(), serviceFilterRequest.getPageSize(), Sort.by(Sort.Direction.fromString(serviceFilterRequest.getSortingDirection()), serviceFilterRequest.getSortingField()));
+        List<Integer> categoryIds = serviceFilterRequest.getCategoryIds();
+        List<Integer> cityIds = serviceFilterRequest.getCityIds();
 
-        return serviceMapper.toServiceResponseList(servicesOfProvider);
+        Page<com.service.marketplace.persistence.entity.Service> filteredServices = serviceRepository.filterServices(
+                serviceFilterRequest.getMinPrice(),
+                serviceFilterRequest.getMaxPrice(),
+                categoryIds.isEmpty() ? null : categoryIds,
+                cityIds.isEmpty() ? null : cityIds,
+                pageable
+        );
+
+        return serviceMapper.toServiceResponsePage(filteredServices);
     }
 
-    @Override
-    public List<ServiceResponse> getAllServicesByCity(Integer cityId) {
-        City city = cityRepository.findById(cityId).orElse(null);
-        List<City> cities = new ArrayList<>();
 
-        if (city != null) {
-            cities.add(city);
-        }
-
-        List<com.service.marketplace.persistence.entity.Service> servicesOfCity = serviceRepository.findByCitiesUsingQuery(cities);
-
-        return serviceMapper.toServiceResponseList(servicesOfCity);
-    }
 }

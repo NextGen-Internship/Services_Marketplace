@@ -25,7 +25,6 @@ public class RequestController {
         return ResponseEntity.ok(requests);
     }
 
-
     @GetMapping("/{requestId}")
     public ResponseEntity<RequestResponse> getRequestById(@PathVariable("requestId") Integer requestId) {
         RequestResponse requestResponse = requestService.getRequestById(requestId);
@@ -37,13 +36,11 @@ public class RequestController {
         }
     }
 
-
     @PostMapping("/create")
     public ResponseEntity<RequestResponse> createRequest(@RequestBody RequestToCreateDto requestToCreate) {
         RequestResponse requestResponse = requestService.createRequest(requestToCreate);
         return ResponseEntity.ok(requestResponse);
     }
-
 
     @PutMapping("/{requestId}")
     public ResponseEntity<RequestResponse> updateRequest(@PathVariable("requestId") Integer requestId, @RequestBody RequestToCreateDto requestToUpdate) {
@@ -59,7 +56,6 @@ public class RequestController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
 
     @DeleteMapping("/{requestId}")
     public ResponseEntity<Void> deleteRequest(@PathVariable("requestId") Integer requestId) {
