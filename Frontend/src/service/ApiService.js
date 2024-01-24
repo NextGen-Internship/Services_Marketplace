@@ -33,6 +33,7 @@ axios.interceptors.response.use(
 );
 
 const apiService = {
+
   getAllServices: async () => { },
   googleLogin: async () => {
     try {
@@ -55,6 +56,7 @@ const apiService = {
 };
 
 const getAllServices = async () => {
+
   try {
     const response = await axios.get(config.baseUrl + config.getAllServices);
     return response.data;
@@ -102,6 +104,38 @@ const createService = async (serviceData) => {
   }
 };
 
+const getPaginationServices = async (page, pageSize, sortingField, sortingDirection) => {
+  try {
+    const response = await axios.get(config.baseUrl + config.getPaginationServices + '/' + page + '/' + pageSize + '/' + sortingField + '/' + sortingDirection);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching services", error);
+    throw error;
+  }
+};
+
+const getPaginationFilteredServices = async (serviceFilterRequest) => {
+  try {
+    const queryParams = new URLSearchParams({
+      minPrice: serviceFilterRequest.minPrice,
+      maxPrice: serviceFilterRequest.maxPrice,
+      categoryIds: serviceFilterRequest.categoryIds,
+      cityIds: serviceFilterRequest.cityIds,
+      page: serviceFilterRequest.page,
+      pageSize: serviceFilterRequest.pageSize,
+      sortingField: serviceFilterRequest.sortingField,
+      sortingDirection: serviceFilterRequest.sortingDirection,
+    });
+
+    const response = await axios.get(config.baseUrl + config.getPaginationFilteredServices + '?' + queryParams);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching services", error);
+    throw error;
+  }
+};
+
 const postLogin = async (formData) => {
   try {
     const response = await axios.post(config.baseUrl + config.postLogin, formData);
@@ -125,6 +159,7 @@ const googleLogin = async (googleToken) => {
 };
 
 const postRegister = async (formData) => {
+
   try {
     const response = await axios.post(config.baseUrl + config.postRegister, formData);
     return response.data;
@@ -174,7 +209,7 @@ const updateUser = async (userId, userData) => {
 const updateUserRole = async (userId, newRole) => {
   try {
 
-    const providerRequestBody = { role: newRole }; 
+    const providerRequestBody = { role: newRole };
     const response = await axios.put(`${config.baseUrl}${config.getUserById}/role/${userId}`, providerRequestBody, {
       headers: {
         "Content-Type": "application/json",
@@ -193,12 +228,12 @@ export {
   getAllCategories,
   getAllCities,
   createService,
+  getPaginationServices,
+  getPaginationFilteredServices,
   postLogin,
   googleLogin,
   postRegister,
-  getUserById,
-  updateUser,
-  getUserByIdTest,
-  updateUserRole
+  getUserById
+
 }
 export default apiService;

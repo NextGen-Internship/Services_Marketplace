@@ -1,16 +1,15 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
-import com.service.marketplace.persistence.entity.Category;
-import com.service.marketplace.persistence.entity.Service;
-import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.ServiceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -67,24 +66,13 @@ public class ServiceController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<ServiceResponse>> getFilteredServices(
-            @RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false) Integer providerId,
-            @RequestParam(required = false) Integer cityId) {
-
-        List<ServiceResponse> filteredServices;
-
-        if (categoryId != null) {
-            filteredServices = serviceService.getAllServicesByCategory(categoryId);
-        } else if (providerId != null) {
-            filteredServices = serviceService.getAllServicesByProvider(providerId);
-        } else if (cityId != null) {
-            filteredServices = serviceService.getAllServicesByCity(cityId);
-        } else {
-            filteredServices = serviceService.getAllServices();
-        }
-
-        return filteredServices.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(filteredServices);
+    public Page<ServiceResponse> getFilteredServices(ServiceFilterRequest serviceFilterRequest) {
+        return serviceService.filterServices(serviceFilterRequest);
     }
 
+    @GetMapping("/getPaginationServices/{page}/{pageSize}/{sortingField}/{sortingDirection}")
+    public Page<ServiceResponse> getServices(@PathVariable("page") Integer page, @PathVariable("pageSize") Integer pageSize,
+                                             @PathVariable("sortingField") String sortingField, @PathVariable("sortingDirection") String sortingDirection) {
+        return serviceService.fetchServices(page, pageSize, sortingField, sortingDirection);
+    }
 }

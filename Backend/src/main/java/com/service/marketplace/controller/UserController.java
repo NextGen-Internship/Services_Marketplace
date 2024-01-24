@@ -3,13 +3,9 @@ package com.service.marketplace.controller;
 import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
-import com.service.marketplace.mapper.UserMapper;
-import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +27,6 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable("userId") Integer userId) {
         UserResponse userResponse = userService.getUserById(userId);
@@ -42,7 +37,6 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
     @Valid
     @PutMapping("/{userId}")

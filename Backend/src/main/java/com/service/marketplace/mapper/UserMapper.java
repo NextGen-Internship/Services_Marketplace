@@ -8,7 +8,6 @@ import com.service.marketplace.persistence.enums.UserRole;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
-import org.springframework.context.annotation.Configuration;
 
 
 @Mapper(componentModel = "spring")
