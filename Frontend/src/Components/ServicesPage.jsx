@@ -74,14 +74,6 @@ const ServicesPage = () => {
     };
 
     useEffect(() => {
-        // const storedPage = isNavigationEvent ? 0 : sessionStorage.getItem('PageNumber');
-        // const storedFilterParams = JSON.parse(sessionStorage.getItem('FilterParams'));
-
-        // if (storedFilterParams && storedPage) {
-        //     getFilteredServices(storedFilterParams);
-        // } else {
-        //     getServices(page, sortingField, sortingDirection);
-        // }
         getServices(page, sortingField, sortingDirection);
     }, [sortingField, sortingDirection]);
 
