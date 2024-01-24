@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture } from '../service/ApiService.js';
+import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
@@ -11,6 +11,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
+  const [profilePicture, setPrfofilePicture] = useState('https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg');
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
@@ -21,7 +22,7 @@ const Profile = () => {
     role: ''
   });
 
-  const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
+  //const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
 
@@ -98,6 +99,7 @@ const Profile = () => {
         const imageUrl = await uploadUserPicture(userId, file);
         setPreviewVisible(true);
         setIsEditingPicture(false);
+        setPrfofilePicture(imageUrl);
         setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
         console.log('Profile picture updated successfully');
       } catch (error) {
@@ -170,6 +172,16 @@ const Profile = () => {
     fetchUserData();
   }, [navigate]);
 
+  useEffect(() => {
+    const getPictureMethod = async () => {
+      const localToken = localStorage['Jwt_Token'];
+      const decodedToken = jwtDecode(localToken);
+      const userId = decodedToken['jti'];
+
+      setPrfofilePicture(getPicture(userId));
+    };
+  }, [])
+
   const becomeProviderButton = user.role !== 'provider' && (
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
@@ -215,7 +227,7 @@ const Profile = () => {
 
       <h2 className="profile-title">About me</h2>
       <img
-        src={user.imageUrl || defaultImageUrl}
+        src={user.imageUrl || profilePicture}
         alt="User"
         className="profile-image"
       />

@@ -248,6 +248,23 @@ const uploadUserPicture = async (userId, newPicture) => {
   }
 };
 
+const getPicture = async (userId) => {
+  try {
+    const response = await axios.get(
+      `${config.baseUrl}${config.getPicture}/${userId}`, 
+      {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving user profile picture", error);
+    throw error;
+  }
+};
+
 export {
   getAllServices,
   getAllCategories,
@@ -262,5 +279,6 @@ export {
   updateUser,
   updateUserRole,
   uploadUserPicture,
+  getPicture,
 }
 export default apiService;

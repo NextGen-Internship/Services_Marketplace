@@ -14,6 +14,7 @@ const config = {
     updateUserRole: '/v1/users/role',
     getUsers: '/v1/users',
     uploadUserPicture: '/file/upload',
+    getPicture: '/file/getPicture'
 }
 
 
