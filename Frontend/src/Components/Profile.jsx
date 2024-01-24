@@ -6,12 +6,14 @@ import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPic
 import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
+  const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
+
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [showServices, setShowServices] = useState(false);
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [profilePicture, setPrfofilePicture] = useState('https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg');
+  const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
@@ -22,7 +24,6 @@ const Profile = () => {
     role: ''
   });
 
-  //const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
 
@@ -99,7 +100,7 @@ const Profile = () => {
         const imageUrl = await uploadUserPicture(userId, file);
         setPreviewVisible(true);
         setIsEditingPicture(false);
-        setPrfofilePicture(imageUrl);
+        setProfilePicture(imageUrl);
         setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
         console.log('Profile picture updated successfully');
       } catch (error) {
@@ -145,8 +146,18 @@ const Profile = () => {
   //     console.error('Error updating user role:', error);
   //   }
   // };
-
   useEffect(() => {
+    const getPictureMethod = async () => {
+      const localToken = localStorage['Jwt_Token'];
+      const decodedToken = jwtDecode(localToken);
+      const userId = decodedToken['jti'];
+
+      const picUrl = await getPicture(userId);
+      console.log('polled url', picUrl);
+      setProfilePicture(picUrl);
+      setUser(prevUser => ({ ...prevUser, imageUrl: picUrl }));
+    };
+
     const fetchUserData = async () => {
       const localToken = localStorage['Jwt_Token'];
       const decodedToken = jwtDecode(localToken);
@@ -163,6 +174,18 @@ const Profile = () => {
         setUser(userData);
         console.log('User data:');
         console.log(userData);
+
+        if (user.imageUrl !== defaultImageUrl) {
+          console.log("custom avatar!")
+          await getPictureMethod();
+          console.log('User Avatar img: ', user.imageUrl)
+          console.log(profilePicture);
+          //setUser(({ ...user, imageUrl: profilePicture }));
+        }
+        else {
+          console.log("default");
+        }
+
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -171,16 +194,6 @@ const Profile = () => {
 
     fetchUserData();
   }, [navigate]);
-
-  useEffect(() => {
-    const getPictureMethod = async () => {
-      const localToken = localStorage['Jwt_Token'];
-      const decodedToken = jwtDecode(localToken);
-      const userId = decodedToken['jti'];
-
-      setPrfofilePicture(getPicture(userId));
-    };
-  }, [])
 
   const becomeProviderButton = user.role !== 'provider' && (
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
