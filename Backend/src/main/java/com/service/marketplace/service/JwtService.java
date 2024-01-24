@@ -22,6 +22,9 @@ public class JwtService {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
+    @Value("${jwt.expiration}")
+    private long expiration;
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -46,7 +49,7 @@ public class JwtService {
                 .setId(String.valueOf(userDetails.getId()))
                 .claim("role", userDetails.getRoles().toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
