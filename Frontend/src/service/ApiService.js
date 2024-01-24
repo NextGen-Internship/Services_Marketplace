@@ -225,12 +225,22 @@ const updateUserRole = async (userId, newRole) => {
 
 const uploadUserPicture = async (userId, newPicture) => {
   try {
-    const response = await axios.post(`${config.baseUrl}${config.getUserById}/upload/${userId}`, newPicture, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+    const formData = new FormData();
+    formData.append('file', newPicture); 
+    for (let [key, value] of formData.entries()) { 
+      console.log(key, value);
+    }
+
+    const response = await axios.post(
+      `${config.baseUrl}/file/upload/${userId}`, 
+      formData,
+      {
+        headers: {
+          //"Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
       }
-    });
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating user profile picture", error);

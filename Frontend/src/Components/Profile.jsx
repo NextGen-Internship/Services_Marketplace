@@ -22,6 +22,8 @@ const Profile = () => {
 
   const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
+  const [isEditingPicture, setIsEditingPicture] = useState(false);
+
   const handleImageUrlChange = (e) => {
     setUser({ ...user, imageUrl: e.target.value });
   };
@@ -30,9 +32,6 @@ const Profile = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleEditPictureToggle = () => {
-    setIsEditingPicture(!isEditingPicture);
-  };
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -80,16 +79,32 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       try {
-        const formData = new FormData();
-        formData.append('file', file);
-        const updatedUser = await uploadUserPicture(user.id, formData);
-        setUser(updatedUser);
+        const localToken = localStorage.getItem('Jwt_Token');
+        if (!localToken) {
+          console.error('No token found');
+          navigate('/login');
+          return;
+        }
+
+        const decodedToken = jwtDecode(localToken);
+        const userId = decodedToken['jti'];
+        if (!userId) {
+          console.error('No user ID found');
+          navigate('/login');
+          return;
+        }
+
+        const imageUrl = await uploadUserPicture(userId, file);
+        setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
         console.log('Profile picture updated successfully');
       } catch (error) {
         console.error('Error updating profile picture:', error);
       }
     }
   };
+
+
+
 
   // const handleBecomeProvider = async (newRole) => {
   //   setShowServices(false);
@@ -156,6 +171,11 @@ const Profile = () => {
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
 
+  const handleEditPictureToggle = () => {
+    setIsEditingPicture(!isEditingPicture);
+    setEditMode(false);
+  };
+
 
   const handlePersonalInfoToggle = () => {
     setShowPersonalInfo(!showPersonalInfo);
@@ -173,10 +193,10 @@ const Profile = () => {
   };
 
   const handleBecomeProvider = () => {
-      setShowServices(false);
-      setShowPersonalInfo(false); 
-      console.log('Request to become a provider sent');
-      //localStorage.removeItem['Jwt_Token'];
+    setShowServices(false);
+    setShowPersonalInfo(false);
+    console.log('Request to become a provider sent');
+    //localStorage.removeItem['Jwt_Token'];
   };
 
   const handleEditProfile = () => {
@@ -195,9 +215,17 @@ const Profile = () => {
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         <button onClick={handleServicesToggle}>My Services</button>
-        {becomeProviderButton} 
+        {becomeProviderButton}
+        <button onClick={handleEditPictureToggle}>Edit Profile Picture</button>
       </div>
-
+      {isEditingPicture && (
+        <div className="profile-picture-edit">
+          <input type="file" onChange={handleImageChange} accept="image/*" />
+          {user.imageUrl && (
+            <img src={user.imageUrl} alt="Profile Preview" className="profile-preview-image" />
+          )}
+        </div>
+      )}
       {showPersonalInfo && (
         <div className="personal-info">
           {editMode ? (
