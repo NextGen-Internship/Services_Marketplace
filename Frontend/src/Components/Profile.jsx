@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, getUserByIdTest, updateUserRole } from '../service/ApiService.js';
+import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
@@ -30,8 +30,9 @@ const Profile = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleEditToggle = () => setIsEditing(!isEditing);
-
+  const handleEditPictureToggle = () => {
+    setIsEditingPicture(!isEditingPicture);
+  };
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -75,53 +76,55 @@ const Profile = () => {
     }
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        console.log("Image loaded", reader.result);
-        setUser({ ...user, imageUrl: reader.result });
-      };
-      reader.readAsDataURL(file);
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const updatedUser = await uploadUserPicture(user.id, formData);
+        setUser(updatedUser);
+        console.log('Profile picture updated successfully');
+      } catch (error) {
+        console.error('Error updating profile picture:', error);
+      }
     }
   };
 
+  // const handleBecomeProvider = async (newRole) => {
+  //   setShowServices(false);
+  //   setShowPersonalInfo(false);
+  //   console.log('Request to become a provider sent');
 
-  const handleBecomeProvider = async (newRole) => {
-    setShowServices(false);
-    setShowPersonalInfo(false);
-    console.log('Request to become a provider sent');
+  //   const localToken = localStorage.getItem('Jwt_Token');
+  //   if (!localToken) {
+  //     console.error('No token found');
+  //     navigate('/login');
+  //     return;
+  //   }
 
-    const localToken = localStorage.getItem('Jwt_Token');
-    if (!localToken) {
-      console.error('No token found');
-      navigate('/login');
-      return;
-    }
+  //   const decodedToken = jwtDecode(localToken);
+  //   const userId = decodedToken['jti'];
+  //   if (!userId) {
+  //     console.error('No user ID found');
+  //     navigate('/login');
+  //     return;
+  //   }
 
-    const decodedToken = jwtDecode(localToken);
-    const userId = decodedToken['jti'];
-    if (!userId) {
-      console.error('No user ID found');
-      navigate('/login');
-      return;
-    }
+  //   try {
+  //     const response = await updateUserRole(userId, newRole);
+  //     console.log("Request data:", { userId, newRole });
 
-    try {
-      const response = await updateUserRole(userId, newRole);
-      console.log("Request data:", { userId, newRole });
+  //     console.log('User role updated successfully:', response);
 
-      console.log('User role updated successfully:', response);
+  //     setUser(prevUser => ({ ...prevUser, role: newRole }));
 
-      setUser(prevUser => ({ ...prevUser, role: newRole }));
-
-      //if(response.newToken) {
-      // localStorage.setItem('Jwt_Token', response.newToken);
-    } catch (error) {
-      console.error('Error updating user role:', error);
-    }
-  };
+  //     //if(response.newToken) {
+  //     // localStorage.setItem('Jwt_Token', response.newToken);
+  //   } catch (error) {
+  //     console.error('Error updating user role:', error);
+  //   }
+  // };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -169,12 +172,12 @@ const Profile = () => {
     setShowPersonalInfo(false);
   };
 
-  // const handleBecomeProvider = () => {
-  //     setShowServices(false);
-  //     setShowPersonalInfo(false); 
-  //     console.log('Request to become a provider sent');
-  //     localStorage.removeItem['Jwt_Token'];
-  // };
+  const handleBecomeProvider = () => {
+      setShowServices(false);
+      setShowPersonalInfo(false); 
+      console.log('Request to become a provider sent');
+      //localStorage.removeItem['Jwt_Token'];
+  };
 
   const handleEditProfile = () => {
     navigate('/edit-information');

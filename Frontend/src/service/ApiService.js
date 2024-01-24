@@ -223,6 +223,21 @@ const updateUserRole = async (userId, newRole) => {
   }
 };
 
+const uploadUserPicture = async (userId, newPicture) => {
+  try {
+    const response = await axios.post(`${config.baseUrl}${config.getUserById}/upload/${userId}`, newPicture, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user profile picture", error);
+    throw error;
+  }
+};
+
 export {
   getAllServices,
   getAllCategories,
@@ -233,7 +248,9 @@ export {
   postLogin,
   googleLogin,
   postRegister,
-  getUserById
-
+  getUserById,
+  updateUser,
+  updateUserRole,
+  uploadUserPicture,
 }
 export default apiService;
