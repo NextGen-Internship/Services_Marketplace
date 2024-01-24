@@ -15,12 +15,10 @@ import java.net.MalformedURLException;
 public class StorageController {
     private final StorageService service;
 
-
     @PostMapping("/upload/{userId}")
     public ResponseEntity<String> uploadFile(@PathVariable int userId, @RequestParam(value = "file") MultipartFile file) {
         return new ResponseEntity<>(service.uploadFile(file, userId), HttpStatus.OK);
     }
-
 
     @DeleteMapping("/delete/{fileName}")
     public ResponseEntity<String> deleteFile(@PathVariable String fileName) {

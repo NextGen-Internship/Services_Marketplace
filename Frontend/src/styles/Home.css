@@ -10,6 +10,16 @@
   height: 100vh;
 }
 
+.home-wrapper .openModalBtn {
+  width: 200px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  background-color: cornflowerblue;
+  color: white;
+  cursor: pointer;
+}
+
 .search-container {
   margin-top: -49%;
   margin-left: 250px;

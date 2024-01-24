@@ -1,4 +1,4 @@
-package com.service.marketplace.service.impl;
+package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
