@@ -1,6 +1,7 @@
 package com.service.marketplace.persistence.entity;
 
 import com.service.marketplace.persistence.enums.TransactionStatus;
+import com.service.marketplace.persistence.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,14 +17,14 @@ public class Transactions extends BaseEntity {
     @Column(name = "amount", nullable = false)
     private double amount;
 
-    @Column(name = "timestamp", nullable = false)
-    private LocalDateTime timestamp;
+    @Column(name = "payment_date", nullable = false)
+    private LocalDateTime paymentDate;
 
     @Column(name = "transaction_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
 
-    @OneToOne
-    private Offer offer;
-
+    @Column(name = "transaction_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
 }
