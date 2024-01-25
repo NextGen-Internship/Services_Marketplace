@@ -48,6 +48,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setId(String.valueOf(userDetails.getId()))
                 .claim("role", userDetails.getRoles().toString())
+                .claim("picture", userDetails.getPicture())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
