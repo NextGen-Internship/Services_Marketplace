@@ -20,7 +20,6 @@ function AddServicePage() {
         fetchData();
     }, []);
 
-    // add service
     const addService = async (service) => {
         try {
             const newService = await createService(service);
@@ -32,11 +31,11 @@ function AddServicePage() {
         }
     };
 
-  return (
-    <div className='AddServicePage'>
-        <AddService onAdd={addService} />
-    </div>
-  )
+    return (
+        <div className='AddServicePage'>
+            <AddService onAdd={addService} />
+        </div>
+    )
 }
 
 export default AddServicePage
