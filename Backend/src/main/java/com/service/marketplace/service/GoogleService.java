@@ -5,13 +5,17 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.service.marketplace.dto.response.AuthenticationResponse;
+import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Service
@@ -20,6 +24,8 @@ public class GoogleService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final RoleRepository roleRepository;
+
 
 
     public AuthenticationResponse verifyGoogleToken(String googleToken) throws IOException, GeneralSecurityException {
@@ -40,12 +46,16 @@ public class GoogleService {
 
             } catch (Exception e) {
                 //String pictureUrl = (String) payload.get("picture");
+                Role role = roleRepository.findByName("CUSTOMER").orElseThrow();
+                Set<Role> roles = new HashSet<>();
+                roles.add(role);
                 String familyName = (String) payload.get("family_name");
                 String givenName = (String) payload.get("given_name");
                 User newUser = new User();
                 newUser.setEmail(payload.getEmail());
                 newUser.setFirstName(givenName);
                 newUser.setLastName(familyName);
+                newUser.setRoles(roles);
 
                 //TODO  newUser.setPicture(pictureUrl); finished logic when the cloud for picture is created.
                 userRepository.save(newUser);
