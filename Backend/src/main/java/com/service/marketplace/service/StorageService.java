@@ -52,6 +52,11 @@ public class StorageService {
         return preSignedUrl.toString();
     }
 
+    public String uploadFile(MultipartFile file, String userEmail) {
+        User user = userRepository.findByEmail(userEmail).orElse(null);
+        return uploadFile(file, user.getId());
+    }
+
     public URL generatePreSignedUrl(String bucketName, String fileName) {
         Date expiration = new Date(System.currentTimeMillis() + expirationPresigned);
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, fileName)
@@ -80,6 +85,11 @@ public class StorageService {
         } else {
             return presignedUrl.toString();
         }
+    }
+
+    public String getPicture(String userEmail) throws MalformedURLException {
+        User user = userRepository.findByEmail(userEmail).orElse(null);
+        return getPicture(user.getId());
     }
 
     public String deleteFile(String fileName) {

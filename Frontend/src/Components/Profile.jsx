@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture } from '../service/ApiService.js';
+import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture, getUserByEmail, updateUserEmail } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
@@ -14,13 +14,14 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
+  const [localFile, setLocalFile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
-    imageUrl: '',
+    picture: '',
     role: ''
   });
 
@@ -38,7 +39,7 @@ const Profile = () => {
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = async (e) => {
     const localToken = localStorage.getItem('Jwt_Token');
     if (!localToken) {
       console.error('No token found');
@@ -46,15 +47,18 @@ const Profile = () => {
       return;
     }
 
+    const file = localFile;
+
     const decodedToken = jwtDecode(localToken);
 
     console.log(decodedToken);
 
-    const userId = decodedToken['jti'];
+    //const userId = decodedToken['jti'];
     //console.log(userId);
+    const userEmail = decodedToken['sub'];
 
-    if (!userId) {
-      console.error('No user ID found');
+    if (!userEmail) {
+      console.error('No user email found');
       navigate('/login');
       return;
     }
@@ -63,13 +67,12 @@ const Profile = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      phoneNumber: user.phoneNumber,
-      imageUrl: user.imageUrl,
+      phoneNumber: user.phoneNumber
     };
     //console.log(updatedUserData);
 
     try {
-      const updatedUser = await updateUser(userId, updatedUserData);
+      const updatedUser = await updateUserEmail(userEmail, updatedUserData, file);
       console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
@@ -80,33 +83,34 @@ const Profile = () => {
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      try {
-        const localToken = localStorage.getItem('Jwt_Token');
-        if (!localToken) {
-          console.error('No token found');
-          navigate('/login');
-          return;
-        }
+    setLocalFile(file);
+    // if (file) {
+    //   try {
+    //     const localToken = localStorage.getItem('Jwt_Token');
+    //     if (!localToken) {
+    //       console.error('No token found');
+    //       navigate('/login');
+    //       return;
+    //     }
 
-        const decodedToken = jwtDecode(localToken);
-        const userId = decodedToken['jti'];
-        if (!userId) {
-          console.error('No user ID found');
-          navigate('/login');
-          return;
-        }
+    //     const decodedToken = jwtDecode(localToken);
+    //     const userId = decodedToken['jti'];
+    //     if (!userId) {
+    //       console.error('No user ID found');
+    //       navigate('/login');
+    //       return;
+    //     }
 
-        const imageUrl = await uploadUserPicture(userId, file);
-        setPreviewVisible(true);
-        setIsEditingPicture(false);
-        setProfilePicture(imageUrl);
-        setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
-        console.log('Profile picture updated successfully');
-      } catch (error) {
-        console.error('Error updating profile picture:', error);
-      }
-    }
+    //     const imageUrl = await uploadUserPicture(userId, file);
+    //     setPreviewVisible(true);
+    //     setIsEditingPicture(false);
+    //     setProfilePicture(imageUrl);
+    //     setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
+    //     console.log('Profile picture updated successfully');
+    //   } catch (error) {
+    //     console.error('Error updating profile picture:', error);
+    //   }
+    // }
   };
 
 
@@ -161,30 +165,32 @@ const Profile = () => {
     const fetchUserData = async () => {
       const localToken = localStorage['Jwt_Token'];
       const decodedToken = jwtDecode(localToken);
-      const userId = decodedToken['jti'];
+      //const userId = decodedToken['jti'];
+      const userEmail = decodedToken['sub'];
 
-      if (!userId) {
+      if (!userEmail) {
         console.error('No user ID found');
         navigate('/login');
         return;
       }
 
       try {
-        const userData = await getUserById(userId);
+        //const userData = await getUserById(userId);
+        const userData = await getUserByEmail(userEmail);
         setUser(userData);
         console.log('User data:');
         console.log(userData);
 
-        if (user.imageUrl !== defaultImageUrl) {
-          console.log("custom avatar!")
-          await getPictureMethod();
-          console.log('User Avatar img: ', user.imageUrl)
-          console.log(profilePicture);
-          //setUser(({ ...user, imageUrl: profilePicture }));
-        }
-        else {
-          console.log("default");
-        }
+        // if (user.imageUrl !== defaultImageUrl) {
+        //   console.log("custom avatar!")
+        //   await getPictureMethod();
+        //   console.log('User Avatar img: ', user.imageUrl)
+        //   console.log(profilePicture);
+        //   //setUser(({ ...user, imageUrl: profilePicture }));
+        // }
+        // else {
+        //   console.log("default");
+        // }
 
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -240,7 +246,7 @@ const Profile = () => {
 
       <h2 className="profile-title">About me</h2>
       <img
-        src={user.imageUrl || profilePicture}
+        src={user.picture || profilePicture}
         alt="User"
         className="profile-image"
       />
@@ -248,13 +254,12 @@ const Profile = () => {
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         <button onClick={handleServicesToggle}>My Services</button>
         {becomeProviderButton}
-        <button onClick={handleEditPictureToggle}>Edit Profile Picture</button>
       </div>
       {isEditingPicture && (
         <div className="profile-picture-edit">
           <input type="file" onChange={handleImageChange} accept="image/*" />
-          {user.imageUrl && (
-            <img src={user.imageUrl} alt="Profile Preview" className="profile-preview-image" />
+          {user.picture && (
+            <img src={user.picture} alt="Profile Preview" className="profile-preview-image" />
           )}
         </div>
       )}

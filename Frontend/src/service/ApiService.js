@@ -179,6 +179,16 @@ const getUserById = async (userId) => {
   }
 };
 
+const getUserByEmail = async (email) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getUserById}/${email}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user data", error);
+    throw error;
+  }
+};
+
 const getUserByIdTest = async (userId) => {
   try {
     const response = await axios.get(`${config.baseUrl}${config.getUserById}/${userId}`).then(e => {
@@ -205,6 +215,37 @@ const updateUser = async (userId, userData) => {
     throw error;
   }
 };
+
+const updateUserEmail = async (userEmail, userData, picture) => {
+  try {
+    const formData = new FormData();
+
+    formData.append('picture', picture);
+
+    console.log(picture);
+
+    Object.keys(userData).forEach(key => {
+      formData.append(key, userData[key]);
+    });
+
+    // remove image url from request
+
+    for (var key of formData.entries()) {
+      console.log(key);
+    }
+
+    const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userEmail}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user data", error);
+    throw error;
+  }
+}
 
 const updateUserRole = async (userId, newRole) => {
   try {
@@ -280,5 +321,7 @@ export {
   updateUserRole,
   uploadUserPicture,
   getPicture,
+  getUserByEmail,
+  updateUserEmail
 }
 export default apiService;

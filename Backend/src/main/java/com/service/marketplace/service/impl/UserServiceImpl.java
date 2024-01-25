@@ -45,6 +45,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(userMapper::userToUserResponse)
+                .orElse(null);
+    }
+
+    @Override
     public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate) {
         User existingUser = userRepository.findById(userId).orElse(null);
 
@@ -55,6 +62,13 @@ public class UserServiceImpl implements UserService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public UserResponse updateUser(String userEmail, UserUpdateRequest userToUpdate) {
+        User existingUser = userRepository.findByEmail(userEmail).orElse(null);
+
+        return updateUser(existingUser.getId(), userToUpdate);
     }
 
     @Override
