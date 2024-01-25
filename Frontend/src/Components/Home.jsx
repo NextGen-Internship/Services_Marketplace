@@ -15,25 +15,6 @@ const Home = () => {
   return (
     <div>
       <div className="home-category">
-        <div className='home-search'>
-          <form onSubmit={handleSearch}>
-            <div>
-              <input
-                className='input-search'
-                type='text'
-                placeholder='Search here...'
-                autoComplete='off'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                required
-              />
-              <button type='submit' className='search-btn'>
-                <FaSearch className='icon-input' />
-              </button>
-            </div>
-          </form>
-        </div>
-
         <h1>Category</h1>
         <div className="content-box">
           <div className="card">

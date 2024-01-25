@@ -33,7 +33,7 @@ body {
     justify-content: space-between;
     flex-wrap: wrap;
     width: 1000px;
-    margin-top: 190px;
+    margin-top: 10px;
   }
   
   .card {
@@ -70,6 +70,7 @@ body {
     border-radius: 20px;
     width: 10%;
     height: 40px;
+    margin-top: -10px;
     
   }
   /* .card i {
