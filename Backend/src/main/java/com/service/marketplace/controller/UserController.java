@@ -33,20 +33,9 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<UserResponse> getUserById(@PathVariable("userId") Integer userId) {
-//        UserResponse userResponse = userService.getUserById(userId);
-//
-//        if (userResponse != null) {
-//            return ResponseEntity.ok(userResponse);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-
-    @GetMapping("/{email}")
-    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable("email") String email) {
-        UserResponse userResponse = userService.getUserByEmail(email);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("userId") Integer userId) {
+        UserResponse userResponse = userService.getUserById(userId);
 
         if (userResponse != null) {
             return ResponseEntity.ok(userResponse);
@@ -55,30 +44,30 @@ public class UserController {
         }
     }
 
-//    @Valid
-//    @PutMapping("/{userId}")
-//    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
-//        try {
-//            UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
-//
-//            if (updatedUser == null) {
-//                return ResponseEntity.notFound().build();
-//            } else {
-//                return ResponseEntity.ok(updatedUser);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.internalServerError().build();
-//        }
-//    }
+    @Valid
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
+        try {
+            UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
+
+            if (updatedUser == null) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(updatedUser);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @Valid
-    @PutMapping("/{userEmail}")
+    @PutMapping()
     public ResponseEntity<UserResponse> updateUserByEmail(@PathVariable("userEmail") String userEmail,
                                                           @ModelAttribute UserUpdateRequest userToUpdate,
                                                           @RequestParam(value = "picture") Optional<MultipartFile> file) {
         try {
-            if (file.isPresent()) {
+            if (file.isPresent()) { //in service
                 storageService.uploadFile(file.get(), userEmail);
             }
 

@@ -108,3 +108,15 @@
     border-radius: 4px;
     border: 1px solid #ccc;
 }
+
+.PhoneInputCountryIcon {
+    width: 40px; 
+    height: auto;
+}
+.custom-phone-input .PhoneInputCountrySelect {
+    flex-shrink: 0; 
+  }
+  
+  .custom-phone-input .PhoneInputInput {
+    flex-grow: 1;
+  }

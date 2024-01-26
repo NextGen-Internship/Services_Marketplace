@@ -4,17 +4,21 @@ import "./Navbar.jsx"
 import '../styles/Profile.css';
 import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture, getUserByEmail, updateUserEmail } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
+import PhoneInput from 'react-phone-number-input';
+
 
 const Profile = () => {
   const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
-  const [showPersonalInfo, setShowPersonalInfo] = useState(false);
+  const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
   const [localFile, setLocalFile] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
@@ -24,6 +28,16 @@ const Profile = () => {
     picture: '',
     role: ''
   });
+
+  // const handleChangePhoneNUmber = (event) => {
+  //   const input = event.target.value;
+  //   setPhoneNumber(validatePhoneNUmber(input));
+  // };
+
+  const validatePhoneNUmber = (phoneNumber) => {
+    const phoneNumberPattern = /^\d{10}$/;
+    return phoneNumberPattern.test(phoneNumber);
+  }
 
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
@@ -281,7 +295,14 @@ const Profile = () => {
               </div>
               <div className="input-group">
                 <label>Phone:</label>
-                <input type="text" name="phoneNumber" value={user.phoneNumber} onChange={handleInputChange} />
+                <PhoneInput
+                  international
+                  countryCallingCodeEditable={false}
+                  defaultCountry="US"
+                  value={user.phoneNumber}
+                  onChange={setPhoneNumber}
+                  name="phoneNumber"
+                />
               </div>
               <div className="input-group">
                 <label>Profile Picture:</label>
