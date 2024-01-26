@@ -30,12 +30,28 @@
     padding: 10px 20px ;
 }
 
-/* .UserIcon {
-    font-size: 30px;
-    margin-right: 5px;
-    display: flex; 
+.UserIcon {
+    font-size: 35px; 
+    color: #0073e6; 
+    border: 2px solid #0073e6; 
+    border-radius: 50%; 
+    width: 40px; 
+    height: 40px;
+    display: flex;
     align-items: center;
-} */
+    justify-content: center;
+    margin-left: 10px; 
+    float: right;
+}
+
+.NavButton {
+    float: right;
+    background-color: #c2c1c1d4;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin: -8px 2px 1px 2px;
+}
+
 .NavButton{
     float: right;
     background-color: #c2c1c1d4;
