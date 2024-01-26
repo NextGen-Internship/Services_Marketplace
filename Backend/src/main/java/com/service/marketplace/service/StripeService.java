@@ -17,20 +17,18 @@ import java.util.Map;
 @Slf4j
 public class StripeService {
 
+    @Value("${pk.stripe.key}")
+    private String stripePublicKey;
 
-    @Value("${api.stripe.key}")
-    private String stripeApiKey;
+    @Value("${sk.stripe.key}")
+    private String stripeSecretKey;
 
-
-    @PostConstruct
-    public void init(){
-
-        Stripe.apiKey = stripeApiKey;
-    }
-
+//    @PostConstruct
+//    public void init(){
+//        Stripe.apiKey=null;
+//    }
 
     public StripeRequest createCardToken(StripeRequest model) {
-
         try {
             Map<String, Object> card = new HashMap<>();
             Map<String, Object> params = new HashMap<>();
@@ -39,6 +37,7 @@ public class StripeService {
             card.put("exp_year", Integer.parseInt(model.getExpYear()));
             card.put("cvc", model.getCvc());
             params.put("card", card);
+            Stripe.apiKey = stripePublicKey;
             Token token = Token.create(params);
 
             if (token != null && token.getId() != null) {
@@ -50,12 +49,9 @@ public class StripeService {
             log.error("StripeService (createCardToken)", e);
             throw new RuntimeException(e.getMessage());
         }
-
     }
 
     public StripeChargeRequest charge(StripeChargeRequest chargeRequest) {
-
-
         try {
             chargeRequest.setSuccess(false);
             Map<String, Object> chargeParams = new HashMap<>();
@@ -63,6 +59,9 @@ public class StripeService {
             chargeParams.put("currency", "USD");
             chargeParams.put("description", "Payment for id " + chargeRequest.getAdditionalInfo().getOrDefault("ID_TAG", ""));
             chargeParams.put("source", chargeRequest.getStripeToken());
+
+            Stripe.apiKey = stripeSecretKey;
+
             Map<String, Object> metaData = new HashMap<>();
             metaData.put("id", chargeRequest.getChargeId());
             metaData.putAll(chargeRequest.getAdditionalInfo());
@@ -73,14 +72,11 @@ public class StripeService {
             if (charge.getPaid()) {
                 chargeRequest.setChargeId(charge.getId());
                 chargeRequest.setSuccess(true);
-
             }
             return chargeRequest;
         } catch (StripeException e) {
             log.error("StripeService (charge)", e);
             throw new RuntimeException(e.getMessage());
         }
-
     }
-
 }

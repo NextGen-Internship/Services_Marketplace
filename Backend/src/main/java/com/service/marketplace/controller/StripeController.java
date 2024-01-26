@@ -4,11 +4,12 @@ import com.service.marketplace.dto.request.StripeChargeRequest;
 import com.service.marketplace.dto.request.StripeRequest;
 import com.service.marketplace.service.StripeService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/stripe")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StripeController {
 
 
