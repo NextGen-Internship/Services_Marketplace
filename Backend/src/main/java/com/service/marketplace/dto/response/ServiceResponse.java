@@ -1,8 +1,6 @@
 package com.service.marketplace.dto.response;
 
 import com.service.marketplace.persistence.enums.ServiceStatus;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,7 +9,7 @@ import java.util.List;
 
 @Data
 public class ServiceResponse {
-    private  Integer id;
+    private Integer id;
     private String title;
     private String description;
     private ServiceStatus serviceStatus;
@@ -19,4 +17,5 @@ public class ServiceResponse {
     private Integer providerId;
     private Integer categoryId;
     private List<Integer> cityIds;
+    private LocalDateTime updatedAt;
 }

@@ -7,9 +7,13 @@ import com.service.marketplace.persistence.entity.Category;
 import java.util.List;
 
 public interface CategoryService {
-    List<Category> getAllCategories();
-    Category getCategoryById(Integer categoryId);
-    Category createCategory(CategoryRequest categoryToCreate);
-    Category updateCategory(Integer categoryId, CategoryRequest categoryToUpdate);
+    List<CategoryResponse> getAllCategories();
+
+    CategoryResponse getCategoryById(Integer categoryId);
+
+    CategoryResponse createCategory(CategoryRequest categoryToCreate);
+
+    CategoryResponse updateCategory(Integer categoryId, CategoryRequest categoryToUpdate);
+
     void deleteCategoryById(Integer categoryId);
 }

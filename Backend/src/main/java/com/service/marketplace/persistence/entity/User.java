@@ -1,18 +1,15 @@
 package com.service.marketplace.persistence.entity;
 
-import com.service.marketplace.persistence.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,9 +45,11 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "description")
     private String description;
 
-//    @Lob
-//    @Column(name = "picture")
-//    private byte[] picture;
+    @Column(name = "picture")
+    private String picture;
+
+    @Column(name = "media_key")
+    private String mediaKey;
 
     @Column(name = "is_active")
     private boolean isActive = true;

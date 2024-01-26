@@ -1,8 +1,9 @@
-// AddService.jsx
 import React, { useState, useEffect } from 'react';
 import '../styles/AddService.css';
 import Multiselect from 'multiselect-react-dropdown';
-import { getAllCategories, getAllCities } from '../service/ApiService';
+import { getAllCategories, getAllCities, getUserById } from '../service/ApiService';
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
 
 const AddService = ({ onAdd }) => {
   const [serviceTitle, setServiceTitle] = useState('');
@@ -10,9 +11,10 @@ const AddService = ({ onAdd }) => {
   const [servicePrice, setServicePrice] = useState('');
   const [serviceCategory, setServiceCategory] = useState('');
   const [categoryList, setCategoryList] = useState([]);
-  const providerId = 4;
+  const [providerId, setProviderId] = useState();
   const [cities, setCities] = useState([]);
   const [chosen, setChosen] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +47,40 @@ const AddService = ({ onAdd }) => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const localToken = localStorage.getItem('Jwt_Token');
+
+      if (!localToken) {
+        console.error('No JWT token found');
+        navigate('/sign-in');
+        return;
+      }
+
+      const decodedToken = jwtDecode(localToken);
+      const userId = decodedToken['jti'];
+      const userRole = localStorage.getItem('Jwt_Token') ? jwtDecode(localStorage.getItem('Jwt_Token'))?.role : null;
+
+      if (!userId || !userRole) {
+        console.error('No user ID or role found');
+        navigate('/sign-in');
+        return;
+      }
+
+      if (userRole.includes('PROVIDER')) {
+        try {
+          const userData = await getUserById(userId);
+          console.log('User data:' + userData);
+          console.log('User role:', userRole);
+          setProviderId(userId);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+    }
+    fetchUserData();
+  }, [navigate]);
 
   const handleChange = (event) => {
     setServiceCategory(event.target.value);
@@ -102,8 +138,7 @@ const AddService = ({ onAdd }) => {
     setServiceDescription('');
     setServicePrice('');
     setServiceCategory('');
-    setCities([]);
-    setChosen([]); 
+    setChosen([]);
   };
 
   return (
