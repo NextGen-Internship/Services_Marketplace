@@ -6,7 +6,6 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class StripeService {
 
@@ -35,13 +33,14 @@ public class StripeService {
 
         try {
             Map<String, Object> card = new HashMap<>();
+            Map<String, Object> params = new HashMap<>();
             card.put("number", model.getCardNumber());
             card.put("exp_month", Integer.parseInt(model.getExpMonth()));
             card.put("exp_year", Integer.parseInt(model.getExpYear()));
             card.put("cvc", model.getCvc());
-            Map<String, Object> params = new HashMap<>();
             params.put("card", card);
             Token token = Token.create(params);
+
             if (token != null && token.getId() != null) {
                 model.setSuccess(true);
                 model.setToken(token.getId());
