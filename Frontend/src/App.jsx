@@ -7,9 +7,11 @@ import Home from './Components/Home';
 import Category from './Components/Category';
 import { SignIn } from './Components/Access/SignIn';
 import SignUp from './Components/Access/SignUp';
+import SuccessPage from './Components/SuccessPage';
 import AddServicePage from './Components/AddServicePage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ServicesPage from './Components/ServicesPage';
+import CancelPage from './Components/CancelPage';
 
 function App() {
   const[clicked, isClicked] = useState(false)
@@ -25,6 +27,8 @@ function App() {
           <Route exact path="services" element={<ServicesPage/>}/>
           <Route exact path="sign-in" element={<SignIn/>}/>
           <Route exact path="sign-up" element={<SignUp/>}/>
+          <Route exact path="success" element={<SuccessPage/>} />
+          <Route exact path="cancel" element={<CancelPage/>} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

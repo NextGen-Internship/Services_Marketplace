@@ -1,66 +1,90 @@
-import React from 'react'
-import '../styles/Modal.css'
-
-const data = {
-    id: 1,
-    src: 'Subscription',
-    title: 'Become Provider',
-    description: 'Unlock endless possibilities by subscribing to our Provider plan! As a provider, you gain the ability to effortlessly add and showcase an unlimited number of services. Seize the opportunity to share your expertise and offerings with a broader audience. Elevate your profile, expand your reach, and start providing services seamlessly with our Provider Subscription.',
-    price: '9.99'
-};
+import React, { useState, useEffect } from 'react';
+import '../styles/Modal.css';
+import axios from 'axios';
+import Stripe from 'stripe';
 
 function Modal({ setOpenModal }) {
-    
-    const checkout = (plan) => {
-        // fetch("http://localhost:8080/api/v1/create-subscription-checkout-session", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     mode: "cors",
-        //     body: JSON.stringify({ plan: plan, customerId: userId }),
-        // })
-        //     .then((res) => {
-        //         if (res.ok) return res.json();
-        //         console.log(res);
-        //         return res.json().then((json) => Promise.reject(json));
-        //     })
-        //     .then(({ session }) => {
-        //         window.location = session.url;
-        //     })
-        //     .catch((e) => {
-        //         console.log(e.error);
-        //     });
-    };
+    const [planData, setPlanData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const fetchPlanData = async () => {
+            try {
+                const response = await axios.get(
+                    'https://api.stripe.com/v1/plans/price_1OcUNzI2KDxgMJyoxeNLRi93',
+                    {
+                        headers: {
+                            Authorization: `Bearer sk_test_51OcQX6I2KDxgMJyoLEPzCcdVgucBUKxHjaTYal5aaj0i3z4PzUCktvxT1yjiJKCmOYiqes1OKtzkTvbNWjolFjrm00Tzq3PmyY`,
+                        },
+                    }
+                );
+
+                console.log('Stripe API response:', response.data);
+
+                setPlanData(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching plan data', error);
+                setLoading(false);
+            }
+        };
+
+        fetchPlanData();
+    }, []);
+
+    const checkout = async () => {
+        try {
+            if (!planData) {
+                console.error('Plan data not available');
+                return;
+            }
+
+            const response = await axios.post(
+                'http://localhost:8080/api/subscribe/create-subscription-checkout-session',
+                {
+                    plan: planData.id,
+                    quantity: 1,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            const { sessionId } = response.data;
+            window.location.href = `https://checkout.stripe.com/checkout/session/${sessionId}`;
+        } catch (error) {
+            console.error('Error during checkout', error);
+        }
+    };
 
     return (
         <div className="modalBackground">
             <div className="modalContainer">
                 <div className="titleCloseBtn">
-                    <button
-                        onClick={() => {
-                            setOpenModal(false);
-                        }}
-                    >
-                        X
-                    </button>
+                    <button onClick={() => setOpenModal(false)}>X</button>
                 </div>
                 <div className="title">
-                    <h1>{data.title}</h1>
+                    <h1>Become Provider</h1>
                 </div>
                 <div className="body">
-                    {/* <p>{data.description}</p> */}
-                    <p>${data.price}</p>
-                </div>
-                <div className="footer">
-                    <button onClick={() => checkout(Number(data.price))}>
-                        Subscribe
-                    </button>
+                    {loading ? (
+                        <p>Loading plan data...</p>
+                    ) : planData ? (
+                        <>
+                            <p>${planData.amount / 100} per {planData.interval}</p>
+                            <div className="footer">
+                                <button onClick={checkout}>Subscribe</button>
+                            </div>
+                        </>
+                    ) : (
+                        <p>No plan data available.</p>
+                    )}
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default Modal;
