@@ -1,4 +1,4 @@
-package com.service.marketplace.service;
+package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
@@ -8,6 +8,7 @@ import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RequestRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.RequestService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
