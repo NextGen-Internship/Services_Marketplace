@@ -2,7 +2,6 @@ package com.service.marketplace.service;
 
 import com.service.marketplace.dto.request.CategoryRequest;
 import com.service.marketplace.dto.response.CategoryResponse;
-import com.service.marketplace.persistence.entity.Category;
 
 import java.util.List;
 
