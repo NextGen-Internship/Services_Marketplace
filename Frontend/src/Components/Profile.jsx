@@ -83,7 +83,7 @@ const Profile = () => {
       email: user.email,
       phoneNumber: user.phoneNumber
     };
-    //console.log(updatedUserData);
+    console.log(updatedUserData);
 
     try {
       const updatedUser = await updateUserEmail(userEmail, updatedUserData, file);
@@ -164,6 +164,12 @@ const Profile = () => {
   //     console.error('Error updating user role:', error);
   //   }
   // };
+
+  const handlePhoneChange = (phone) => {
+    setPhoneNumber(phone);
+    setUser(current => ({ ...current, phoneNumber: phone }));
+  };
+
   useEffect(() => {
     const getPictureMethod = async () => {
       const localToken = localStorage['Jwt_Token'];
@@ -192,6 +198,7 @@ const Profile = () => {
         //const userData = await getUserById(userId);
         const userData = await getUserByEmail(userEmail);
         setUser(userData);
+        setPhoneNumber(userData.phoneNumber);
         console.log('User data:');
         console.log(userData);
 
@@ -298,9 +305,9 @@ const Profile = () => {
                 <PhoneInput
                   international
                   countryCallingCodeEditable={false}
-                  defaultCountry="US"
-                  value={user.phoneNumber}
-                  onChange={setPhoneNumber}
+                  defaultCountry="BG"
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
                   name="phoneNumber"
                 />
               </div>
