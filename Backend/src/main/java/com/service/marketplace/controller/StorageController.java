@@ -1,6 +1,8 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,19 +13,23 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.MalformedURLException;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/file")
 public class StorageController {
     private final StorageService service;
+    private final UserRepository userRepository;
 
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        int userId = ((User) authentication.getPrincipal()).getId();
-        return new ResponseEntity<>(service.uploadFile(file, userId), HttpStatus.OK);
+
+        String userEmail = ((UserResponse) authentication.getPrincipal()).getEmail();
+        User user = userRepository.findByEmail(userEmail).orElse(null);
+        return new ResponseEntity<>(service.uploadFile(file, user.getId()), HttpStatus.OK);
     }
 
 
