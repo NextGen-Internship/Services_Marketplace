@@ -58,8 +58,9 @@ public class UserController {
 
     @Valid
     @PutMapping("/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @ModelAttribute UserUpdateRequest userToUpdate, @RequestParam(value = "picture") Optional<MultipartFile> file) {
         try {
+            storageService.uploadFile(file.isPresent() ? file.get() : null);
             UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
 
             if (updatedUser == null) {
@@ -73,28 +74,27 @@ public class UserController {
         }
     }
 
-    @Valid
-    @PutMapping()
-    public ResponseEntity<UserResponse> updateUserByEmail(@PathVariable("userEmail") String userEmail,
-                                                          @ModelAttribute UserUpdateRequest userToUpdate,
-                                                          @RequestParam(value = "picture") Optional<MultipartFile> file) {
-        try {
-            if (file.isPresent()) { //in service
-                storageService.uploadFile(file.get());
-            }
-
-            UserResponse updatedUser = userService.updateUser(userEmail, userToUpdate);
-
-            if (updatedUser == null) {
-                return ResponseEntity.notFound().build();
-            } else {
-                return ResponseEntity.ok(updatedUser);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+//    @Valid
+//    @PutMapping()
+//    public ResponseEntity<UserResponse> updateCurrentUser(@ModelAttribute UserUpdateRequest userToUpdate,
+//                                                          @RequestParam(value = "picture") Optional<MultipartFile> file) {
+//        try {
+//            User user = userService.getCurrentUser();
+//            storageService.uploadFile(file.isPresent() ? file.get() : null);
+//
+//
+//            UserResponse updatedUser = userService.updateUser(user.getId(), userToUpdate);
+//
+//            if (updatedUser == null) {
+//                return ResponseEntity.notFound().build();
+//            } else {
+//                return ResponseEntity.ok(updatedUser);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 
     @Valid
     @PutMapping("/role/{userId}")

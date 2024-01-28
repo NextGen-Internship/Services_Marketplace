@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture, getUserByEmail, updateUserEmail } from '../service/ApiService.js';
+import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture, getUserByEmail, updateUserWithPicture, getCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 
@@ -67,12 +67,12 @@ const Profile = () => {
 
     console.log(decodedToken);
 
-    //const userId = decodedToken['jti'];
+    const userId = decodedToken['jti'];
     //console.log(userId);
-    const userEmail = decodedToken['sub'];
+    //const userEmail = decodedToken['sub'];
 
-    if (!userEmail) {
-      console.error('No user email found');
+    if (!userId) {
+      console.error('No user found');
       navigate('/login');
       return;
     }
@@ -86,7 +86,7 @@ const Profile = () => {
     console.log(updatedUserData);
 
     try {
-      const updatedUser = await updateUserEmail(userEmail, updatedUserData, file);
+      const updatedUser = await updateUserWithPicture(userId, updatedUserData, file);
       console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
@@ -171,24 +171,24 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    const getPictureMethod = async () => {
-      const localToken = localStorage['Jwt_Token'];
-      const decodedToken = jwtDecode(localToken);
-      const userId = decodedToken['jti'];
+    // const getPictureMethod = async () => {
+    //   const localToken = localStorage['Jwt_Token'];
+    //   const decodedToken = jwtDecode(localToken);
+    //   const userId = decodedToken['jti'];
 
-      const picUrl = await getPicture(userId);
-      console.log('polled url', picUrl);
-      setProfilePicture(picUrl);
-      setUser(prevUser => ({ ...prevUser, imageUrl: picUrl }));
-    };
+    //   const picUrl = await getPicture(userId);
+    //   console.log('polled url', picUrl);
+    //   setProfilePicture(picUrl);
+    //   setUser(prevUser => ({ ...prevUser, imageUrl: picUrl }));
+    // };
 
     const fetchUserData = async () => {
       const localToken = localStorage['Jwt_Token'];
-      const decodedToken = jwtDecode(localToken);
+      //const decodedToken = jwtDecode(localToken);
       //const userId = decodedToken['jti'];
-      const userEmail = decodedToken['sub'];
+      //const userEmail = decodedToken['sub'];
 
-      if (!userEmail) {
+      if (!localToken) {
         console.error('No user ID found');
         navigate('/login');
         return;
@@ -196,7 +196,7 @@ const Profile = () => {
 
       try {
         //const userData = await getUserById(userId);
-        const userData = await getUserByEmail(userEmail);
+        const userData = await getCurrentUser();
         setUser(userData);
         setPhoneNumber(userData.phoneNumber);
         console.log('User data:');
@@ -226,11 +226,11 @@ const Profile = () => {
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
 
-  const handleEditPictureToggle = () => {
-    setIsEditingPicture(!isEditingPicture);
-    setEditMode(false);
-    setPreviewVisible(false);
-  };
+  // const handleEditPictureToggle = () => {
+  //   setIsEditingPicture(!isEditingPicture);
+  //   setEditMode(false);
+  //   setPreviewVisible(false);
+  // };
 
 
   const handlePersonalInfoToggle = () => {

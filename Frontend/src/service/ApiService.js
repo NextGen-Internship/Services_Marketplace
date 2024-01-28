@@ -189,16 +189,20 @@ const getUserByEmail = async (email) => {
   }
 };
 
-const getUserByIdTest = async (userId) => {
+
+const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${config.baseUrl}${config.getUserById}/${userId}`).then(e => {
-      console.log("REsponse test: ", e)
-    })
+    const response = await axios.get(`${config.baseUrl}${config.getCurrentUser}`,{ headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+    }
+  });
+    return response.data;
   } catch (error) {
     console.error("Error fetching user data", error);
     throw error;
   }
-};
+}
 
 
 const updateUser = async (userId, userData) => {
@@ -216,7 +220,7 @@ const updateUser = async (userId, userData) => {
   }
 };
 
-const updateUserEmail = async (userEmail, userData, picture) => {
+const updateUserWithPicture = async (userId, userData, picture) => {
   try {
     const formData = new FormData();
 
@@ -234,7 +238,7 @@ const updateUserEmail = async (userEmail, userData, picture) => {
       console.log(key);
     }
 
-    const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userEmail}`, formData, {
+    const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userId}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
@@ -322,6 +326,7 @@ export {
   uploadUserPicture,
   getPicture,
   getUserByEmail,
-  updateUserEmail
+  updateUserWithPicture,
+  getCurrentUser
 }
 export default apiService;
