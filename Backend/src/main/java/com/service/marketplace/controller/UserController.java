@@ -3,6 +3,7 @@ package com.service.marketplace.controller;
 import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
+import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.StorageService;
 import com.service.marketplace.service.UserService;
 import jakarta.validation.Valid;
@@ -44,6 +45,17 @@ public class UserController {
         }
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        User user = userService.getCurrentUser();
+
+        if (user != null) {
+            return ResponseEntity.ok(userService.getUserById(user.getId()));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @Valid
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
@@ -68,7 +80,7 @@ public class UserController {
                                                           @RequestParam(value = "picture") Optional<MultipartFile> file) {
         try {
             if (file.isPresent()) { //in service
-                storageService.uploadFile(file.get(), userEmail);
+                storageService.uploadFile(file.get());
             }
 
             UserResponse updatedUser = userService.updateUser(userEmail, userToUpdate);
