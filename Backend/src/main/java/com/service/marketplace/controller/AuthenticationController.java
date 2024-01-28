@@ -18,21 +18,21 @@ import java.security.GeneralSecurityException;
 @CrossOrigin
 public class AuthenticationController {
 
-    private final AuthenticationService service;
+    private final AuthenticationService authService;
     private final GoogleService googleService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
-        return ResponseEntity.ok(service.register(request));
+        return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
-        AuthenticationResponse authenticationResponse = service.login(request);
+        AuthenticationResponse authenticationResponse = authService.login(request);
         return ResponseEntity.ok(authenticationResponse);
     }
 

@@ -3,11 +3,13 @@ package com.service.marketplace.service;
 import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
-import com.service.marketplace.persistence.enums.UserRole;
+import com.service.marketplace.persistence.entity.User;
 
 import java.util.List;
 
 public interface UserService {
+    User getCurrentUser();
+
     List<UserResponse> getAllUsers();
 
     UserResponse getUserById(Integer userId);
