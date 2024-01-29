@@ -14,13 +14,10 @@ public interface UserService {
 
     UserResponse getUserById(Integer userId);
 
-    UserResponse getUserByEmail(String email);
-
     UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate);
-
-    UserResponse updateUser(String userEmail, UserUpdateRequest userToUpdate);
 
     boolean deleteUserById(Integer userId);
 
     UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest);
+    UserResponse getUserResponseByUser(User user);
 }

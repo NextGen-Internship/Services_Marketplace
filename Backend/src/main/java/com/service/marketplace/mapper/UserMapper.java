@@ -21,7 +21,6 @@ public interface UserMapper {
 
     void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
 
-
     UserResponse userToUserResponse(User user);
 
     User userRoleToUser(UserRole role);

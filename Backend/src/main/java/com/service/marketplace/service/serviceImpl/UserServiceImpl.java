@@ -97,6 +97,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.userToUserResponse(existingUser);
     }
 
+    @Override
+    public UserResponse getUserResponseByUser(User user) {
+        return userMapper.userToUserResponse(user);
+    }
+
 
     @Override
     public boolean deleteUserById(Integer userId) {
