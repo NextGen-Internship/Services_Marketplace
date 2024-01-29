@@ -58,9 +58,8 @@ public class UserController {
 
     @Valid
     @PutMapping("/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @ModelAttribute UserUpdateRequest userToUpdate, @RequestParam(value = "picture") Optional<MultipartFile> file) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
         try {
-            storageService.uploadFile(file.isPresent() ? file.get() : null);
             UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
 
             if (updatedUser == null) {

@@ -220,36 +220,34 @@ const updateUser = async (userId, userData) => {
   }
 };
 
-const updateUserWithPicture = async (userId, userData, picture) => {
-  try {
-    const formData = new FormData();
+// const updateUserWithPicture = async (userId, userData, picture) => {
+//   try {
+//     const formData = new FormData();
 
-    formData.append('picture', picture);
+//     formData.append('picture', picture);
 
-    console.log(picture);
+//     console.log(picture);
 
-    Object.keys(userData).forEach(key => {
-      formData.append(key, userData[key]);
-    });
+//     Object.keys(userData).forEach(key => {
+//       formData.append(key, userData[key]);
+//     });
 
-    // remove image url from request
+//     for (var key of formData.entries()) {
+//       console.log(key);
+//     }
 
-    for (var key of formData.entries()) {
-      console.log(key);
-    }
-
-    const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userId}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-      }
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error updating user data", error);
-    throw error;
-  }
-}
+//     const response = await axios.put(`${config.baseUrl}${config.getUserById}/${userId}`, formData, {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//         "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+//       }
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error updating user data", error);
+//     throw error;
+//   }
+// }
 
 const updateUserRole = async (userId, newRole) => {
   try {
@@ -268,30 +266,30 @@ const updateUserRole = async (userId, newRole) => {
   }
 };
 
-const uploadUserPicture = async (userId, newPicture) => {
-  try {
-    const formData = new FormData();
-    formData.append('file', newPicture); 
-    for (let [key, value] of formData.entries()) { 
-      console.log(key, value);
-    }
+// const uploadUserPicture = async (userId, newPicture) => {
+//   try {
+//     const formData = new FormData();
+//     formData.append('file', newPicture); 
+//     for (let [key, value] of formData.entries()) { 
+//       console.log(key, value);
+//     }
 
-    const response = await axios.post(
-      `${config.baseUrl}/file/upload/${userId}`, 
-      formData,
-      {
-        headers: {
-          //"Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-        }
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error updating user profile picture", error);
-    throw error;
-  }
-};
+//     const response = await axios.post(
+//       `${config.baseUrl}/file/upload/${userId}`, 
+//       formData,
+//       {
+//         headers: {
+//           //"Content-Type": "multipart/form-data",
+//           "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+//         }
+//       }
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error updating user profile picture", error);
+//     throw error;
+//   }
+// };
 
 const getPicture = async (userId) => {
   try {
@@ -323,10 +321,10 @@ export {
   getUserById,
   updateUser,
   updateUserRole,
-  uploadUserPicture,
+  //uploadUserPicture,
   getPicture,
   getUserByEmail,
-  updateUserWithPicture,
+ // updateUserWithPicture,
   getCurrentUser
 }
 export default apiService;

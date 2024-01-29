@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture, getUserByEmail, updateUserWithPicture, getCurrentUser } from '../service/ApiService.js';
+import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture, getUserByEmail, updateUserEmail, getCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 
@@ -34,10 +34,10 @@ const Profile = () => {
   //   setPhoneNumber(validatePhoneNUmber(input));
   // };
 
-  const validatePhoneNUmber = (phoneNumber) => {
-    const phoneNumberPattern = /^\d{10}$/;
-    return phoneNumberPattern.test(phoneNumber);
-  }
+  // const validatePhoneNUmber = (phoneNumber) => {
+  //   const phoneNumberPattern = /^\d{10}$/;
+  //   return phoneNumberPattern.test(phoneNumber);
+  // }
 
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
@@ -61,18 +61,18 @@ const Profile = () => {
       return;
     }
 
-    const file = localFile;
+   // const file = localFile;
 
     const decodedToken = jwtDecode(localToken);
 
     console.log(decodedToken);
 
     const userId = decodedToken['jti'];
-    //console.log(userId);
+    console.log(userId);
     //const userEmail = decodedToken['sub'];
 
     if (!userId) {
-      console.error('No user found');
+      console.error('No user email found');
       navigate('/login');
       return;
     }
@@ -86,7 +86,7 @@ const Profile = () => {
     console.log(updatedUserData);
 
     try {
-      const updatedUser = await updateUserWithPicture(userId, updatedUserData, file);
+      const updatedUser = await updateUser(userId, updatedUserData);
       console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
@@ -184,11 +184,11 @@ const Profile = () => {
 
     const fetchUserData = async () => {
       const localToken = localStorage['Jwt_Token'];
-      //const decodedToken = jwtDecode(localToken);
-      //const userId = decodedToken['jti'];
+      const decodedToken = jwtDecode(localToken);
+      const userId = decodedToken['jti'];
       //const userEmail = decodedToken['sub'];
 
-      if (!localToken) {
+      if (!userId) {
         console.error('No user ID found');
         navigate('/login');
         return;
@@ -226,11 +226,11 @@ const Profile = () => {
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
 
-  // const handleEditPictureToggle = () => {
-  //   setIsEditingPicture(!isEditingPicture);
-  //   setEditMode(false);
-  //   setPreviewVisible(false);
-  // };
+  const handleEditPictureToggle = () => {
+    setIsEditingPicture(!isEditingPicture);
+    setEditMode(false);
+    setPreviewVisible(false);
+  };
 
 
   const handlePersonalInfoToggle = () => {
@@ -266,11 +266,11 @@ const Profile = () => {
     <div className="profile-container">
 
       <h2 className="profile-title">About me</h2>
-      <img
+      {/* <img
         src={user.picture || profilePicture}
         alt="User"
         className="profile-image"
-      />
+      /> */}
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         <button onClick={handleServicesToggle}>My Services</button>
@@ -302,6 +302,10 @@ const Profile = () => {
               </div>
               <div className="input-group">
                 <label>Phone:</label>
+                <input type="phone" name="phoneNumber" value={user.phoneNumber} onChange={handleInputChange} />
+              </div>
+              {/* <div className="input-group">
+                <label>Phone:</label>
                 <PhoneInput
                   international
                   countryCallingCodeEditable={false}
@@ -310,14 +314,14 @@ const Profile = () => {
                   onChange={handlePhoneChange}
                   name="phoneNumber"
                 />
-              </div>
-              <div className="input-group">
+              </div> */}
+              {/* <div className="input-group">
                 <label>Profile Picture:</label>
                 <input type="file" onChange={handleImageChange} accept="image/*" />
                 {user.imageUrl && (
                   <img src={user.imageUrl} alt="Profile Preview" className="profile-preview-image" />
                 )}
-              </div>
+              </div> */}
               <button className='save-button' onClick={handleSaveProfile}>Save</button>
             </>
           ) : (
