@@ -73,27 +73,27 @@ public class UserController {
         }
     }
 
-//    @Valid
-//    @PutMapping()
-//    public ResponseEntity<UserResponse> updateCurrentUser(@ModelAttribute UserUpdateRequest userToUpdate,
-//                                                          @RequestParam(value = "picture") Optional<MultipartFile> file) {
-//        try {
-//            User user = userService.getCurrentUser();
-//            storageService.uploadFile(file.isPresent() ? file.get() : null);
-//
-//
-//            UserResponse updatedUser = userService.updateUser(user.getId(), userToUpdate);
-//
-//            if (updatedUser == null) {
-//                return ResponseEntity.notFound().build();
-//            } else {
-//                return ResponseEntity.ok(updatedUser);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.internalServerError().build();
-//        }
-//    }
+    @Valid
+    @PutMapping()
+    public ResponseEntity<UserResponse> updateCurrentUser(@ModelAttribute UserUpdateRequest userToUpdate,
+                                                          @RequestParam(value = "picture") Optional<MultipartFile> file) {
+        try {
+            User user = userService.getCurrentUser();
+            storageService.uploadFile(file.isPresent() ? file.get() : null);
+
+
+            UserResponse updatedUser = userService.updateUser(user.getId(), userToUpdate);
+
+            if (updatedUser == null) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(updatedUser);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @Valid
     @PutMapping("/role/{userId}")

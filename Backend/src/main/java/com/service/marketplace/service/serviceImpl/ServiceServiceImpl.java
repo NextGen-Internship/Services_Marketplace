@@ -12,17 +12,15 @@ import com.service.marketplace.persistence.repository.CityRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
+import com.service.marketplace.service.UserService;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +31,7 @@ import java.util.List;
 public class ServiceServiceImpl implements ServiceService {
     private final ServiceRepository serviceRepository;
     private final ServiceMapper serviceMapper;
+    private final UserService userService;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
@@ -137,6 +136,18 @@ public class ServiceServiceImpl implements ServiceService {
             return Collections.emptyList(); // Handle the case when the user is not found
         }
     }
+
+    @Override
+    public List<ServiceResponse> getServicesByCurrentUser() {
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null) {
+            return Collections.emptyList();
+        }
+
+        List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(currentUser);
+        return serviceMapper.toServiceResponseList(userServices);
+    }
+
 
 
 }

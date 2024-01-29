@@ -23,4 +23,5 @@ public interface ServiceService {
 
     Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest);
 
+    List<ServiceResponse> getServicesByCurrentUser();
 }

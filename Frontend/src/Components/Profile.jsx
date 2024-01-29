@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, getUserByIdTest, updateUserRole, uploadUserPicture, getPicture, getUserByEmail, updateUserEmail, getCurrentUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 
@@ -29,17 +29,6 @@ const Profile = () => {
     role: ''
   });
 
-  // const handleChangePhoneNUmber = (event) => {
-  //   const input = event.target.value;
-  //   setPhoneNumber(validatePhoneNUmber(input));
-  // };
-
-  // const validatePhoneNUmber = (phoneNumber) => {
-  //   const phoneNumberPattern = /^\d{10}$/;
-  //   return phoneNumberPattern.test(phoneNumber);
-  // }
-
-
   const [isEditingPicture, setIsEditingPicture] = useState(false);
 
   const handleImageUrlChange = (e) => {
@@ -61,15 +50,12 @@ const Profile = () => {
       return;
     }
 
-   // const file = localFile;
-
     const decodedToken = jwtDecode(localToken);
 
     console.log(decodedToken);
 
     const userId = decodedToken['jti'];
     console.log(userId);
-    //const userEmail = decodedToken['sub'];
 
     if (!userId) {
       console.error('No user email found');

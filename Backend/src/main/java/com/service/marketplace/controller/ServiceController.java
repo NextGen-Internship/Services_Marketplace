@@ -40,6 +40,12 @@ public class ServiceController {
         return ResponseEntity.ok(userServices);
     }
 
+    @GetMapping("/user/current")
+    public ResponseEntity<List<ServiceResponse>> getServicesByCurrentUser() {
+        List<ServiceResponse> userServices = serviceService.getServicesByCurrentUser();
+        return ResponseEntity.ok(userServices);
+    }
+
 
     @PostMapping("/create")
     public ResponseEntity<ServiceResponse> createService(@RequestBody ServiceRequest serviceToCreate) {
