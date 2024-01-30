@@ -9,3 +9,4 @@ public interface AuthenticationService {
 
     AuthenticationResponse login(AuthenticationRequest request);
 }
+
