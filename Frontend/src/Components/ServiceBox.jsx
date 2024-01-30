@@ -22,17 +22,19 @@ const ServiceBox = ({ service, cities }) => {
                 <img src="https://www.shutterstock.com/image-vector/service-tool-icon-this-isolated-260nw-274711127.jpg"></img>
             </div>
             <div className='service-info'>
-                <div>
-                    <h3>{service.title}</h3>
-                    <p>{service.price}</p>
-                </div>
-                <div>
-                    <p>{service.description}</p>
-                </div>
-                <div>
-                    <p>{getCitiesNames(service, cities)} - {formattedDate}</p>
-                    <ViewMoreBtn onClick={() => console.log('click')} />
-                </div>
+            <div className="service-title">
+                <h3>{service.title}</h3>
+            </div>
+            <div className="service-price">
+                <p>{service.price}</p>
+            </div>
+            <div className="service-description">
+                <p>{service.description}</p>
+            </div>
+            <div className="service-details">
+                <p>{getCitiesNames(service, cities)} - {formattedDate}</p>
+                <ViewMoreBtn onClick={() => console.log('click')} />
+            </div>
             </div>
         </div>
     )
