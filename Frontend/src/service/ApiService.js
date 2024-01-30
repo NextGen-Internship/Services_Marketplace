@@ -109,7 +109,7 @@ const getPaginationServices = async (page, pageSize, sortingField, sortingDirect
     const response = await axios.get(config.baseUrl + config.getPaginationServices + '/' + page + '/' + pageSize + '/' + sortingField + '/' + sortingDirection);
     return response.data;
   } catch (error) {
-    console.error("Error fetching services", error);
+    console.error("Error fetching paginated services", error);
     throw error;
   }
 };
@@ -131,7 +131,7 @@ const getPaginationFilteredServices = async (serviceFilterRequest) => {
 
     return response.data;
   } catch (error) {
-    console.error("Error fetching services", error);
+    console.error("Error fetching filtered paginated services", error);
     throw error;
   }
 };
@@ -141,7 +141,7 @@ const postLogin = async (formData) => {
     const response = await axios.post(config.baseUrl + config.postLogin, formData);
     return response.data;
   } catch (error) {
-    console.error("Error fetching services", error);
+    console.error("Error login", error);
     throw error;
   }
 };
@@ -153,7 +153,7 @@ const googleLogin = async (googleToken) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching services", error);
+    console.error("Error login with google", error);
     throw error;
   }
 };
@@ -164,7 +164,7 @@ const postRegister = async (formData) => {
     const response = await axios.post(config.baseUrl + config.postRegister, formData);
     return response.data;
   } catch (error) {
-    console.error("Error fetching services", error);
+    console.error("Error creating registration", error);
     throw error;
   }
 };
@@ -227,10 +227,9 @@ const updateUserRole = async (userId, newRole) => {
   }
 };
 
-const getPicture = async (userId) => {
+const getPicture = async () => {
   try {
-    const response = await axios.get(
-      `${config.baseUrl}${config.getPicture}/${userId}`, 
+    const response = await axios.get(config.baseUrl + config.getPicture, 
       {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
@@ -243,6 +242,24 @@ const getPicture = async (userId) => {
     throw error;
   }
 };
+
+const uploadUserPicture = async (image) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', image);
+
+      const response = await axios.put(config.baseUrl + config.uploadUserPicture, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error uploading user picture", error);
+      throw error;
+    }
+  };
 
 export {
   getAllServices,
@@ -258,6 +275,7 @@ export {
   updateUser,
   updateUserRole,
   getPicture,
-  getCurrentUser
+  getCurrentUser,
+  uploadUserPicture,
 }
 export default apiService;

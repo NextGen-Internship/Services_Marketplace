@@ -17,7 +17,7 @@ import java.net.MalformedURLException;
 public class CloudinaryController {
     private final CloudinaryService cloudinaryService;
 
-    @PostMapping("/upload")
+    @PutMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile multipartFile) throws IOException {
         return new ResponseEntity<>(cloudinaryService.uploadFile(multipartFile), HttpStatus.OK);
     }

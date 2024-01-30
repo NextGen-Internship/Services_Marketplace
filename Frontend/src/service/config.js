@@ -13,9 +13,9 @@ const config = {
     updateUser: '/v1/users',
     updateUserRole: '/v1/users/role',
     getUsers: '/v1/users',
-    uploadUserPicture: '/file/upload',
-    getPicture: '/file/getPicture',
-    getCurrentUser: '/v1/users/current'
+    uploadUserPicture: '/api/cloudinary/upload',
+    getPicture: '/api/cloudinary/getPicture',
+    getCurrentUser: '/v1/users/current',
 }
 
 
