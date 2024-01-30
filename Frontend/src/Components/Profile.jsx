@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
+import '../styles/ServicesPage.css';
 import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
+import ReactPaginate from 'react-paginate';
 
 
 const Profile = () => {
-  const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
+  //const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
@@ -18,11 +20,16 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
+  //const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
   const [localFile, setLocalFile] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
   const [areMyServicesVisible, setAreMyServicesVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [beecomeProviderBtn, setBecomeProviderBtn] = useState(true);
+  const [servicesPerPage] = useState(5); // or any number you prefer
+  const [paginatedServices, setPaginatedServices] = useState([]);  
+  const [totalPages, setTotalPages] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
@@ -147,6 +154,12 @@ const Profile = () => {
       console.log('User role updated successfully:', response);
 
       setUser(prevUser => ({ ...prevUser, role: newRole }));
+      localStorage.setItem('userRole', newRole);
+      if (newRole === 'provider') {
+        setShowPersonalInfo(true);
+        setShowServices(true);
+        setBecomeProviderBtn(false);
+      }
 
       //if(response.newToken) {
       // localStorage.setItem('Jwt_Token', response.newToken);
@@ -187,10 +200,17 @@ const Profile = () => {
       try {
         //const userData = await getUserById(userId);
         const userData = await getCurrentUser();
-        setUser(userData);
-        setPhoneNumber(userData.phoneNumber);
-        console.log('User data:');
+        //setUser(userData);
+        //setPhoneNumber(userData.phoneNumber);
+        console.log('User data:');  
         console.log(userData);
+        const savedRole = localStorage.getItem('userRole');
+
+    if (savedRole === userData.role) {
+      setUser(prevUser => ({ ...prevUser, ...userData, role: savedRole }));
+    } else {
+      setUser(prevUser => ({ ...prevUser, ...userData }));
+    }
 
         // if (user.imageUrl !== defaultImageUrl) {
         //   console.log("custom avatar!")
@@ -203,16 +223,28 @@ const Profile = () => {
         //   console.log("default");
         // }
 
+        
+
+      console.log('Fetched user role:', user.role);
+
+      if (savedRole && savedRole === userData.role) {
+        setUser(prevUser => ({ ...prevUser, ...userData, role: savedRole }));
+      } else {
+        setUser(prevUser => ({ ...prevUser, ...userData }));
+      } 
+
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
-    console.log('Fetched user role:', user.role);
 
     fetchUserData();
   }, [navigate]);
 
-  const becomeProviderButton = user.role !== 'provider' && (
+  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  console.log(user.role);
+
+  const becomeProviderButton = (user.role !== 'provider') && (
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
 
@@ -237,6 +269,10 @@ const Profile = () => {
     try {
       const services = await getServicesByCurrentUser(); 
       setUserServices(services);
+      const indexOfLastService = (currentPage + 1) * servicesPerPage;
+      const indexOfFirstService = indexOfLastService - servicesPerPage;
+      setPaginatedServices(services.slice(indexOfFirstService, indexOfLastService));
+      setTotalPages(Math.ceil(services.length / servicesPerPage));
       setAreMyServicesVisible(true);
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -246,15 +282,33 @@ const Profile = () => {
     setPreviewVisible(false);
 };
 
+const handlePageChange = (selectedPage) => {
+  setCurrentPage(selectedPage);
+  const indexOfLastService = (selectedPage + 1) * servicesPerPage;
+  const indexOfFirstService = indexOfLastService - servicesPerPage;
+  setPaginatedServices(userServices.slice(indexOfFirstService, indexOfLastService));
+};
 
   const handleEditProfile = () => {
     navigate('/edit-information');
   };
 
+  const renderServiceBox = (service) => {
+    return (
+      <div key={service.id} className="service-box">
+        <div className="service-info">
+          <h3>{service.title}</h3>
+          <p> {service.price}</p>
+          <p>{service.description}</p>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="profile-container">
 
-      <h2 className="profile-title">About me</h2>
+      <h2 className="profile-title">Profile</h2>
       {/* <img
         src={user.picture || profilePicture}
         alt="User"
@@ -266,7 +320,7 @@ const Profile = () => {
         <button onClick={handleServicesToggle}>My Services</button>
   )}        {becomeProviderButton}
       </div>
-      <ServicesModal 
+      <MyServicesModal 
                 isOpen={isModalVisible} 
                 onClose={() => setIsModalVisible(false)} 
                 services={userServices} 
@@ -330,10 +384,20 @@ const Profile = () => {
           )}
         </div>
       )}
-
       {showServices && (
         <div className="user-services">
-          <p>Services will be listed here...</p>
+          {paginatedServices.length > 0 ? paginatedServices.map(renderServiceBox) : 'No Services to Show'}
+          <div className="pagination-controls">
+            <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={1}
+              onPageChange={({ selected }) => handlePageChange(selected)}
+              containerClassName="pagination"
+              activeClassName="active"
+              initialPage={currentPage}
+            />
+          </div>
         </div>
       )}
     </div>
