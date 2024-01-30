@@ -244,6 +244,20 @@ const getPicture = async (userId) => {
   }
 };
 
+const getServicesByCurrentUser = async() => {
+    try {
+        const response = await axios.get(`${config.baseUrl}${config.getServicesByCurrentUser}`,{ headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
+      });
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching my services", error);
+        throw error;
+      }
+}
+
 export {
   getAllServices,
   getAllCategories,
@@ -258,6 +272,7 @@ export {
   updateUser,
   updateUserRole,
   getPicture,
-  getCurrentUser
+  getCurrentUser,
+  getServicesByCurrentUser
 }
 export default apiService;

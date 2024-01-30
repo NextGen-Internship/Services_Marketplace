@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
+import MyServicesModal from './MyServicesModal';
 
 
 const Profile = () => {
@@ -13,12 +14,15 @@ const Profile = () => {
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
   const navigate = useNavigate();
+  const [userServices, setUserServices] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
   const [localFile, setLocalFile] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
+  const [areMyServicesVisible, setAreMyServicesVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
@@ -225,16 +229,23 @@ const Profile = () => {
     setPreviewVisible(false);
   };
 
-  const handleServicesToggle = () => {
+  const handleServicesToggle = async () => {
     if (user.role !== 'provider') {
       console.log('Only providers can see their services');
       return;
     }
+    try {
+      const services = await getServicesByCurrentUser(); 
+      setUserServices(services);
+      setAreMyServicesVisible(true);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
     setShowServices(!showServices);
     setShowPersonalInfo(false);
     setPreviewVisible(false);
+};
 
-  }
 
   const handleEditProfile = () => {
     navigate('/edit-information');
@@ -255,6 +266,11 @@ const Profile = () => {
         <button onClick={handleServicesToggle}>My Services</button>
   )}        {becomeProviderButton}
       </div>
+      <ServicesModal 
+                isOpen={isModalVisible} 
+                onClose={() => setIsModalVisible(false)} 
+                services={userServices} 
+            />
       {isEditingPicture && (
         <div className="profile-picture-edit">
           <input type="file" onChange={handleImageChange} accept="image/*" />
