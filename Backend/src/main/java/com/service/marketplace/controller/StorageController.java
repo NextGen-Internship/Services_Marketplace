@@ -1,7 +1,6 @@
 package com.service.marketplace.controller;
 
 import com.service.marketplace.service.StorageService;
-import com.service.marketplace.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +27,6 @@ public class StorageController {
 
     @GetMapping("/getPicture")
     public ResponseEntity<String> getPicture() throws MalformedURLException {
-        return new ResponseEntity<>(storageService.getPicture().toString(), HttpStatus.OK);
+        return new ResponseEntity<>(storageService.getPicture(), HttpStatus.OK);
     }
 }
