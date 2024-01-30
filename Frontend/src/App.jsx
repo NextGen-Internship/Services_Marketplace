@@ -1,7 +1,7 @@
 import './App.css';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar';
-import { useState } from 'react';
 import Menu from './Components/Menu';
 import Home from './Components/Home';
 import Category from './Components/Category';
@@ -10,6 +10,7 @@ import SignUp from './Components/Access/SignUp';
 import AddServicePage from './Components/AddServicePage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ServicesPage from './Components/ServicesPage';
+import Profile from './Components/Profile';
 
 function App() {
   const[clicked, isClicked] = useState(false)
@@ -25,6 +26,8 @@ function App() {
           <Route exact path="services" element={<ServicesPage/>}/>
           <Route exact path="sign-in" element={<SignIn/>}/>
           <Route exact path="sign-up" element={<SignUp/>}/>
+          <Route exact path="profile" element={<Profile/>}/>
+      
         </Routes>
       </Router>
     </GoogleOAuthProvider>

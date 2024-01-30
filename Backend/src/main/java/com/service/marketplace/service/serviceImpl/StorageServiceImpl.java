@@ -37,6 +37,9 @@ public class StorageServiceImpl implements StorageService {
     private long expirationPresigned;
 
     public String uploadFile(MultipartFile file) {
+        if (file == null) {
+            return null;
+        }
         File fileObj = convertMultipartFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 

@@ -9,7 +9,14 @@ const config = {
     postLogin: '/api/auth/login',
     googleLogin: '/api/auth/google/login',
     postRegister: '/api/auth/register',
+    getUserById: '/v1/users',
+    updateUser: '/v1/users',
+    updateUserRole: '/v1/users/role',
     getUsers: '/v1/users',
+    uploadUserPicture: '/file/upload',
+    getPicture: '/file/getPicture',
+    getCurrentUser: '/v1/users/current'
 }
+
 
 export default config;
