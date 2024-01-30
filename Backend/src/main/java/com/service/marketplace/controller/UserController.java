@@ -3,7 +3,6 @@ package com.service.marketplace.controller;
 import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
-import com.service.marketplace.mapper.UserMapper;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.StorageService;
 import com.service.marketplace.service.UserService;
