@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import config from './config.js';
 import isTokenExpired from "../utils/Utils.js";
 

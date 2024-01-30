@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Modal.css';
 import axios from 'axios';
 import Stripe from 'stripe';
+import { useNavigate } from 'react-router-dom';
 
 function Modal({ setOpenModal }) {
     const [planData, setPlanData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPlanData = async () => {
@@ -32,31 +34,8 @@ function Modal({ setOpenModal }) {
         fetchPlanData();
     }, []);
 
-    const checkout = async () => {
-        try {
-            if (!planData) {
-                console.error('Plan data not available');
-                return;
-            }
-
-            const response = await axios.post(
-                'http://localhost:8080/api/subscribe/create-subscription-checkout-session',
-                {
-                    plan: planData.id,
-                    quantity: 1,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-
-            const { sessionId } = response.data;
-            window.location.href = `https://checkout.stripe.com/checkout/session/${sessionId}`;
-        } catch (error) {
-            console.error('Error during checkout', error);
-        }
+    const navigateToNewSubscription = () => {
+        navigate('/new-subscription');
     };
 
     return (
@@ -75,11 +54,14 @@ function Modal({ setOpenModal }) {
                         <>
                             <p>${planData.amount / 100} per {planData.interval}</p>
                             <div className="footer">
-                                <button onClick={checkout}>Subscribe</button>
+                                <button onClick={navigateToNewSubscription}>Subscribe</button>
                             </div>
                         </>
                     ) : (
+                        <div>
                         <p>No plan data available.</p>
+                        <button onClick={navigateToNewSubscription}>Subscribe</button>
+                        </div>
                     )}
                 </div>
             </div>

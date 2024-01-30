@@ -12,6 +12,7 @@ import AddServicePage from './Components/AddServicePage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ServicesPage from './Components/ServicesPage';
 import CancelPage from './Components/CancelPage';
+import NewSubscription from './Components/NewSubscription';
 
 function App() {
   const[clicked, isClicked] = useState(false)
@@ -29,6 +30,7 @@ function App() {
           <Route exact path="sign-up" element={<SignUp/>}/>
           <Route exact path="success" element={<SuccessPage/>} />
           <Route exact path="cancel" element={<CancelPage/>} />
+          <Route exact path='/new-subscription' element={<NewSubscription />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>
