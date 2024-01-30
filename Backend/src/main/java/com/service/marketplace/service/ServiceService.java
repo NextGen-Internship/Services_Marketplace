@@ -19,6 +19,7 @@ public interface ServiceService {
     void deleteServiceById(Integer serviceId);
 
     List<ServiceResponse> getServicesByUserId(Integer userId);
+
     Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection);
 
     Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest);

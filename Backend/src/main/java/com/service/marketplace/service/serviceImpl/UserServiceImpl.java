@@ -6,7 +6,6 @@ import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.mapper.UserMapper;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.JwtService;
@@ -17,9 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,20 +31,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         if (auth == null || !auth.isAuthenticated()) {
             return null;
         }
-
         Object principal = auth.getPrincipal();
-
-        if (principal instanceof User) {
-            User user = (User) principal;
+        if (principal instanceof User user) {
             String email = user.getEmail();
-
             return userRepository.findByEmail(email).orElse(null);
         }
-
         return null;
     }
 

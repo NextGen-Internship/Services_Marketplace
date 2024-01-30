@@ -14,12 +14,10 @@ import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.UserService;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -147,7 +145,6 @@ public class ServiceServiceImpl implements ServiceService {
         List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(currentUser);
         return serviceMapper.toServiceResponseList(userServices);
     }
-
 
 
 }

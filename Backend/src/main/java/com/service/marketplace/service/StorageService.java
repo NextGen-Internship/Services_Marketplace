@@ -13,6 +13,7 @@ public interface StorageService {
     boolean isPresignedUrlExpired(URL presignedUrl);
 
     String getPicture() throws MalformedURLException;
+
     String deleteFile(String fileName);
 }
 

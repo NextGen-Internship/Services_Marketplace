@@ -19,5 +19,6 @@ public interface UserService {
     boolean deleteUserById(Integer userId);
 
     UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest);
+
     UserResponse getUserResponseByUser(User user);
 }
