@@ -73,16 +73,16 @@ function Navbar({ clicked, isClicked }) {
 
                 {localStorage.getItem('Jwt_Token') ? (
                     <>
-                    <li className="Profile-Button">
-                    <NavLink className="Link" to="/profile" onClick={handlePagination}>
-                    <CgProfile className="UserIcon"/>
-                    </NavLink>
-                   </li>
-                <li className="NavButton">
-                        <NavLink className="BtnLink" onClick={handleLogout}>
-                            Logout
-                        </NavLink>
-                    </li>
+                        <li className="Profile-Button">
+                            <NavLink className="Link" to="/profile" onClick={handlePagination}>
+                                <CgProfile className="UserIcon" />
+                            </NavLink>
+                        </li>
+                        <li className="logout-button">
+                            <NavLink className="BtnLink" onClick={handleLogout}>
+                                Logout
+                            </NavLink>
+                        </li>
                     </>
                 ) : (
                     <>

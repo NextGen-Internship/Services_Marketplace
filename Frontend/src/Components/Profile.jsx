@@ -116,40 +116,40 @@ const Profile = () => {
 
 
 
-  // const handleBecomeProvider = async (newRole) => {
-  //   setShowServices(false);
-  //   setShowPersonalInfo(false);
-  //   console.log('Request to become a provider sent');
+  const handleBecomeProvider = async (newRole) => {
+    setShowServices(false);
+    setShowPersonalInfo(false);
+    console.log('Request to become a provider sent');
 
-  //   const localToken = localStorage.getItem('Jwt_Token');
-  //   if (!localToken) {
-  //     console.error('No token found');
-  //     navigate('/login');
-  //     return;
-  //   }
+    const localToken = localStorage.getItem('Jwt_Token');
+    if (!localToken) {
+      console.error('No token found');
+      navigate('/login');
+      return;
+    }
 
-  //   const decodedToken = jwtDecode(localToken);
-  //   const userId = decodedToken['jti'];
-  //   if (!userId) {
-  //     console.error('No user ID found');
-  //     navigate('/login');
-  //     return;
-  //   }
+    const decodedToken = jwtDecode(localToken);
+    const userId = decodedToken['jti'];
+    if (!userId) {
+      console.error('No user ID found');
+      navigate('/login');
+      return;
+    }
 
-  //   try {
-  //     const response = await updateUserRole(userId, newRole);
-  //     console.log("Request data:", { userId, newRole });
+    try {
+      const response = await updateUserRole(userId, newRole);
+      console.log("Request data:", { userId, newRole });
 
-  //     console.log('User role updated successfully:', response);
+      console.log('User role updated successfully:', response);
 
-  //     setUser(prevUser => ({ ...prevUser, role: newRole }));
+      setUser(prevUser => ({ ...prevUser, role: newRole }));
 
-  //     //if(response.newToken) {
-  //     // localStorage.setItem('Jwt_Token', response.newToken);
-  //   } catch (error) {
-  //     console.error('Error updating user role:', error);
-  //   }
-  // };
+      //if(response.newToken) {
+      // localStorage.setItem('Jwt_Token', response.newToken);
+    } catch (error) {
+      console.error('Error updating user role:', error);
+    }
+  };
 
   const handlePhoneChange = (phone) => {
     setPhoneNumber(phone);
@@ -226,7 +226,6 @@ const Profile = () => {
   };
 
   const handleServicesToggle = () => {
-    console.log('Current user role:', user.role);
     if (user.role !== 'provider') {
       console.log('Only providers can see their services');
       return;
@@ -234,15 +233,8 @@ const Profile = () => {
     setShowServices(!showServices);
     setShowPersonalInfo(false);
     setPreviewVisible(false);
-  };
 
-  const handleBecomeProvider = () => {
-    setShowServices(false);
-    setShowPersonalInfo(false);
-    console.log('Request to become a provider sent');
-    //localStorage.removeItem['Jwt_Token'];
-    setPreviewVisible(false);
-  };
+  }
 
   const handleEditProfile = () => {
     navigate('/edit-information');
@@ -259,8 +251,9 @@ const Profile = () => {
       /> */}
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
+        {user.role === 'provider' && (
         <button onClick={handleServicesToggle}>My Services</button>
-        {becomeProviderButton}
+  )}        {becomeProviderButton}
       </div>
       {isEditingPicture && (
         <div className="profile-picture-edit">
