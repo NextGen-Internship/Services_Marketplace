@@ -1,7 +1,7 @@
 import './App.css';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar';
-import { useState } from 'react';
 import Menu from './Components/Menu';
 import Home from './Components/Home';
 import Category from './Components/Category';
@@ -13,6 +13,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import ServicesPage from './Components/ServicesPage';
 import CancelPage from './Components/CancelPage';
 import NewSubscription from './Components/NewSubscription';
+import Profile from './Components/Profile';
 
 function App() {
   const[clicked, isClicked] = useState(false)
@@ -31,6 +32,7 @@ function App() {
           <Route exact path="success" element={<SuccessPage/>} />
           <Route exact path="cancel" element={<CancelPage/>} />
           <Route exact path='/new-subscription' element={<NewSubscription />} />
+          <Route exact path="profile" element={<Profile/>}/>
         </Routes>
       </Router>
     </GoogleOAuthProvider>

@@ -12,6 +12,7 @@ import com.service.marketplace.persistence.repository.CityRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
+import com.service.marketplace.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -27,6 +29,7 @@ import java.util.List;
 public class ServiceServiceImpl implements ServiceService {
     private final ServiceRepository serviceRepository;
     private final ServiceMapper serviceMapper;
+    private final UserService userService;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
@@ -116,6 +119,31 @@ public class ServiceServiceImpl implements ServiceService {
         );
 
         return serviceMapper.toServiceResponsePage(filteredServices);
+    }
+
+
+    @Override
+    public List<ServiceResponse> getServicesByUserId(Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(user);
+
+            return serviceMapper.toServiceResponseList(userServices);
+        } else {
+            return Collections.emptyList(); // Handle the case when the user is not found
+        }
+    }
+
+    @Override
+    public List<ServiceResponse> getServicesByCurrentUser() {
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null) {
+            return Collections.emptyList();
+        }
+
+        List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(currentUser);
+        return serviceMapper.toServiceResponseList(userServices);
     }
 
 
