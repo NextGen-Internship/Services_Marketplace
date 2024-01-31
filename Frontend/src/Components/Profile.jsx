@@ -55,7 +55,6 @@ const Profile = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  // TODO
   useEffect(() => {
     const fetchPicture = async () => {
       try {
