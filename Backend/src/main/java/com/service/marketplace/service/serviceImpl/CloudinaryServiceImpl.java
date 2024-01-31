@@ -34,9 +34,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
         String pictureUrl = (String) uploadResult.get("secure_url");
 
-        // Update user's picture in the database
-        int userId = userService.getCurrentUser().getId();
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userService.getCurrentUser();
         user.setPicture(String.valueOf(pictureUrl));
         userRepository.save(user);
 
@@ -45,20 +43,19 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     @Override
     public String deleteFile() {
-        int userId = userService.getCurrentUser().getId();
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userService.getCurrentUser();
         String pictureUrl = user.getPicture();
         if (pictureUrl == null) {
-            return "User with ID " + userId + " does not have a picture to delete.";
+            return "User with ID " + user.getId() + " does not have a picture to delete.";
         }
 
         String publicId = extractPublicIdFromUrl(pictureUrl);
         try {
             cloudinary.uploader().destroy(publicId, null);
             user.setPicture(null);
-            return "File for user with ID " + userId + " has been deleted.";
+            return "File for user with ID " + user.getId() + " has been deleted.";
         } catch (IOException e) {
-            return "Error deleting file for user with ID " + userId + ": " + e.getMessage();
+            return "Error deleting file for user with ID " + user.getId() + ": " + e.getMessage();
         }
     }
 
