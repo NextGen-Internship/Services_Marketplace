@@ -180,23 +180,17 @@ const Profile = () => {
 
   useEffect(() => {
     const getPictureMethod = async () => {
-      const localToken = localStorage['Jwt_Token'];
-      const decodedToken = jwtDecode(localToken);
-      const userId = decodedToken['jti'];
-
       const picUrl = await getPicture();
       console.log('polled url', picUrl);
       setProfilePicture(picUrl);
-      setUser(prevUser => ({ ...prevUser, imageUrl: picUrl }));
+      setUser(prevUser => ({ ...prevUser, picture: picUrl }));
     };
 
     const fetchUserData = async () => {
       const localToken = localStorage['Jwt_Token'];
-      const decodedToken = jwtDecode(localToken);
-      const userId = decodedToken['jti'];
 
-      if (!userId) {
-        console.error('No user ID found');
+      if (!localToken) {
+        console.error('No user found');
         navigate('/login');
         return;
       }
@@ -208,10 +202,10 @@ const Profile = () => {
         console.log('User data:');
         console.log(userData);
 
-        if (user.imageUrl !== defaultImageUrl) {
+        if (user.picture !== defaultImageUrl) {
           console.log("custom avatar!")
           await getPictureMethod();
-          console.log('User Avatar img: ', user.imageUrl)
+          console.log('User Avatar img: ', user.picture)
           console.log(profilePicture);
         }
         else {
@@ -231,13 +225,6 @@ const Profile = () => {
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
 
-  // const handleEditPictureToggle = () => {
-  //   setIsEditingPicture(!isEditingPicture);
-  //   setEditMode(false);
-  //   setPreviewVisible(false);
-  // };
-
-
   const handlePersonalInfoToggle = () => {
     setShowPersonalInfo(!showPersonalInfo);
     setShowServices(false);
@@ -254,10 +241,6 @@ const Profile = () => {
     setPreviewVisible(false);
 
   }
-
-  const handleEditProfile = () => {
-    navigate('/edit-information');
-  };
 
   return (
     <div className="profile-container">
