@@ -36,7 +36,7 @@ const Profile = () => {
     lastName: '',
     email: '',
     phoneNumber: '',
-    picture: '',
+    //picture: '',
     role: ''
   });
 
@@ -78,12 +78,13 @@ const Profile = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
+      role: user.role
     };
     console.log(updatedUserData);
 
     try {
-      const updatedUser = await updateUser(userId, updatedUserData);
+      const updatedUser = await updateUser(userId, user);
       console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
@@ -91,41 +92,6 @@ const Profile = () => {
       console.error('Error updating profile:', error);
     }
   };
-
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    setLocalFile(file);
-    // if (file) {
-    //   try {
-    //     const localToken = localStorage.getItem('Jwt_Token');
-    //     if (!localToken) {
-    //       console.error('No token found');
-    //       navigate('/login');
-    //       return;
-    //     }
-
-    //     const decodedToken = jwtDecode(localToken);
-    //     const userId = decodedToken['jti'];
-    //     if (!userId) {
-    //       console.error('No user ID found');
-    //       navigate('/login');
-    //       return;
-    //     }
-
-    //     const imageUrl = await uploadUserPicture(userId, file);
-    //     setPreviewVisible(true);
-    //     setIsEditingPicture(false);
-    //     setProfilePicture(imageUrl);
-    //     setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
-    //     console.log('Profile picture updated successfully');
-    //   } catch (error) {
-    //     console.error('Error updating profile picture:', error);
-    //   }
-    // }
-  };
-
-
-
 
   const handleBecomeProvider = async (newRole) => {
     setShowServices(false);
@@ -154,6 +120,9 @@ const Profile = () => {
       console.log('User role updated successfully:', response);
 
       setUser(prevUser => ({ ...prevUser, role: newRole }));
+      console.log('Updated role:', newRole);
+      console.log('User role:', user.role);
+
       localStorage.setItem('userRole', newRole);
       if (newRole === 'provider') {
         setShowPersonalInfo(true);
@@ -161,8 +130,6 @@ const Profile = () => {
         setBecomeProviderBtn(false);
       }
 
-      //if(response.newToken) {
-      // localStorage.setItem('Jwt_Token', response.newToken);
     } catch (error) {
       console.error('Error updating user role:', error);
     }
@@ -174,77 +141,43 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    // const getPictureMethod = async () => {
-    //   const localToken = localStorage['Jwt_Token'];
-    //   const decodedToken = jwtDecode(localToken);
-    //   const userId = decodedToken['jti'];
-
-    //   const picUrl = await getPicture(userId);
-    //   console.log('polled url', picUrl);
-    //   setProfilePicture(picUrl);
-    //   setUser(prevUser => ({ ...prevUser, imageUrl: picUrl }));
-    // };
-
     const fetchUserData = async () => {
       const localToken = localStorage['Jwt_Token'];
+      if (!localToken) {
+        console.error('No token found');
+        navigate('/login');
+        return;
+      }
+  
       const decodedToken = jwtDecode(localToken);
       const userId = decodedToken['jti'];
-      //const userEmail = decodedToken['sub'];
-
       if (!userId) {
         console.error('No user ID found');
         navigate('/login');
         return;
       }
-
+  
       try {
-        //const userData = await getUserById(userId);
-        const userData = await getCurrentUser();
-        //setUser(userData);
-        //setPhoneNumber(userData.phoneNumber);
-        console.log('User data:');  
-        console.log(userData);
+        const updatedUserData = await getCurrentUser();
+        console.log('User data:', updatedUserData);
         const savedRole = localStorage.getItem('userRole');
-
-    if (savedRole === userData.role) {
-      setUser(prevUser => ({ ...prevUser, ...userData, role: savedRole }));
-    } else {
-      setUser(prevUser => ({ ...prevUser, ...userData }));
-    }
-
-        // if (user.imageUrl !== defaultImageUrl) {
-        //   console.log("custom avatar!")
-        //   await getPictureMethod();
-        //   console.log('User Avatar img: ', user.imageUrl)
-        //   console.log(profilePicture);
-        //   //setUser(({ ...user, imageUrl: profilePicture }));
-        // }
-        // else {
-        //   console.log("default");
-        // }
-
+        setUser(updatedUserData);
+  
+        if (savedRole === updatedUserData.role) {
+          setUser(prevUser => ({ ...prevUser, ...updatedUserData, role: savedRole }));
+        } 
         
-
-      console.log('Fetched user role:', user.role);
-
-      if (savedRole && savedRole === userData.role) {
-        setUser(prevUser => ({ ...prevUser, ...userData, role: savedRole }));
-      } else {
-        setUser(prevUser => ({ ...prevUser, ...userData }));
-      } 
-
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
-
+  
     fetchUserData();
-  }, [navigate]);
-
-  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  }, [navigate], [user.role]);
+  
+  console.log("@@@@@@@@@@@@@@@@@@");
   console.log(user.role);
-
-  const becomeProviderButton = (user.role !== 'provider') && (
+  const becomeProviderButton = (user.role !== "provider") && (
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
 
@@ -325,14 +258,14 @@ const handlePageChange = (selectedPage) => {
                 onClose={() => setIsModalVisible(false)} 
                 services={userServices} 
             />
-      {isEditingPicture && (
+      {/* {isEditingPicture && (
         <div className="profile-picture-edit">
           <input type="file" onChange={handleImageChange} accept="image/*" />
           {user.picture && (
             <img src={user.picture} alt="Profile Preview" className="profile-preview-image" />
           )}
         </div>
-      )}
+      )} */}
       {showPersonalInfo && (
         <div className="personal-info">
           {editMode ? (
