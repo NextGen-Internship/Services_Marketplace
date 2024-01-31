@@ -9,7 +9,7 @@ const SubscriptionComponent = () => {
     const handleCheckout = async (priceId) => {
       const checkout = {
         priceId: priceId,
-        cancelUrl: 'http://localhost:3000/canceled',
+        cancelUrl: 'http://localhost:3000/cancel',
         successUrl: 'http://localhost:3000/success',
       };
   
