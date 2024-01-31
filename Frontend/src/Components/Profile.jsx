@@ -5,6 +5,7 @@ import '../styles/Profile.css';
 import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
+import Modal from './Modal.jsx';
 
 
 const Profile = () => {
@@ -28,6 +29,7 @@ const Profile = () => {
     picture: '',
     role: ''
   });
+  const [modalOpen, setModalOpen] = useState(false);
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
 
@@ -209,7 +211,15 @@ const Profile = () => {
   }, [navigate]);
 
   const becomeProviderButton = user.role !== 'provider' && (
-    <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
+    // <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
+    <div>
+      <button className='openModalBtn' onClick={() => {
+        setModalOpen(true);
+      }}>
+        Become Provider
+      </button>
+      {modalOpen && <Modal setOpenModal={setModalOpen} />}
+    </div>
   );
 
   const handleEditPictureToggle = () => {
@@ -252,8 +262,8 @@ const Profile = () => {
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         {user.role === 'provider' && (
-        <button onClick={handleServicesToggle}>My Services</button>
-  )}        {becomeProviderButton}
+          <button onClick={handleServicesToggle}>My Services</button>
+        )}        {becomeProviderButton}
       </div>
       {isEditingPicture && (
         <div className="profile-picture-edit">
