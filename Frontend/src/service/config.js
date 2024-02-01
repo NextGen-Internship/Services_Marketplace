@@ -16,7 +16,8 @@ const config = {
     uploadUserPicture: '/file/upload',
     getPicture: '/file/getPicture',
     getCurrentUser: '/v1/users/current',
-    getServicesByCurrentUser: '/v1/services/user/current'
+    getServicesByCurrentUser: '/v1/services/user/current',
+    updateService: '/v1/services/update/'
 }
 
 

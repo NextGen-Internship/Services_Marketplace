@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser, updateService } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
@@ -37,8 +37,10 @@ const Profile = () => {
     email: '',
     phoneNumber: '',
     //picture: '',
-    role: ''
+    roles: []
   });
+
+  const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
 
@@ -119,12 +121,12 @@ const Profile = () => {
 
       console.log('User role updated successfully:', response);
 
-      setUser(prevUser => ({ ...prevUser, role: newRole }));
+      //setUser(prevUser => ({ ...prevUser, roles: prevUser.roles.push() }));
+      setUser(await getCurrentUser())
       console.log('Updated role:', newRole);
-      console.log('User role:', user.role);
+      console.log('User role:', user.roles);
 
-      localStorage.setItem('userRole', newRole);
-      if (newRole === 'provider') {
+      if (isProvider(user)) {
         setShowPersonalInfo(true);
         setShowServices(true);
         setBecomeProviderBtn(false);
@@ -139,6 +141,10 @@ const Profile = () => {
     setPhoneNumber(phone);
     setUser(current => ({ ...current, phoneNumber: phone }));
   };
+
+  const isProvider = (usr) => {
+    return usr.roles.filter(i => i.authority === 'PROVIDER').length > 0;
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -160,11 +166,11 @@ const Profile = () => {
       try {
         const updatedUserData = await getCurrentUser();
         console.log('User data:', updatedUserData);
-        const savedRole = localStorage.getItem('userRole');
         setUser(updatedUserData);
   
-        if (savedRole === updatedUserData.role) {
-          setUser(prevUser => ({ ...prevUser, ...updatedUserData, role: savedRole }));
+        if (isProvider(updatedUserData)) {
+          setShowPersonalInfo(true);
+          setBecomeProviderBtn(false);
         } 
         
       } catch (error) {
@@ -173,11 +179,11 @@ const Profile = () => {
     };
   
     fetchUserData();
-  }, [navigate], [user.role]);
+  }, [navigate], [user.roles]);
   
   console.log("@@@@@@@@@@@@@@@@@@");
-  console.log(user.role);
-  const becomeProviderButton = (user.role !== "provider") && (
+  console.log(user.roles);
+  const becomeProviderButton = (user.roles == null || !isProvider(user)) && (
     <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
 
@@ -195,7 +201,7 @@ const Profile = () => {
   };
 
   const handleServicesToggle = async () => {
-    if (user.role !== 'provider') {
+    if (!isProvider(user)) {
       console.log('Only providers can see their services');
       return;
     }
@@ -226,13 +232,26 @@ const handlePageChange = (selectedPage) => {
     navigate('/edit-information');
   };
 
+  // call this when you want to save the render service box
+  const saveServiceBox = (service) => {
+    updateService(service);
+  }
+
+  const editServiceBox = (service) => {
+    setServiceBoxIdToEdit(service.id);
+    console.log('Edit Mode ON FOR ' + service.id);
+  }
+
   const renderServiceBox = (service) => {
-    return (
+    return ( // napravi go kakto napravi editMode za personal info, samo che tuk sum napravil 1 promenliva koqto pazi ID-to na 
+            // boxa- koito iskash da editvash, tuk trqbva da napishes if (serviceBoxIdToEdit === service.id) v samiq html i samo togava da prevkluchich
+            // da e s label-i.
       <div key={service.id} className="service-box">
         <div className="service-info">
           <h3>{service.title}</h3>
           <p> {service.price}</p>
           <p>{service.description}</p>
+          <button onClick={f => editServiceBox(service)}>Edit</button>
         </div>
       </div>
     );
@@ -249,7 +268,7 @@ const handlePageChange = (selectedPage) => {
       /> */}
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
-        {user.role === 'provider' && (
+        {isProvider(user) && (
         <button onClick={handleServicesToggle}>My Services</button>
   )}        {becomeProviderButton}
       </div>
