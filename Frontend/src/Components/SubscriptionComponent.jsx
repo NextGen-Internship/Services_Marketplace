@@ -7,10 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import Subscription from './Subscription.jsx';
 
 const SubscriptionComponent = () => {
-    const monthlyPriceId = 'price_1OcUNzI2KDxgMJyoxeNLRi93';
-    const halfYearPriceId = 'price_1OeaSMI2KDxgMJyo18FOtvvQ';
-    const yearlyPriceId = 'price_1OewOKI2KDxgMJyoQiYAv4zP';
-
     const navigate = useNavigate();
     const [selectedPriceId, setSelectedPriceId] = useState(null);
 
@@ -29,12 +25,14 @@ const SubscriptionComponent = () => {
 
         const decodedToken = jwtDecode(localToken);
         const userEmail = decodedToken['sub'];
+        const userId = decodedToken['jti'];
 
         const checkout = {
             priceId: selectedPriceId,
             cancelUrl: 'http://localhost:3000/cancel',
             successUrl: 'http://localhost:3000/success',
             email: userEmail,
+            userId: userId,
         };
 
         try {
@@ -56,9 +54,9 @@ const SubscriptionComponent = () => {
         <div className="example-card">
             <h2>Subscribe now!</h2>
             <div>
-                <Subscription priceId={monthlyPriceId} onSelected={setSelectedPriceId} />
-                <Subscription priceId={halfYearPriceId} onSelected={setSelectedPriceId} />
-                <Subscription priceId={yearlyPriceId} onSelected={setSelectedPriceId} />
+                <Subscription priceId={environment.monthlyPriceId} onSelected={setSelectedPriceId} />
+                <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} />
+                <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} />
                 <button onClick={handleCheckout}>
                     Subscribe
                 </button>

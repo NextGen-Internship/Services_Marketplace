@@ -89,6 +89,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse updateUserRoleToProvider(Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        Role role = roleRepository.findByName("PROVIDER").orElseThrow(() -> new IllegalArgumentException("Role not found."));
+
+        if (!user.getRoles().contains(role)) {
+            user.getRoles().add(role);
+            User updatedUser = userRepository.save(user);
+            return userMapper.userToUserResponse(updatedUser);
+        }
+
+        return userMapper.userToUserResponse(user);
+    }
+
+    @Override
     public UserResponse getUserResponseByUser(User user) {
         return userMapper.userToUserResponse(user);
     }

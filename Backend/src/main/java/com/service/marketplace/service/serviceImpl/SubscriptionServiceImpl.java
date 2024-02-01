@@ -5,12 +5,19 @@ import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.service.SubscriptionService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
+import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.Price;
 import com.stripe.model.checkout.Session;
+import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -73,33 +80,33 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
     }
 
-//    public ResponseEntity<String> handleStripeWebhook(HttpServletRequest request, String payload) {
-//        String endpointSecret = "your_stripe_endpoint_secret"; // Replace with your actual Stripe endpoint secret
-//
-//        try {
-//            // Verify the webhook signature
-//            Event event = Webhook.constructEvent(
-//                    payload,
-//                    request.getHeader("Stripe-Signature"),
-//                    endpointSecret
-//            );
-//
-//            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-//            if (dataObjectDeserializer.getObject().isPresent()) {
-//                Object object = dataObjectDeserializer.getObject().get();
-//                if (object instanceof Session) {
-//                    Session session = (Session) object;
-//                    String clientReferenceId = session.getClientReferenceId();
-//                    // Update user role to 'provider' based on clientReferenceId (assuming it holds user identifier)
-//                    userService.updateUserRoleToProvider(Integer.parseInt(clientReferenceId));
-//                }
-//            }
-//
-//            return ResponseEntity.ok().build();
-//        } catch (SignatureVerificationException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Stripe signature");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-//        }
-//    }
+    public ResponseEntity<String> handleStripeWebhook(HttpServletRequest request, String payload) {
+        String endpointSecret = "whsec_cc0df325d4cf2f830514ec91c6e23dde3a856062b86ec456d8aa4791581aa91d";
+
+        try {
+            // Verify the webhook signature
+            Event event = Webhook.constructEvent(
+                    payload,
+                    request.getHeader("Stripe-Signature"),
+                    endpointSecret
+            );
+
+            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+            if (dataObjectDeserializer.getObject().isPresent()) {
+                Object object = dataObjectDeserializer.getObject().get();
+                if (object instanceof Session) {
+                    Session session = (Session) object;
+                    String clientReferenceId = session.getClientReferenceId();
+                    userService.updateUserRoleToProvider(Integer.parseInt(clientReferenceId));
+                }
+            }
+
+            return ResponseEntity.ok().build();
+        } catch (SignatureVerificationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Stripe signature");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+        }
+    }
+
 }
