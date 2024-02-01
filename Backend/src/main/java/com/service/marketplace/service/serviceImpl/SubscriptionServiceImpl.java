@@ -5,20 +5,12 @@ import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.service.SubscriptionService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
-import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Event;
-import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.Price;
-import com.stripe.model.Product;
 import com.stripe.model.checkout.Session;
-import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -65,23 +57,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public Product getProductWithPrice(String productId, String priceId) throws StripeException {
+    public String getProductPrice(String priceId) {
         Stripe.apiKey = stripeApiKey;
 
         try {
-            // Retrieve the product using the provided product ID
-            Product product = Product.retrieve(productId);
-
-            // Retrieve the price using the provided price ID
             Price price = Price.retrieve(priceId);
 
-            // Attach the price information to the product
-            product.setPrice(price);
-
-            return product;
+            return gson.toJson(price);
         } catch (StripeException e) {
-            // Handle Stripe API exceptions
-            throw new StripeException("Error retrieving product information: " + e.getMessage());
+            Map<String, Object> messageData = new HashMap<>();
+            messageData.put("message", e.getMessage());
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("error", messageData);
+            return gson.toJson(responseData);
         }
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { environment } from '../environment.js';
 import axios from 'axios';
@@ -12,8 +12,14 @@ const SubscriptionComponent = () => {
     const yearlyPriceId = 'price_1OewOKI2KDxgMJyoQiYAv4zP';
 
     const navigate = useNavigate();
+    const [selectedPriceId, setSelectedPriceId] = useState(null);
 
-    const handleCheckout = async (priceId) => {
+    const handleCheckout = async () => {
+        if (!selectedPriceId) {
+            console.error('No price selected');
+            return;
+        }
+
         const localToken = localStorage.getItem('Jwt_Token');
         if (!localToken) {
             console.error('No token found');
@@ -25,7 +31,7 @@ const SubscriptionComponent = () => {
         const userEmail = decodedToken['sub'];
 
         const checkout = {
-            priceId: priceId,
+            priceId: selectedPriceId,
             cancelUrl: 'http://localhost:3000/cancel',
             successUrl: 'http://localhost:3000/success',
             email: userEmail,
@@ -48,12 +54,12 @@ const SubscriptionComponent = () => {
 
     return (
         <div className="example-card">
-            <h1>Subscribe now!</h1>
+            <h2>Subscribe now!</h2>
             <div>
-                <Subscription priceId={monthlyPriceId} />
-                <Subscription priceId={halfYearPriceId} />
-                <Subscription priceId={yearlyPriceId} />
-                <button onClick={() => handleCheckout(monthlyPriceId)}>
+                <Subscription priceId={monthlyPriceId} onSelected={setSelectedPriceId} />
+                <Subscription priceId={halfYearPriceId} onSelected={setSelectedPriceId} />
+                <Subscription priceId={yearlyPriceId} onSelected={setSelectedPriceId} />
+                <button onClick={handleCheckout}>
                     Subscribe
                 </button>
             </div>
