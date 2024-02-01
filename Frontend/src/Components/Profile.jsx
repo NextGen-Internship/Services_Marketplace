@@ -6,6 +6,8 @@ import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture,
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import Modal from './Modal.jsx';
+import SubscriptionComponent from './SubscriptionComponent.jsx';
+import axios from 'axios';
 
 
 const Profile = () => {
@@ -13,7 +15,7 @@ const Profile = () => {
 
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
-  const[showBecomeProviderForm,setShowBecomeProviderForm] = useState(false) 
+  const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -29,6 +31,16 @@ const Profile = () => {
     phoneNumber: '',
     picture: '',
     role: ''
+  });
+  const [formData, setFormData] = useState({
+    email: '',
+    firstMiddleName: '',
+    lastName: '',
+    dateOfBirth: '',
+    phoneNumber: '',
+    address: '',
+    city: '',
+    postalCode: ''
   });
 
 
@@ -47,6 +59,15 @@ const Profile = () => {
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
+
+  const handleProviderInfoChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
   const handleSaveProfile = async (e) => {
     const localToken = localStorage.getItem('Jwt_Token');
     if (!localToken) {
@@ -244,7 +265,7 @@ const Profile = () => {
   };
 
 
-  
+
 
   const handleServicesToggle = () => {
     if (user.role !== 'provider') {
@@ -260,6 +281,16 @@ const Profile = () => {
   const handleEditProfile = () => {
     navigate('/edit-information');
   };
+
+  const handleAccountCreation = async () => {
+    try {
+      console.log(formData);
+      const response = await axios.post('http://localhost:8080/api/subscribe/createAccount', formData);
+      console.log('Stripe account created:', response.data);
+    } catch (error) {
+      console.error('Error creating Stripe account:', error);
+    }
+  }
 
   return (
     <div className="profile-container">
@@ -336,46 +367,47 @@ const Profile = () => {
         </div>
       )}
       {showBecomeProviderForm &&
-      <div className="provider-info">
-      
-        
+        <div className="provider-info">
           <div className="input-group">
             <label>First and Middle:</label>
-            <input type="text" name="First and Middle"  onChange={handleInputChange} />
+            <input type="text" name="firstMiddleName" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>Last Name:</label>
-            <input type="text" name="lastName"  onChange={handleInputChange} />
+            <input type="text" name="lastName" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>Date of birth:</label>
-            <input type="date" name="date"  onChange={handleInputChange} />
+            <input type="date" name="dateOfBirth" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>Phone number:</label>
-            <input type="phone" name="phone"  onChange={handleInputChange} />
+            <input type="text" name="phoneNumber" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>Email:</label>
-            <input type="email" name="email"  onChange={handleInputChange} />
+            <input type="email" name="email" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>Address:</label>
-            <input type="address" name="address"  onChange={handleInputChange} />
+            <input type="address" name="address" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>City:</label>
-            <input type="city" name="city"  onChange={handleInputChange} />
+            <input type="city" name="city" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>Postal code:</label>
-            <input type="Postal code" name="Postal code"  onChange={handleInputChange} />
+            <input type="Postal code" name="postalCode" onChange={handleProviderInfoChange} />
           </div>
-          
+          <div>
+            <SubscriptionComponent handleAccountCreation={handleAccountCreation} />
+          </div>
+
           <button className='save-button' onClick={handleSaveProfile}>Save</button>
-        
-      
-    </div>
+
+
+        </div>
       }
 
       {showServices && (

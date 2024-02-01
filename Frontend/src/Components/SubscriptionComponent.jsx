@@ -6,11 +6,13 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import Subscription from './Subscription.jsx';
 
-const SubscriptionComponent = () => {
+const SubscriptionComponent = ({ handleAccountCreation }) => {
     const navigate = useNavigate();
     const [selectedPriceId, setSelectedPriceId] = useState(null);
 
     const handleCheckout = async () => {
+        handleAccountCreation();
+
         if (!selectedPriceId) {
             console.error('No price selected');
             return;
@@ -57,7 +59,7 @@ const SubscriptionComponent = () => {
                 <Subscription priceId={environment.monthlyPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} />
-                <button onClick={() => handleCheckout(selectedPriceId)}>
+                <button onClick={() => handleCheckout()}>
                     Subscribe
                 </button>
             </div>
