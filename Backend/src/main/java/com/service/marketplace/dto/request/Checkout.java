@@ -9,4 +9,6 @@ public class Checkout {
     private String priceId;
     private String successUrl;
     private String cancelUrl;
+    private String email;
+    private String userId;
 }
