@@ -4,7 +4,7 @@ import { environment } from '../environment.js';
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
-import Subscription from './Subscription.jsx';
+// import Subscription from './Subscription.jsx';
 
 const SubscriptionComponent = () => {
     const monthlyPriceId = 'price_1OcUNzI2KDxgMJyoxeNLRi93';
@@ -50,9 +50,9 @@ const SubscriptionComponent = () => {
         <div className="example-card">
             <h1>Subscribe now!</h1>
             <div>
-                <Subscription priceId={monthlyPriceId} />
+                {/* <Subscription priceId={monthlyPriceId} />
                 <Subscription priceId={halfYearPriceId} />
-                <Subscription priceId={yearlyPriceId} />
+                <Subscription priceId={yearlyPriceId} /> */}
                 <button onClick={() => handleCheckout(monthlyPriceId)}>
                     Subscribe
                 </button>
