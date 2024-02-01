@@ -13,6 +13,7 @@ const Profile = () => {
 
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
+  const[showBecomeProviderForm,setShowBecomeProviderForm] = useState(false) 
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -29,6 +30,8 @@ const Profile = () => {
     picture: '',
     role: ''
   });
+
+
   const [modalOpen, setModalOpen] = useState(false);
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
@@ -209,16 +212,21 @@ const Profile = () => {
 
     fetchUserData();
   }, [navigate]);
-
+  const handleBecomeProviderToggle = () => {
+    setShowBecomeProviderForm(!showBecomeProviderForm);
+    setShowServices(false);
+    setPreviewVisible(false);
+  };
   const becomeProviderButton = user.role !== 'provider' && (
     // <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
     <div>
-      <button className='openModalBtn' onClick={() => {
+      {/* <button className='openModalBtn' onClick={() => {
         setModalOpen(true);
-      }}>
+      }}> */}
+      <button onClick={handleBecomeProviderToggle}>
         Become Provider
       </button>
-      {modalOpen && <Modal setOpenModal={setModalOpen} />}
+      {/* {modalOpen && <Modal setOpenModal={setModalOpen} />} */}
     </div>
   );
 
@@ -234,6 +242,9 @@ const Profile = () => {
     setShowServices(false);
     setPreviewVisible(false);
   };
+
+
+  
 
   const handleServicesToggle = () => {
     if (user.role !== 'provider') {
@@ -324,6 +335,48 @@ const Profile = () => {
           )}
         </div>
       )}
+      {showBecomeProviderForm &&
+      <div className="provider-info">
+      
+        
+          <div className="input-group">
+            <label>First and Middle:</label>
+            <input type="text" name="First and Middle"  onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>Last Name:</label>
+            <input type="text" name="lastName"  onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>Date of birth:</label>
+            <input type="date" name="date"  onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>Phone number:</label>
+            <input type="phone" name="phone"  onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>Email:</label>
+            <input type="email" name="email"  onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>Address:</label>
+            <input type="address" name="address"  onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>City:</label>
+            <input type="city" name="city"  onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>Postal code:</label>
+            <input type="Postal code" name="Postal code"  onChange={handleInputChange} />
+          </div>
+          
+          <button className='save-button' onClick={handleSaveProfile}>Save</button>
+        
+      
+    </div>
+      }
 
       {showServices && (
         <div className="user-services">

@@ -57,7 +57,7 @@ const SubscriptionComponent = () => {
                 <Subscription priceId={environment.monthlyPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} />
-                <button onClick={handleCheckout}>
+                <button onClick={() => handleCheckout(selectedPriceId)}>
                     Subscribe
                 </button>
             </div>
