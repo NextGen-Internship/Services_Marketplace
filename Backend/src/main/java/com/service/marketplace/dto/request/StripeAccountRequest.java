@@ -16,4 +16,5 @@ public class StripeAccountRequest {
     private String address;
     private String city;
     private String postalCode;
+    private String iban;
 }

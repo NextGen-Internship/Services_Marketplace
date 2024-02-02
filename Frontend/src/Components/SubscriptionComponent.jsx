@@ -11,8 +11,6 @@ const SubscriptionComponent = ({ handleAccountCreation }) => {
     const [selectedPriceId, setSelectedPriceId] = useState(null);
 
     const handleCheckout = async () => {
-        handleAccountCreation();
-
         if (!selectedPriceId) {
             console.error('No price selected');
             return;
@@ -59,7 +57,8 @@ const SubscriptionComponent = ({ handleAccountCreation }) => {
                 <Subscription priceId={environment.monthlyPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} />
-                <button onClick={() => handleCheckout()}>
+                <button onClick={() => {handleAccountCreation(); 
+                                        handleCheckout()}}>
                     Subscribe
                 </button>
             </div>

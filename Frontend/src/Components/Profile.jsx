@@ -40,7 +40,8 @@ const Profile = () => {
     phoneNumber: '',
     address: '',
     city: '',
-    postalCode: ''
+    postalCode: '',
+    iban: '',
   });
 
 
@@ -399,6 +400,10 @@ const Profile = () => {
           <div className="input-group">
             <label>Postal code:</label>
             <input type="Postal code" name="postalCode" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>IBAN:</label>
+            <input type="text" name="iban" onChange={handleProviderInfoChange} />
           </div>
           <div>
             <SubscriptionComponent handleAccountCreation={handleAccountCreation} />

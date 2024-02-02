@@ -3,18 +3,19 @@ package com.service.marketplace.service.serviceImpl;
 import com.google.gson.Gson;
 import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
+import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.SubscriptionService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Account;
-import com.stripe.model.Event;
-import com.stripe.model.EventDataObjectDeserializer;
-import com.stripe.model.Price;
+import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.AccountCreateParams;
+import com.stripe.param.CustomerListParams;
+import com.stripe.param.TokenCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ import java.util.Map;
 public class SubscriptionServiceImpl implements SubscriptionService {
     private static final Gson gson = new Gson();
     private final UserService userService;
+    private final UserRepository userRepository;
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
 
@@ -47,6 +49,22 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             HttpServletRequest httpRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             Stripe.apiKey = stripeApiKey;
             long currentUnixTimestamp = (int) (System.currentTimeMillis() / 1000);
+
+            TokenCreateParams params = TokenCreateParams.builder()
+                    .setBankAccount(
+                            TokenCreateParams.BankAccount.builder()
+                                    .setCountry("BG") // Bulgaria
+                                    .setCurrency("BGN") // Bulgarian Lev
+                                    .setAccountHolderName("Account Holder") // Set account holder name
+                                    .setAccountHolderType(TokenCreateParams.BankAccount.AccountHolderType.INDIVIDUAL)
+                                    .setRoutingNumber("BNBG9661") // Bulgarian bank routing number
+                                    .setAccountNumber("1020345678") // Account number
+                                    .build()
+                    )
+                    .build();
+
+            // Create the token
+            Token token = Token.create(params);
 
             AccountCreateParams accountCreateParams = AccountCreateParams.builder()
                     .setType(AccountCreateParams.Type.CUSTOM)
@@ -83,11 +101,20 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                                     .build())
                             .setPhone(stripeAccountRequest.getPhoneNumber())
                             .build())
+                    .setExternalAccount(token.getId())
                     .build();
-
 
             Account account = Account.create(accountCreateParams);
             account.setPayoutsEnabled(true);
+
+            User user = userRepository.findByEmail(stripeAccountRequest.getEmail()).orElse(null);
+
+            if (user != null) {
+                user.setStripeAccountId(account.getId());
+            } else {
+                throw new RuntimeException("Failed to create Stripe account.");
+            }
+            userRepository.save(user);
 
             return account.getId();
         } catch (StripeException e) {
@@ -96,36 +123,63 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
     }
 
+//    public boolean checkIfUserHasStripeAccount() throws StripeException {
+//        User user = userService.getCurrentUser();
+//        try {
+//            CustomerListParams params = CustomerListParams.builder()
+//                    .setEmail(user.getEmail())
+//                    .build();
+//
+//            Iterable<Customer> customers = Customer.list(params).autoPagingIterable();
+//
+//            return customers.iterator().hasNext();
+//        } catch (StripeException e) {
+//            return false;
+//        }
+//    }
+
     @Override
     public String subscriptionWithCheckoutPage(Checkout checkout) {
-        Stripe.apiKey = stripeApiKey;
-
-        SessionCreateParams params = new SessionCreateParams.Builder()
-                .setSuccessUrl(checkout.getSuccessUrl())
-                .setCancelUrl(checkout.getCancelUrl())
-                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-                .setCustomerEmail(checkout.getEmail())
-                .setClientReferenceId(checkout.getUserId())
-                .addLineItem(new SessionCreateParams.LineItem.Builder()
-                        .setQuantity(1L)
-                        .setPrice(checkout.getPriceId())
-                        .build())
-                .build();
-
         try {
+            User user = userRepository.findByEmail(checkout.getEmail()).orElse(null);
+            if (user == null) {
+                return gson.toJson(Map.of("error", "User not found"));
+            }
+
+            Stripe.apiKey = stripeApiKey;
+
+            // Retrieve customer object from Stripe using user's Stripe account ID
+            Customer customer = Customer.retrieve(user.getStripeAccountId());
+            Account account = Account.retrieve(user.getStripeAccountId());
+
+            // Create session parameters
+            SessionCreateParams params = new SessionCreateParams.Builder()
+                    .setSuccessUrl(checkout.getSuccessUrl())
+                    .setCancelUrl(checkout.getCancelUrl())
+                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                    .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+                    .setCustomer(customer.getId())
+                    .setCustomerEmail(checkout.getEmail())
+                    .addLineItem(new SessionCreateParams.LineItem.Builder()
+                            .setQuantity(1L)
+                            .setPrice(checkout.getPriceId())
+                            .build())
+                    .build();
+
+            // Create session and return session ID
             Session session = Session.create(params);
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("sessionId", session.getId());
-            return gson.toJson(responseData);
+            return gson.toJson(Map.of("sessionId", session.getId()));
+        } catch (StripeException e) {
+            // Handle Stripe exceptions
+            e.printStackTrace();
+            return gson.toJson(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            Map<String, Object> messageData = new HashMap<>();
-            messageData.put("message", e.getMessage());
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("error", messageData);
-            return gson.toJson(responseData);
+            // Handle other exceptions
+            e.printStackTrace();
+            return gson.toJson(Map.of("error", "An unexpected error occurred"));
         }
     }
+
 
     @Override
     public String getProductPrice(String priceId) {

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface SubscriptionService {
     String createStripeAccount(StripeAccountRequest stripeAccountRequest);
-    String subscriptionWithCheckoutPage(Checkout checkout);
+    String subscriptionWithCheckoutPage(Checkout checkout) throws StripeException;
     String getProductPrice(String priceId);
     ResponseEntity<String> handleStripeWebhook(HttpServletRequest request, String payload);
 }
