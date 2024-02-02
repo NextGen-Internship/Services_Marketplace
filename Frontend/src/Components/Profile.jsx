@@ -143,7 +143,7 @@ const Profile = () => {
   };
 
   const isProvider = (usr) => {
-    return usr.roles.filter(i => i.authority === 'PROVIDER').length > 0;
+    return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
 
   useEffect(() => {
