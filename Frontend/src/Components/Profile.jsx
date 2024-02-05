@@ -8,6 +8,8 @@ import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
+import { FaRegEdit } from "react-icons/fa";
+
 
 
 const Profile = () => {
@@ -289,7 +291,6 @@ const Profile = () => {
       );
       setUserServices(updatedServices);
       setServiceBoxIdToEdit(-1);
-      handleServicesToggle();
     } catch (error) {
       console.error('Error updating service:', error);
     }
@@ -386,7 +387,7 @@ const Profile = () => {
               <h3>{service.title}</h3>
               <p>{service.price}</p>
               <p>{service.description}</p>
-              <button onClick={() => editServiceBox(service.id)}>Edit</button>
+              <button onClick={() => editServiceBox(service.id)}><FaRegEdit /></button>
             </>
           )}
         </div>
