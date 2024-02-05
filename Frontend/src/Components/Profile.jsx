@@ -273,22 +273,16 @@ const Profile = () => {
     try {
       const updatedService = await updateService(editableService);
       console.log('Service updated successfully:', updatedService);
-      const updatedServices = userServices.map(service =>
+      const updatedServices = userServices.map((service) =>
         service.id === editableService.id ? { ...service, ...editableService } : service
       );
       setUserServices(updatedServices);
       setServiceBoxIdToEdit(-1);
-      // setEditableService({
-      //   title: '',
-      //   description: '',
-      //   price: '',
-      //   categoryId: '',
-      //   cityIds: [] // Resetting as example, adjust based on your logic
-      // });
     } catch (error) {
       console.error('Error updating service:', error);
     }
   };
+  
 
 
 
