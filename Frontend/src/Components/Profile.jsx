@@ -32,6 +32,7 @@ const Profile = () => {
   const [servicesPerPage] = useState(5); // or any number you prefer
   const [paginatedServices, setPaginatedServices] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [selectedCities, setSelectedCities] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: '',
@@ -42,6 +43,7 @@ const Profile = () => {
     roles: []
   });
   const [editableService, setEditableService] = useState({
+    id: 0,
     title: '',
     description: '',
     price: '',
@@ -53,6 +55,15 @@ const Profile = () => {
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
+
+  const handleCityClick = (cityId) => {
+    const isAlreadySelected = selectedCities.includes(cityId);
+    if (isAlreadySelected) {
+      setSelectedCities(selectedCities.filter(id => id !== cityId));
+    } else {
+      setSelectedCities([...selectedCities, cityId]);
+    }
+  };
 
   const handleImageUrlChange = (e) => {
     setUser({ ...user, imageUrl: e.target.value });
@@ -271,7 +282,7 @@ const Profile = () => {
 
   const saveServiceBox = async () => {
     try {
-      const updatedService = await updateService(editableService);
+      const updatedService = await updateService(editableService.id, editableService);
       console.log('Service updated successfully:', updatedService);
       const updatedServices = userServices.map((service) =>
         service.id === editableService.id ? { ...service, ...editableService } : service
@@ -282,7 +293,7 @@ const Profile = () => {
       console.error('Error updating service:', error);
     }
   };
-  
+
 
 
 
@@ -291,6 +302,7 @@ const Profile = () => {
     if (serviceToEdit) {
       setServiceBoxIdToEdit(serviceId);
       setEditableService({
+        id: serviceToEdit.id,
         title: serviceToEdit.title,
         description: serviceToEdit.description,
         price: serviceToEdit.price,
@@ -306,7 +318,7 @@ const Profile = () => {
       const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
       setEditableService((prev) => ({
         ...prev,
-        cityIds: selectedOptions.map(Number), 
+        cityIds: selectedOptions.map(Number),
       }));
     } else {
       setEditableService((prevState) => ({
@@ -316,7 +328,7 @@ const Profile = () => {
     }
   };
 
-console.log(editableService);
+  console.log(editableService);
 
 
   const renderServiceBox = (service) => {
@@ -349,21 +361,21 @@ console.log(editableService);
                 ))}
               </select>
               <label htmlFor="cityIds">Cities:</label>
-          <select
-            multiple
-            value={editableService.cityIds}
-            onChange={(e) => handleServiceChange(e, 'cityIds')}
-          >
-            {cities.map((city) => (
-              <option
-                key={city.id}
-                value={city.id}
-                selected={editableService.cityIds && editableService.cityIds.includes(city.id)}
+              <select
+                multiple
+                value={editableService.cityIds}
+                onChange={(e) => handleServiceChange(e, 'cityIds')}
               >
-                {city.name}
-              </option>
-            ))}
-          </select>
+                {cities.map((city) => (
+                  <option
+                    key={city.id}
+                    value={city.id}
+                    selected={editableService.cityIds && editableService.cityIds.includes(city.id)}
+                  >
+                    {city.name}
+                  </option>
+                ))}
+              </select>
 
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
