@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 public interface CloudinaryService {
-    String uploadFile(MultipartFile multipartFile) throws IOException;
+    String uploadFile(MultipartFile multipartFile, String entityType, Integer entityId) throws IOException;
     String deleteFile();
     String getPicture() throws MalformedURLException;
 }

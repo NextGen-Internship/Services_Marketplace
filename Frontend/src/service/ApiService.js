@@ -243,11 +243,8 @@ const getPicture = async () => {
   }
 };
 
-const uploadUserPicture = async (image) => {
+const uploadUserPicture = async (formData) => {
     try {
-        const formData = new FormData();
-        formData.append('file', image);
-
       const response = await axios.put(config.baseUrl + config.uploadUserPicture, formData, {
         headers: {
           "Content-Type": "multipart/form-data",

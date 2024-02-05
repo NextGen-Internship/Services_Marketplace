@@ -1,16 +1,24 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.cloudinary.Cloudinary;
+import com.service.marketplace.persistence.entity.Files;
+import com.service.marketplace.persistence.entity.Review;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.ReviewRepository;
+import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.CloudinaryService;
 import com.service.marketplace.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,12 +28,14 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     private final Cloudinary cloudinary;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final ServiceRepository serviceRepository;
+    private final ReviewRepository reviewRepository;
 
     @Value("${Cloudinary_cloud_name}")
     private String folder;
 
     @Override
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file, String entityType, Integer entityId) throws IOException {
         String filename = generateFilename(file);
         Map<?, ?> options = Map.of(
                 "folder", folder
@@ -34,9 +44,33 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
         String pictureUrl = (String) uploadResult.get("secure_url");
 
-        User user = userService.getCurrentUser();
-        user.setPicture(String.valueOf(pictureUrl));
-        userRepository.save(user);
+        switch (entityType) {
+            case "USER":
+                User user = userService.getCurrentUser();
+
+                if (user == null) {
+                    throw new EntityNotFoundException("User not found");
+                }
+
+                user.setPicture(String.valueOf(pictureUrl));
+                userRepository.save(user);
+                break;
+            case "SERVICE":
+                com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Service not found"));
+                service.setPicture(String.valueOf(pictureUrl));
+                serviceRepository.save(service);
+                break;
+            case "REVIEW":
+                Review review = reviewRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Review not found"));
+                List<Files> reviewFiles = review.getFilesList();
+                Files files = new Files(String.valueOf(pictureUrl), LocalDateTime.now().plusMonths(3));
+                reviewFiles.add(files);
+                review.setFilesList(reviewFiles);
+                reviewRepository.save(review);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid entity type");
+        }
 
         return pictureUrl;
     }

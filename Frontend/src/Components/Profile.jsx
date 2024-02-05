@@ -127,7 +127,13 @@ const Profile = () => {
           return;
         }
 
-        const imageUrl = await uploadUserPicture(file);
+        const entityType = 'USER';
+
+        const uploadPictureData = new FormData();
+        uploadPictureData.append('file', file);
+        uploadPictureData.append('entityType', entityType);
+
+        const imageUrl = await uploadUserPicture(uploadPictureData);
         console.log(imageUrl);
         setPreviewVisible(true);
         setIsEditingPicture(false);
