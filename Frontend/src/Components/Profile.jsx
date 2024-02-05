@@ -308,13 +308,21 @@ const Profile = () => {
 
 
   const handleServiceChange = (e, fieldName) => {
-    setEditableService(prevState => ({
-      ...prevState,
-      [fieldName]: e.target.value
-    }));
+    if (fieldName === 'cityIds') {
+      const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+      setEditableService((prev) => ({
+        ...prev,
+        cityIds: selectedOptions.map(Number), 
+      }));
+    } else {
+      setEditableService((prevState) => ({
+        ...prevState,
+        [fieldName]: e.target.value,
+      }));
+    }
   };
 
-
+console.log(editableService);
 
 
   const renderServiceBox = (service) => {
@@ -347,33 +355,21 @@ const Profile = () => {
                 ))}
               </select>
               <label htmlFor="cityIds">Cities:</label>
-              <select
-                multiple
-                value={editableService.cityIds}
-                onChange={(e) => {
-                  const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-                  setEditableService((prev) => ({
-                    ...prev,
-                    cityIds: [...new Set([...prev.cityIds, ...selectedOptions.map(Number)])], // Removes duplicates
-                  }));
-                }}
-                
+          <select
+            multiple
+            value={editableService.cityIds}
+            onChange={(e) => handleServiceChange(e, 'cityIds')}
+          >
+            {cities.map((city) => (
+              <option
+                key={city.id}
+                value={city.id}
+                selected={editableService.cityIds && editableService.cityIds.includes(city.id)}
               >
-                {cities.map((city) => (
-                  <option
-                    key={city.id}
-                    value={city.id}
-                    selected={editableService.cityIds && editableService.cityIds.includes(city.id.toString())} 
-                  >
-                    {city.name}
-                  </option>
-                ))}
-
-              </select>
-
-              <div className="selected-cities">
-                <strong>Selected Cities: </strong>{getCityNamesByIds(editableService.cityIds)}
-              </div>
+                {city.name}
+              </option>
+            ))}
+          </select>
 
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
