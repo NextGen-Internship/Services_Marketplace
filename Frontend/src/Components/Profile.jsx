@@ -289,6 +289,7 @@ const Profile = () => {
       );
       setUserServices(updatedServices);
       setServiceBoxIdToEdit(-1);
+      handleServicesToggle();
     } catch (error) {
       console.error('Error updating service:', error);
     }
