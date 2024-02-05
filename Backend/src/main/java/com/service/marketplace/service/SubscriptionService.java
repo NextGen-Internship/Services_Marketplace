@@ -10,5 +10,5 @@ public interface SubscriptionService {
     String createStripeAccount(StripeAccountRequest stripeAccountRequest);
     String subscriptionWithCheckoutPage(Checkout checkout) throws StripeException;
     String getProductPrice(String priceId);
-    ResponseEntity<String> handleStripeWebhook(HttpServletRequest request, String payload);
+    ResponseEntity<String> handleStripeWebhook(String request, String payload);
 }

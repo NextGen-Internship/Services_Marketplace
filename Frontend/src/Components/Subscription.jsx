@@ -48,7 +48,7 @@ const Subscription = ({ priceId, onSelected }) => {
         {productData ? (
                 <div className='subscription-info'>
                     <h3 className='subscription-name'>{productData.recurring.interval === 'month' ? (productData.recurring.interval_count === 1 ? 'Monthly' : 'Half Year') : 'Yearly'} Subscription</h3>
-                    <p className='subscription-details'>{getCurrencySymbol(productData.currency)}{productData.unit_amount / 100} per {productData.recurring.interval}</p>
+                    <p className='subscription-details'>{getCurrencySymbol(productData.currency)}{productData.unit_amount / 100} per {productData.recurring.interval_count} {productData.recurring.interval}{productData.recurring.interval_count > 1 ? 's' : ''}</p>
                 </div>
             ) : (
                 <p className='loading'>Loading...</p>

@@ -2,13 +2,23 @@ package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
+import com.service.marketplace.persistence.entity.Role;
+import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.service.SubscriptionService;
+import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Price;
+import com.stripe.model.*;
+import com.stripe.net.Webhook;
+import com.stripe.param.SubscriptionListParams;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -33,7 +43,7 @@ public class SubscriptionController {
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> handleStripeWebhook(HttpServletRequest request, String payload) {
-        return subscriptionService.handleStripeWebhook(request, payload);
+    public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
+        return subscriptionService.handleStripeWebhook(payload, sigHeader);
     }
 }

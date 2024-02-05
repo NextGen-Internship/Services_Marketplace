@@ -238,6 +238,7 @@ const Profile = () => {
     setShowBecomeProviderForm(!showBecomeProviderForm);
     setShowServices(false);
     setPreviewVisible(false);
+    setShowPersonalInfo(false);
   };
   const becomeProviderButton = user.role !== 'provider' && (
     // <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
@@ -263,6 +264,7 @@ const Profile = () => {
     setShowPersonalInfo(!showPersonalInfo);
     setShowServices(false);
     setPreviewVisible(false);
+    setShowBecomeProviderForm(false);
   };
 
 
@@ -409,7 +411,7 @@ const Profile = () => {
             <SubscriptionComponent handleAccountCreation={handleAccountCreation} />
           </div>
 
-          <button className='save-button' onClick={handleSaveProfile}>Save</button>
+          <button className='save-button' onClick={handleSaveProfile}>Subscribe</button>
 
 
         </div>

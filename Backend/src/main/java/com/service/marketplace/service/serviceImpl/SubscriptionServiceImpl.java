@@ -3,7 +3,9 @@ package com.service.marketplace.service.serviceImpl;
 import com.google.gson.Gson;
 import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
+import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.UserRole;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.SubscriptionService;
 import com.service.marketplace.service.UserService;
@@ -15,6 +17,7 @@ import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.CustomerListParams;
+import com.stripe.param.SubscriptionListParams;
 import com.stripe.param.TokenCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,11 +27,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 @Service
@@ -138,45 +144,74 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public String subscriptionWithCheckoutPage(Checkout checkout) {
+        Stripe.apiKey = stripeApiKey;
+
+        SessionCreateParams params = new SessionCreateParams.Builder()
+                .setSuccessUrl(checkout.getSuccessUrl())
+                .setCancelUrl(checkout.getCancelUrl())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+                .addLineItem(new SessionCreateParams.LineItem.Builder()
+                        .setQuantity(1L)
+                        .setPrice(checkout.getPriceId())
+                        .build())
+                .build();
+
         try {
-            User user = userRepository.findByEmail(checkout.getEmail()).orElse(null);
-            if (user == null) {
-                return gson.toJson(Map.of("error", "User not found"));
-            }
-
-            Stripe.apiKey = stripeApiKey;
-
-            // Retrieve customer object from Stripe using user's Stripe account ID
-            Customer customer = Customer.retrieve(user.getStripeAccountId());
-            Account account = Account.retrieve(user.getStripeAccountId());
-
-            // Create session parameters
-            SessionCreateParams params = new SessionCreateParams.Builder()
-                    .setSuccessUrl(checkout.getSuccessUrl())
-                    .setCancelUrl(checkout.getCancelUrl())
-                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                    .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-                    .setCustomer(customer.getId())
-                    .setCustomerEmail(checkout.getEmail())
-                    .addLineItem(new SessionCreateParams.LineItem.Builder()
-                            .setQuantity(1L)
-                            .setPrice(checkout.getPriceId())
-                            .build())
-                    .build();
-
-            // Create session and return session ID
             Session session = Session.create(params);
-            return gson.toJson(Map.of("sessionId", session.getId()));
-        } catch (StripeException e) {
-            // Handle Stripe exceptions
-            e.printStackTrace();
-            return gson.toJson(Map.of("error", e.getMessage()));
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("sessionId", session.getId());
+            return gson.toJson(responseData);
         } catch (Exception e) {
-            // Handle other exceptions
-            e.printStackTrace();
-            return gson.toJson(Map.of("error", "An unexpected error occurred"));
+            Map<String, Object> messageData = new HashMap<>();
+            messageData.put("message", e.getMessage());
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("error", messageData);
+            return gson.toJson(responseData);
         }
     }
+
+//    @Override
+//    public String subscriptionWithCheckoutPage(Checkout checkout) {
+//        try {
+//            User user = userRepository.findByEmail(checkout.getEmail()).orElse(null);
+//            if (user == null) {
+//                return gson.toJson(Map.of("error", "User not found"));
+//            }
+//
+//            Stripe.apiKey = stripeApiKey;
+//
+//            // Retrieve customer object from Stripe using user's Stripe account ID
+//            Customer customer = Customer.retrieve(user.getStripeAccountId());
+//            Account account = Account.retrieve(user.getStripeAccountId());
+//
+//            // Create session parameters
+//            SessionCreateParams params = new SessionCreateParams.Builder()
+//                    .setSuccessUrl(checkout.getSuccessUrl())
+//                    .setCancelUrl(checkout.getCancelUrl())
+//                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+//                    .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+//                    .setCustomer(customer.getId())
+//                    .setCustomerEmail(checkout.getEmail())
+//                    .addLineItem(new SessionCreateParams.LineItem.Builder()
+//                            .setQuantity(1L)
+//                            .setPrice(checkout.getPriceId())
+//                            .build())
+//                    .build();
+//
+//            // Create session and return session ID
+//            Session session = Session.create(params);
+//            return gson.toJson(Map.of("sessionId", session.getId()));
+//        } catch (StripeException e) {
+//            // Handle Stripe exceptions
+//            e.printStackTrace();
+//            return gson.toJson(Map.of("error", e.getMessage()));
+//        } catch (Exception e) {
+//            // Handle other exceptions
+//            e.printStackTrace();
+//            return gson.toJson(Map.of("error", "An unexpected error occurred"));
+//        }
+//    }
 
 
     @Override
@@ -196,33 +231,82 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
     }
 
-    public ResponseEntity<String> handleStripeWebhook(HttpServletRequest request, String payload) {
-        String endpointSecret = "whsec_cc0df325d4cf2f830514ec91c6e23dde3a856062b86ec456d8aa4791581aa91d";
+    @Override
+    public ResponseEntity<String> handleStripeWebhook(String payload, String sigHeader) {
+        String endpointSecret = "whsec_rnufepI4MEpDUrZ7pbZbOZsgpy0yL6a5";
 
+        Event event = null;
         try {
-            // Verify the webhook signature
-            Event event = Webhook.constructEvent(
-                    payload,
-                    request.getHeader("Stripe-Signature"),
-                    endpointSecret
-            );
-
-            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-            if (dataObjectDeserializer.getObject().isPresent()) {
-                Object object = dataObjectDeserializer.getObject().get();
-                if (object instanceof Session) {
-                    Session session = (Session) object;
-                    String clientReferenceId = session.getClientReferenceId();
-                    userService.updateUserRoleToProvider(Integer.parseInt(clientReferenceId));
-                }
-            }
-
-            return ResponseEntity.ok().build();
+            event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
         } catch (SignatureVerificationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Stripe signature");
+            // Invalid signature
+            System.out.println("Failed signature verification");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
+            // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
         }
+
+        // Deserialize the nested object inside the event
+        EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+        StripeObject stripeObject = null;
+        if (dataObjectDeserializer.getObject().isPresent()) {
+            stripeObject = dataObjectDeserializer.getObject().get();
+        } else {
+            // Deserialization failed, probably due to an API version mismatch.
+            // You may want to handle this case appropriately.
+        }
+
+        // Handle the event
+        switch (event.getType()) {
+            case "checkout.session.completed": {
+                User user = userService.getCurrentUser();
+                String userEmail = user.getEmail();
+
+                // Retrieve all subscriptions associated with the customer's email address from Stripe
+                List<Subscription> subscriptions;
+                try {
+                    Customer customer = Customer.retrieve("cus_PVQYKC5NJY6J8j");
+                    subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customer.getId()).build()).getData();
+                } catch (StripeException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+                }
+
+                // Check if any subscription is active
+                boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
+
+                // If there's an active subscription, change the user's role to 'Provider'
+                if (hasActiveSubscription) {
+                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+                    if (userToBeUpdated != null) {
+                        Set<Role> userRoles = userToBeUpdated.getRoles();
+                        userRoles.add(new Role(String.valueOf(UserRole.PROVIDER)));
+                        userToBeUpdated.setRoles(userRoles);
+                        userRepository.save(userToBeUpdated);
+                    }
+                }
+                break;
+            }
+            case "customer.subscription.created": {
+                // Handle customer.subscription.created event
+                break;
+            }
+            case "customer.subscription.deleted": {
+                // Handle customer.subscription.deleted event
+                break;
+            }
+            case "customer.subscription.updated": {
+                // Handle customer.subscription.updated event
+                break;
+            }
+            // Add cases to handle other event types
+            default:
+                System.out.println("Unhandled event type: " + event.getType());
+        }
+
+        // Respond with a success status
+        return ResponseEntity.ok().build();
     }
+
 
 }
