@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser, updateService } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
@@ -23,12 +23,14 @@ const Profile = () => {
   //const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
   const [localFile, setLocalFile] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [categories, setCategories] = useState([]);
   const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
   const [areMyServicesVisible, setAreMyServicesVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [cities, setCities] = useState([]);
   const [beecomeProviderBtn, setBecomeProviderBtn] = useState(true);
   const [servicesPerPage] = useState(5); // or any number you prefer
-  const [paginatedServices, setPaginatedServices] = useState([]);  
+  const [paginatedServices, setPaginatedServices] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
@@ -44,8 +46,9 @@ const Profile = () => {
     description: '',
     price: '',
     categoryId: '',
+    cityIds: [],
   });
-  
+
 
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
 
@@ -144,7 +147,7 @@ const Profile = () => {
     }
   };
 
-  
+
 
   const handlePhoneChange = (phone) => {
     setPhoneNumber(phone);
@@ -154,6 +157,18 @@ const Profile = () => {
   const isProvider = (usr) => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const fetchedCities = await getAllCities();
+        setCities(fetchedCities);
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+      }
+    };
+
+    fetchCities();
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -163,7 +178,7 @@ const Profile = () => {
         navigate('/login');
         return;
       }
-  
+
       const decodedToken = jwtDecode(localToken);
       const userId = decodedToken['jti'];
       if (!userId) {
@@ -171,25 +186,38 @@ const Profile = () => {
         navigate('/login');
         return;
       }
-  
+
       try {
         const updatedUserData = await getCurrentUser();
         console.log('User data:', updatedUserData);
         setUser(updatedUserData);
-  
+
         if (isProvider(updatedUserData)) {
           setShowPersonalInfo(true);
           setBecomeProviderBtn(false);
-        } 
-        
+        }
+
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
-  
+
     fetchUserData();
   }, [navigate], [user.roles]);
-  
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await getAllCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   console.log("@@@@@@@@@@@@@@@@@@");
   console.log(user.roles);
   const becomeProviderButton = (user.roles == null || !isProvider(user)) && (
@@ -215,7 +243,7 @@ const Profile = () => {
       return;
     }
     try {
-      const services = await getServicesByCurrentUser(); 
+      const services = await getServicesByCurrentUser();
       setUserServices(services);
       const indexOfLastService = (currentPage + 1) * servicesPerPage;
       const indexOfFirstService = indexOfLastService - servicesPerPage;
@@ -228,14 +256,14 @@ const Profile = () => {
     setShowServices(!showServices);
     setShowPersonalInfo(false);
     setPreviewVisible(false);
-};
+  };
 
-const handlePageChange = (selectedPage) => {
-  setCurrentPage(selectedPage);
-  const indexOfLastService = (selectedPage + 1) * servicesPerPage;
-  const indexOfFirstService = indexOfLastService - servicesPerPage;
-  setPaginatedServices(userServices.slice(indexOfFirstService, indexOfLastService));
-};
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage);
+    const indexOfLastService = (selectedPage + 1) * servicesPerPage;
+    const indexOfFirstService = indexOfLastService - servicesPerPage;
+    setPaginatedServices(userServices.slice(indexOfFirstService, indexOfLastService));
+  };
 
   const handleEditProfile = () => {
     navigate('/edit-information');
@@ -243,13 +271,9 @@ const handlePageChange = (selectedPage) => {
 
   const saveServiceBox = async () => {
     try {
-      const updatedService = await updateService({
-        ...editableService,
-        categoryId: editableService.categoryId,
-        cityIds: editableService.cityIds
-      });
+      const updatedService = await updateService(editableService); 
       console.log('Service updated successfully:', updatedService);
-      const updatedServices = userServices.map(service => 
+      const updatedServices = userServices.map(service =>
         service.id === editableService.id ? { ...service, ...editableService } : service
       );
       setUserServices(updatedServices);
@@ -265,31 +289,32 @@ const handlePageChange = (selectedPage) => {
       console.error('Error updating service:', error);
     }
   };
-  
-  
+
+
 
   const editServiceBox = (serviceId) => {
     const serviceToEdit = userServices.find(service => service.id === serviceId);
     if (serviceToEdit) {
       setServiceBoxIdToEdit(serviceId);
       setEditableService({
-        id: serviceToEdit.id,
         title: serviceToEdit.title,
         description: serviceToEdit.description,
         price: serviceToEdit.price,
+        description: serviceToEdit.categories,
+        cities: serviceToEdit.cities
       });
     }
   };
-  
+
   const handleServiceChange = (e, fieldName) => {
     setEditableService(prevState => ({
       ...prevState,
       [fieldName]: e.target.value
     }));
   };
-  
-  
-  
+
+
+
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
@@ -298,12 +323,37 @@ const handlePageChange = (selectedPage) => {
         <div className="service-info">
           {isEditing ? (
             <>
-             <label htmlFor="title">Title:</label>
+              <label htmlFor="title">Title:</label>
               <input type="text" value={editableService.title} onChange={(e) => handleServiceChange(e, 'title')} />
               <label htmlFor="price">Price:</label>
               <input type="text" value={editableService.price} onChange={(e) => handleServiceChange(e, 'price')} />
               <label htmlFor="description">Description:</label>
               <textarea value={editableService.description} onChange={(e) => handleServiceChange(e, 'description')} />
+              <label htmlFor="categoryId">Category:</label>
+              <select
+                value={editableService.categoryId}
+                onChange={(e) => setEditableService(prev => ({ ...prev, categoryId: e.target.value }))}
+              >
+                <option value="">Select a Category</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </select>
+              <label htmlFor="cityIds">Cities:</label>
+              <select
+                multiple
+                value={editableService.cityIds}
+                onChange={(e) => {
+                  const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                  setEditableService(prev => ({ ...prev, cityIds: selectedOptions }));
+                }}
+              >
+                {cities.map(city => (
+                  <option key={city.id} value={city.id}>{city.name}</option>
+                ))}
+              </select>
+
+
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
             </>
@@ -319,9 +369,9 @@ const handlePageChange = (selectedPage) => {
       </div>
     );
   };
-  
-  
-  
+
+
+
 
   return (
     <div className="profile-container">
@@ -335,14 +385,14 @@ const handlePageChange = (selectedPage) => {
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         {isProvider(user) && (
-        <button onClick={handleServicesToggle}>My Services</button>
-  )}        {becomeProviderButton}
+          <button onClick={handleServicesToggle}>My Services</button>
+        )}        {becomeProviderButton}
       </div>
-      <MyServicesModal 
-                isOpen={isModalVisible} 
-                onClose={() => setIsModalVisible(false)} 
-                services={userServices} 
-            />
+      <MyServicesModal
+        isOpen={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        services={userServices}
+      />
       {/* {isEditingPicture && (
         <div className="profile-picture-edit">
           <input type="file" onChange={handleImageChange} accept="image/*" />
