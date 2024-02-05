@@ -259,20 +259,44 @@ const getServicesByCurrentUser = async() => {
       }
 }
 
-const updateService = async(service) => {
+const updateService = async (service) => {
   try {
-    const response = await axios.put(`${config.baseUrl}${config.updateService}${service.id}}`, service, { 
+    const response = await axios.put(`${config.baseUrl}${config.updateService}/${service.id}`, service, {
       headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-    }
-  });
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating my services", error);
     throw error;
   }
-}
+};
+
+
+
+const getCategoryById = async (categoryId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getCategoryById}/${categoryId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching category", error);
+    throw error;
+  }
+};
+
+const getCityById = async (cityId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getCityById}/${cityId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching city", error);
+    throw error;
+  }
+};
+
+
 
 export {
   getAllServices,
@@ -290,6 +314,8 @@ export {
   getPicture,
   getCurrentUser,
   getServicesByCurrentUser,
-  updateService
+  updateService,
+  getCategoryById,
+  getCityById
 }
 export default apiService;

@@ -43,6 +43,7 @@ const Profile = () => {
     title: '',
     description: '',
     price: '',
+    categoryId: '',
   });
   
 
@@ -242,22 +243,29 @@ const handlePageChange = (selectedPage) => {
 
   const saveServiceBox = async () => {
     try {
-      const updatedService = await updateService(editableService); 
+      const updatedService = await updateService({
+        ...editableService,
+        categoryId: editableService.categoryId,
+        cityIds: editableService.cityIds
+      });
       console.log('Service updated successfully:', updatedService);
-        const updatedServices = userServices.map(service => 
+      const updatedServices = userServices.map(service => 
         service.id === editableService.id ? { ...service, ...editableService } : service
       );
       setUserServices(updatedServices);
       setServiceBoxIdToEdit(-1);
-      setEditableService({
-        title: '',
-        description: '',
-        price: '',
-      });
+      // setEditableService({
+      //   title: '',
+      //   description: '',
+      //   price: '',
+      //   categoryId: '',
+      //   cityIds: [] // Resetting as example, adjust based on your logic
+      // });
     } catch (error) {
       console.error('Error updating service:', error);
     }
   };
+  
   
 
   const editServiceBox = (serviceId) => {
