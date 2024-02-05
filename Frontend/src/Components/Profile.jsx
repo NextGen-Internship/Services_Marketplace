@@ -241,15 +241,10 @@ const Profile = () => {
     setShowPersonalInfo(false);
   };
   const becomeProviderButton = user.role !== 'provider' && (
-    // <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
     <div>
-      {/* <button className='openModalBtn' onClick={() => {
-        setModalOpen(true);
-      }}> */}
       <button onClick={handleBecomeProviderToggle}>
         Become Provider
       </button>
-      {/* {modalOpen && <Modal setOpenModal={setModalOpen} />} */}
     </div>
   );
 

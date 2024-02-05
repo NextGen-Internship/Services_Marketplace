@@ -1,6 +1,8 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
 import com.service.marketplace.dto.response.UserResponse;
@@ -260,8 +262,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         // Handle the event
         switch (event.getType()) {
             case "checkout.session.completed": {
-                User user = userService.getCurrentUser();
-                String userEmail = user.getEmail();
+                String userEmail = extractUserEmailFromPayload(payload);
 
                 // Retrieve the customer ID from Stripe using the email
                 try {
@@ -295,6 +296,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 break;
             }
             case "customer.subscription.created": {
+                Subscription subscription;
                 System.out.println("Webhook for created subscription");
                 break;
             }
@@ -314,5 +316,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return ResponseEntity.ok().build();
     }
 
+    private String extractUserEmailFromPayload(String payload) {
+        try {
+            // Parse the payload as JSON
+            JsonObject jsonObject = JsonParser.parseString(payload).getAsJsonObject();
+
+            // Extract the email field from the JSON object
+            JsonObject data = jsonObject.getAsJsonObject("data").getAsJsonObject("object").getAsJsonObject("customer_details");
+            String email = data.get("email").getAsString();
+
+            return email;
+        } catch (Exception e) {
+            // Handle parsing errors or missing email field
+            System.err.println("Error extracting user email from payload: " + e.getMessage());
+            return null;
+        }
+    }
 
 }

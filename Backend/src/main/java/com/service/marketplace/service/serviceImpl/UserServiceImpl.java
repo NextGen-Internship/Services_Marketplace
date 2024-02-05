@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
             String email = user.getEmail();
             return userRepository.findByEmail(email).orElse(null);
         }
+
         return null;
     }
 
