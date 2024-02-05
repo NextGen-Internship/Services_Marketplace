@@ -31,9 +31,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth == null || !auth.isAuthenticated()) {
             return null;
         }
+
         Object principal = auth.getPrincipal();
         if (principal instanceof User user) {
             String email = user.getEmail();

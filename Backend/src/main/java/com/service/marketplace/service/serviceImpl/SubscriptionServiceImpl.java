@@ -3,6 +3,7 @@ package com.service.marketplace.service.serviceImpl;
 import com.google.gson.Gson;
 import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
+import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.enums.UserRole;
@@ -58,8 +59,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
             Map<String, Object> externalAccountParams = new HashMap<>();
             externalAccountParams.put("object", "bank_account");
-            externalAccountParams.put("country", "BG"); // Държава
-            externalAccountParams.put("currency", "BGN"); // Валута
+            externalAccountParams.put("country", "BG");
+            externalAccountParams.put("currency", "BGN");
             externalAccountParams.put("account_holder_name", "Account Holder");
             externalAccountParams.put("account_holder_type", "individual");
             externalAccountParams.put("account_number", stripeAccountRequest.getIban());
@@ -233,9 +234,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public ResponseEntity<String> handleStripeWebhook(String payload, String sigHeader) {
-        String endpointSecret = "whsec_rnufepI4MEpDUrZ7pbZbOZsgpy0yL6a5";
+        String endpointSecret = "whsec_cc0df325d4cf2f830514ec91c6e23dde3a856062b86ec456d8aa4791581aa91d";
 
-        Event event = null;
+        Event event;
         try {
             event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
         } catch (SignatureVerificationException e) {
@@ -247,7 +248,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
         }
 
-        // Deserialize the nested object inside the event
         EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
         StripeObject stripeObject = null;
         if (dataObjectDeserializer.getObject().isPresent()) {
@@ -263,32 +263,39 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 User user = userService.getCurrentUser();
                 String userEmail = user.getEmail();
 
-                // Retrieve all subscriptions associated with the customer's email address from Stripe
-                List<Subscription> subscriptions;
+                // Retrieve the customer ID from Stripe using the email
                 try {
-                    Customer customer = Customer.retrieve("cus_PVQYKC5NJY6J8j");
-                    subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customer.getId()).build()).getData();
-                } catch (StripeException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-                }
+                    Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
+                    String customerId = customer.getId();
 
-                // Check if any subscription is active
-                boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
-
-                // If there's an active subscription, change the user's role to 'Provider'
-                if (hasActiveSubscription) {
-                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
-                    if (userToBeUpdated != null) {
-                        Set<Role> userRoles = userToBeUpdated.getRoles();
-                        userRoles.add(new Role(String.valueOf(UserRole.PROVIDER)));
-                        userToBeUpdated.setRoles(userRoles);
-                        userRepository.save(userToBeUpdated);
+                    // Retrieve all subscriptions associated with the customer's email address from Stripe
+                    List<Subscription> subscriptions;
+                    try {
+                        subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
+                    } catch (StripeException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
                     }
+
+                    // Check if any subscription is active
+                    boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
+
+                    // If there's an active subscription, change the user's role to 'Provider'
+                    if (hasActiveSubscription) {
+                        User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+
+                        if (userToBeUpdated != null) {
+                            userService.updateUserRoleToProvider(userToBeUpdated.getId());
+                        }
+                    }
+                } catch (StripeException e) {
+                    // Handle Stripe exception
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
                 }
+
                 break;
             }
             case "customer.subscription.created": {
-                // Handle customer.subscription.created event
+                System.out.println("Webhook for created subscription");
                 break;
             }
             case "customer.subscription.deleted": {
@@ -296,7 +303,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 break;
             }
             case "customer.subscription.updated": {
-                // Handle customer.subscription.updated event
+                System.out.println("Webhook for updated subscription");
                 break;
             }
             // Add cases to handle other event types
@@ -304,7 +311,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 System.out.println("Unhandled event type: " + event.getType());
         }
 
-        // Respond with a success status
         return ResponseEntity.ok().build();
     }
 
