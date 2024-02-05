@@ -39,6 +39,12 @@ const Profile = () => {
     //picture: '',
     roles: []
   });
+  const [editableService, setEditableService] = useState({
+    title: '',
+    description: '',
+    price: '',
+  });
+  
 
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
 
@@ -234,73 +240,78 @@ const handlePageChange = (selectedPage) => {
     navigate('/edit-information');
   };
 
-  // call this when you want to save the render service box
-  const saveServiceBox = (service) => {
-    updateService(service);
-  }
-
-  const editServiceBox = (service) => {
-    setServiceBoxIdToEdit(service.id);
-    console.log('Edit Mode ON FOR ' + service.id);
-  }
-
-  const handleServiceChange = (e, serviceId, fieldName) => {
-    // Create a new array with updated service information
-    const updatedServices = userServices.map(service => {
-      if (service.id === serviceId) {
-        return { ...service, [fieldName]: e.target.value };
-      }
-      return service;
-    });
-  
-    // Update the userServices state with the new array
-    setUserServices(updatedServices);
+  const saveServiceBox = async () => {
+    try {
+      const updatedService = await updateService(editableService); 
+      console.log('Service updated successfully:', updatedService);
+        const updatedServices = userServices.map(service => 
+        service.id === editableService.id ? { ...service, ...editableService } : service
+      );
+      setUserServices(updatedServices);
+      setServiceBoxIdToEdit(-1);
+      setEditableService({
+        title: '',
+        description: '',
+        price: '',
+      });
+    } catch (error) {
+      console.error('Error updating service:', error);
+    }
   };
+  
+
+  const editServiceBox = (serviceId) => {
+    const serviceToEdit = userServices.find(service => service.id === serviceId);
+    if (serviceToEdit) {
+      setServiceBoxIdToEdit(serviceId);
+      setEditableService({
+        id: serviceToEdit.id,
+        title: serviceToEdit.title,
+        description: serviceToEdit.description,
+        price: serviceToEdit.price,
+      });
+    }
+  };
+  
+  const handleServiceChange = (e, fieldName) => {
+    setEditableService(prevState => ({
+      ...prevState,
+      [fieldName]: e.target.value
+    }));
+  };
+  
+  
   
 
   const renderServiceBox = (service) => {
-    if (serviceBoxIdToEdit === service.id) {
-      return (
-        <div key={service.id} className="service-box">
-          <div className="service-info">
-            <label htmlFor="title">Title:</label>
-            <input
-              id="title"
-              type="text"
-              value={service.title}
-              onChange={(e) => handleServiceChange(e, service.id, 'title')}
-            />
-            <label htmlFor="price">Price:</label>
-            <input
-              id="price"
-              type="text"
-              value={service.price}
-              onChange={(e) => handleServiceChange(e, service.id, 'price')}
-            />
-            <label htmlFor="description">Description:</label>
-            <textarea
-              id="description"
-              value={service.description}
-              onChange={(e) => handleServiceChange(e, service.id, 'description')}
-            />
-            <button onClick={() => saveServiceBox(service)}>Save</button>
-            <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
-          </div>
+    const isEditing = serviceBoxIdToEdit === service.id;
+    return (
+      <div key={service.id} className="service-box">
+        <div className="service-info">
+          {isEditing ? (
+            <>
+             <label htmlFor="title">Title:</label>
+              <input type="text" value={editableService.title} onChange={(e) => handleServiceChange(e, 'title')} />
+              <label htmlFor="price">Price:</label>
+              <input type="text" value={editableService.price} onChange={(e) => handleServiceChange(e, 'price')} />
+              <label htmlFor="description">Description:</label>
+              <textarea value={editableService.description} onChange={(e) => handleServiceChange(e, 'description')} />
+              <button onClick={saveServiceBox}>Save</button>
+              <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
+            </>
+          ) : (
+            <>
+              <h3>{service.title}</h3>
+              <p>{service.price}</p>
+              <p>{service.description}</p>
+              <button onClick={() => editServiceBox(service.id)}>Edit</button>
+            </>
+          )}
         </div>
-      );
-    } else {
-      return (
-        <div key={service.id} className="service-box">
-          <div className="service-info">
-            <h3>{service.title}</h3>
-            <p>{service.price}</p>
-            <p>{service.description}</p>
-            <button onClick={() => setServiceBoxIdToEdit(service.id)}>Edit</button>
-          </div>
-        </div>
-      );
-    }
+      </div>
+    );
   };
+  
   
   
 
