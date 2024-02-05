@@ -57,6 +57,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "stripe_account_id")
     private String stripeAccountId;
 
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

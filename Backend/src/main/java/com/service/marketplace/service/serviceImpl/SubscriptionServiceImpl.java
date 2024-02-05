@@ -50,21 +50,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             Stripe.apiKey = stripeApiKey;
             long currentUnixTimestamp = (int) (System.currentTimeMillis() / 1000);
 
-            TokenCreateParams params = TokenCreateParams.builder()
-                    .setBankAccount(
-                            TokenCreateParams.BankAccount.builder()
-                                    .setCountry("BG") // Bulgaria
-                                    .setCurrency("BGN") // Bulgarian Lev
-                                    .setAccountHolderName("Account Holder") // Set account holder name
-                                    .setAccountHolderType(TokenCreateParams.BankAccount.AccountHolderType.INDIVIDUAL)
-                                    .setRoutingNumber("BNBG9661") // Bulgarian bank routing number
-                                    .setAccountNumber("1020345678") // Account number
-                                    .build()
-                    )
-                    .build();
+            Map<String, Object> externalAccountParams = new HashMap<>();
+            externalAccountParams.put("object", "bank_account");
+            externalAccountParams.put("country", "BG"); // Държава
+            externalAccountParams.put("currency", "BGN"); // Валута
+            externalAccountParams.put("account_holder_name", "Account Holder");
+            externalAccountParams.put("account_holder_type", "individual");
+            externalAccountParams.put("account_number", stripeAccountRequest.getIban());
+            externalAccountParams.put("default_for_currency", true);
 
-            // Create the token
-            Token token = Token.create(params);
+                Map<String, Object> tokenParams = new HashMap<>();
+                tokenParams.put("bank_account", externalAccountParams);
+                Token token = Token.create(tokenParams);
+                String bankAccountToken = token.getId();
 
             AccountCreateParams accountCreateParams = AccountCreateParams.builder()
                     .setType(AccountCreateParams.Type.CUSTOM)
@@ -101,7 +99,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                                     .build())
                             .setPhone(stripeAccountRequest.getPhoneNumber())
                             .build())
-                    .setExternalAccount(token.getId())
+                    .setExternalAccount(bankAccountToken)
                     .build();
 
             Account account = Account.create(accountCreateParams);
