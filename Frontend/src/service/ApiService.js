@@ -261,7 +261,7 @@ const getServicesByCurrentUser = async() => {
 
 const updateService = async(service) => {
   try {
-    const response = await axios.get(`${config.baseUrl}${config.updateService}${service.id}}`, service, { 
+    const response = await axios.put(`${config.baseUrl}${config.updateService}${service.id}}`, service, { 
       headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`

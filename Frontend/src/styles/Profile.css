@@ -122,3 +122,54 @@
   .custom-phone-input .PhoneInputInput {
     flex-grow: 1;
   }
+
+  .service-box {
+    background-color: #f9fafc;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.service-info {
+    margin-bottom: 15px;
+}
+
+.service-info label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+.service-info input[type="text"],
+.service-info textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Make sure padding doesn't affect overall width */
+    font-size: 16px; /* Larger font size for better readability */
+}
+
+.service-info textarea {
+    resize: vertical; /* Allows vertical resize */
+    height: 100px; /* Initial height */
+}
+
+.service-info button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Matching button font size with input fields */
+    margin-right: 10px; /* Spacing between buttons */
+}
+
+.service-info button:hover {
+    background-color: #5db6ee;
+}
+

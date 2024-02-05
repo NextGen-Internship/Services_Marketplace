@@ -137,6 +137,8 @@ const Profile = () => {
     }
   };
 
+  
+
   const handlePhoneChange = (phone) => {
     setPhoneNumber(phone);
     setUser(current => ({ ...current, phoneNumber: phone }));
@@ -242,20 +244,65 @@ const handlePageChange = (selectedPage) => {
     console.log('Edit Mode ON FOR ' + service.id);
   }
 
-  const renderServiceBox = (service) => {
-    return ( // napravi go kakto napravi editMode za personal info, samo che tuk sum napravil 1 promenliva koqto pazi ID-to na 
-            // boxa- koito iskash da editvash, tuk trqbva da napishes if (serviceBoxIdToEdit === service.id) v samiq html i samo togava da prevkluchich
-            // da e s label-i.
-      <div key={service.id} className="service-box">
-        <div className="service-info">
-          <h3>{service.title}</h3>
-          <p> {service.price}</p>
-          <p>{service.description}</p>
-          <button onClick={f => editServiceBox(service)}>Edit</button>
-        </div>
-      </div>
-    );
+  const handleServiceChange = (e, serviceId, fieldName) => {
+    // Create a new array with updated service information
+    const updatedServices = userServices.map(service => {
+      if (service.id === serviceId) {
+        return { ...service, [fieldName]: e.target.value };
+      }
+      return service;
+    });
+  
+    // Update the userServices state with the new array
+    setUserServices(updatedServices);
   };
+  
+
+  const renderServiceBox = (service) => {
+    if (serviceBoxIdToEdit === service.id) {
+      return (
+        <div key={service.id} className="service-box">
+          <div className="service-info">
+            <label htmlFor="title">Title:</label>
+            <input
+              id="title"
+              type="text"
+              value={service.title}
+              onChange={(e) => handleServiceChange(e, service.id, 'title')}
+            />
+            <label htmlFor="price">Price:</label>
+            <input
+              id="price"
+              type="text"
+              value={service.price}
+              onChange={(e) => handleServiceChange(e, service.id, 'price')}
+            />
+            <label htmlFor="description">Description:</label>
+            <textarea
+              id="description"
+              value={service.description}
+              onChange={(e) => handleServiceChange(e, service.id, 'description')}
+            />
+            <button onClick={() => saveServiceBox(service)}>Save</button>
+            <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div key={service.id} className="service-box">
+          <div className="service-info">
+            <h3>{service.title}</h3>
+            <p>{service.price}</p>
+            <p>{service.description}</p>
+            <button onClick={() => setServiceBoxIdToEdit(service.id)}>Edit</button>
+          </div>
+        </div>
+      );
+    }
+  };
+  
+  
 
   return (
     <div className="profile-container">
