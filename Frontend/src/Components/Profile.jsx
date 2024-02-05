@@ -352,8 +352,12 @@ const Profile = () => {
                 value={editableService.cityIds}
                 onChange={(e) => {
                   const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-                  setEditableService((prev) => ({ ...prev, cityIds: selectedOptions.map(Number) }));
+                  setEditableService((prev) => ({
+                    ...prev,
+                    cityIds: [...new Set([...prev.cityIds, ...selectedOptions.map(Number)])], // Removes duplicates
+                  }));
                 }}
+                
               >
                 {cities.map((city) => (
                   <option
