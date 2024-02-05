@@ -271,7 +271,7 @@ const Profile = () => {
 
   const saveServiceBox = async () => {
     try {
-      const updatedService = await updateService(editableService); 
+      const updatedService = await updateService(editableService);
       console.log('Service updated successfully:', updatedService);
       const updatedServices = userServices.map(service =>
         service.id === editableService.id ? { ...service, ...editableService } : service
@@ -300,11 +300,12 @@ const Profile = () => {
         title: serviceToEdit.title,
         description: serviceToEdit.description,
         price: serviceToEdit.price,
-        description: serviceToEdit.categories,
-        cities: serviceToEdit.cities
+        categoryId: serviceToEdit.categoryId,
+        cityIds: serviceToEdit.cityIds || [],
       });
     }
   };
+
 
   const handleServiceChange = (e, fieldName) => {
     setEditableService(prevState => ({
@@ -318,6 +319,12 @@ const Profile = () => {
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
+    const getCityNamesByIds = (cityIds) => {
+      const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
+      console.log(cityNames);
+      return cityNames.filter(Boolean).join(', ');
+    };
+
     return (
       <div key={service.id} className="service-box">
         <div className="service-info">
@@ -344,15 +351,25 @@ const Profile = () => {
                 multiple
                 value={editableService.cityIds}
                 onChange={(e) => {
-                  const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-                  setEditableService(prev => ({ ...prev, cityIds: selectedOptions }));
+                  const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+                  setEditableService((prev) => ({ ...prev, cityIds: selectedOptions.map(Number) }));
                 }}
               >
-                {cities.map(city => (
-                  <option key={city.id} value={city.id}>{city.name}</option>
+                {cities.map((city) => (
+                  <option
+                    key={city.id}
+                    value={city.id}
+                    selected={editableService.cityIds && editableService.cityIds.includes(city.id.toString())} 
+                  >
+                    {city.name}
+                  </option>
                 ))}
+
               </select>
 
+              <div className="selected-cities">
+                <strong>Selected Cities: </strong>{getCityNamesByIds(editableService.cityIds)}
+              </div>
 
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
