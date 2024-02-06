@@ -15,7 +15,8 @@ const config = {
     getUsers: '/v1/users',
     uploadUserPicture: '/file/upload',
     getPicture: '/file/getPicture',
-    getCurrentUser: '/v1/users/current'
+    getCurrentUser: '/v1/users/current',
+    getSubscriptionByUserId: '/api/subscriptions/user'
 }
 
 

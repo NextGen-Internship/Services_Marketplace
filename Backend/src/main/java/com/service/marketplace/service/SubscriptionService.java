@@ -1,14 +1,20 @@
 package com.service.marketplace.service;
 
-import com.service.marketplace.dto.request.Checkout;
-import com.service.marketplace.dto.request.StripeAccountRequest;
-import com.stripe.exception.StripeException;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.ResponseEntity;
+import com.service.marketplace.dto.request.CategoryRequest;
+import com.service.marketplace.dto.request.SubscriptionRequest;
+import com.service.marketplace.dto.response.CategoryResponse;
+import com.service.marketplace.dto.response.SubscriptionResponse;
+
+import java.util.List;
 
 public interface SubscriptionService {
-    String createStripeAccount(StripeAccountRequest stripeAccountRequest);
-    String subscriptionWithCheckoutPage(Checkout checkout) throws StripeException;
-    String getProductPrice(String priceId);
-    ResponseEntity<String> handleStripeWebhook(String request, String payload);
+    List<SubscriptionResponse> getAllSubscriptions();
+
+    SubscriptionResponse getSubscriptionById(Integer subscriptionId);
+
+    // SubscriptionResponse updateSubscription(Integer subscriptionId, SubscriptionRequest subscriptionToUpdate);
+
+    void deleteSubscriptionById(Integer subscriptionId);
+
+    SubscriptionResponse getSubscriptionByUserId(Integer userId);
 }

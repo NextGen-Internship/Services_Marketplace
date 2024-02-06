@@ -1,9 +1,10 @@
 CREATE TABLE IF NOT EXISTS subscription (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    user_id INT,
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
     isActive BOOLEAN NOT NULL DEFAULT TRUE,
+    stripe_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user (id)
 );
 

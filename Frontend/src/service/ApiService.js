@@ -169,6 +169,16 @@ const postRegister = async (formData) => {
   }
 };
 
+const getSubscriptionByUserId = async (userId) => {
+    try {
+      const response = await axios.get(`${config.baseUrl}${config.getSubscriptionByUserId}/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user data", error);
+      throw error;
+    }
+  };
+
 const getUserById = async (userId) => {
   try {
     const response = await axios.get(`${config.baseUrl}${config.getUserById}/${userId}`);
@@ -258,6 +268,7 @@ export {
   updateUser,
   updateUserRole,
   getPicture,
-  getCurrentUser
+  getCurrentUser,
+  getSubscriptionByUserId,
 }
 export default apiService;

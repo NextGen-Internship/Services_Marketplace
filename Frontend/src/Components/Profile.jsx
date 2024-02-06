@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getSubscriptionByUserId } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import Modal from './Modal.jsx';
@@ -24,6 +24,7 @@ const Profile = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [subscriptionId, setSubscriptionId] = useState('');
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
@@ -43,7 +44,6 @@ const Profile = () => {
     postalCode: '',
     iban: '',
   });
-
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -290,6 +290,54 @@ const Profile = () => {
     }
   }
 
+  
+
+  const cancelSubscription = async (subscriptionId) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/api/subscribe/cancel/${subscriptionId}`);
+      console.log('Stripe subscription cancelled:', response.data);
+    } catch (error) {
+      console.error('Error cancelling Stripe subscription:', error);
+    }
+  };
+
+  const fetchSubscription = async (userId) => {
+    try {
+      const response = await getSubscriptionByUserId(userId);
+      console.log(response);
+      setSubscriptionId(response.stripeId);
+    } catch (error) {
+      console.error('Error fetching subscription data:', error);
+    }
+  };
+
+  const handleSubscriptionCancel = async () => {
+    if (subscriptionId) {
+      cancelSubscription(subscriptionId);
+    } else {
+      console.error('No subscription ID found');
+    }
+  };
+
+  useEffect(() => {
+  const localToken = localStorage.getItem('Jwt_Token');
+  if (!localToken) {
+    console.error('No token found');
+    navigate('/login');
+    return null;
+  }
+
+  const decodedToken = jwtDecode(localToken);
+  const userId = decodedToken['jti'];
+  if (!userId) {
+    console.error('No user ID found');
+    navigate('/login');
+    return null;
+  }
+
+  fetchSubscription(userId);
+}, []);
+
   return (
     <div className="profile-container">
 
@@ -305,6 +353,9 @@ const Profile = () => {
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
       </div>
+      <div className="provider-info">
+          <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
+        </div>
       {isEditingPicture && (
         <div className="profile-picture-edit">
           <input type="file" onChange={handleImageChange} accept="image/*" />

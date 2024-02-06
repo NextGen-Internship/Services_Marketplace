@@ -1,49 +1,46 @@
 package com.service.marketplace.controller;
 
-import com.service.marketplace.dto.request.Checkout;
-import com.service.marketplace.dto.request.StripeAccountRequest;
-import com.service.marketplace.persistence.entity.Role;
-import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.enums.UserRole;
+import com.service.marketplace.dto.response.ServiceResponse;
+import com.service.marketplace.dto.response.SubscriptionResponse;
 import com.service.marketplace.service.SubscriptionService;
-import com.stripe.exception.SignatureVerificationException;
-import com.stripe.exception.StripeException;
-import com.stripe.model.*;
-import com.stripe.net.Webhook;
-import com.stripe.param.SubscriptionListParams;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
-@CrossOrigin
 @RequiredArgsConstructor
-@RequestMapping("/api/subscribe")
+@RequestMapping("/api/subscriptions")
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
-    @PostMapping("/createAccount")
-    public String createStripeAccount(@RequestBody StripeAccountRequest stripeAccountRequest) throws StripeException {
-        return subscriptionService.createStripeAccount(stripeAccountRequest);
+    @GetMapping("/all")
+    public ResponseEntity<List<SubscriptionResponse>> getAllSubscriptions() {
+        List<SubscriptionResponse> subscriptions = subscriptionService.getAllSubscriptions();
+        return ResponseEntity.ok(subscriptions);
     }
 
-    @PostMapping("/subscription")
-    public String subscriptionWithCheckoutPage(@RequestBody Checkout checkout) throws StripeException {
-        return subscriptionService.subscriptionWithCheckoutPage(checkout);
+    @GetMapping("/{subscriptionId}")
+    public ResponseEntity<SubscriptionResponse> getSubscriptionById(@PathVariable("subscriptionId") Integer subscriptionId) {
+        SubscriptionResponse subscription = subscriptionService.getSubscriptionById(subscriptionId);
+
+        if (subscription != null) {
+            return ResponseEntity.ok(subscription);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/plan")
-    public String getProductPrice(@RequestParam String priceId) {
-        return subscriptionService.getProductPrice(priceId);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<SubscriptionResponse> getSubscriptionByUserId(@PathVariable("userId") Integer userId) {
+        SubscriptionResponse userSubscription = subscriptionService.getSubscriptionByUserId(userId);
+        return ResponseEntity.ok(userSubscription);
     }
 
-    @PostMapping("/webhook")
-    public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
-        return subscriptionService.handleStripeWebhook(payload, sigHeader);
+    @DeleteMapping("/delete/{subscriptionId}")
+    public ResponseEntity<Void> deleteService(@PathVariable("subscriptionId") Integer subscriptionId) {
+        subscriptionService.deleteSubscriptionById(subscriptionId);
+        return ResponseEntity.ok().build();
     }
 }
