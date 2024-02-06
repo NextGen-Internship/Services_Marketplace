@@ -241,7 +241,7 @@ const Profile = () => {
     setIsEditingPicture(!isEditingPicture);
     setEditMode(false);
     setPreviewVisible(false);
-  };
+  };  
 
 
   const handlePersonalInfoToggle = () => {

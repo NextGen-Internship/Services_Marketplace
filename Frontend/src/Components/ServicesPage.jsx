@@ -5,6 +5,8 @@ import ServiceBoxes from './ServiceBoxes';
 import { getPaginationServices, getPaginationFilteredServices, getAllCities, getAllCategories } from '../service/ApiService';
 import Filters from './Filters';
 import '../styles/ServicesPage.css';
+import ViewMoreModal from './ViewMoreModal';
+
 
 const ServicesPage = () => {
     const isNavigationEvent = !sessionStorage.getItem('PageNumber');
@@ -14,11 +16,19 @@ const ServicesPage = () => {
     const [page, setPage] = useState(Number(storedPage));
     const [pageSize, setPageSize] = useState(5);
     const [totalPages, setTotalPages] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
     const [totalElements, setTotalElements] = useState(0);
     const [sortingField, setSortingField] = useState('updatedAt');
     const [sortingDirection, setSortingDirection] = useState('DESC');
     const [cities, setCities] = useState([]);
     const [categories, setCategories] = useState([]);
+
+    const handleViewMoreClick = (service) => {
+        setSelectedService(service);
+        setIsModalOpen(true);
+        console.log("Modal")
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -106,7 +116,8 @@ const ServicesPage = () => {
                 <Filters applyFilters={getFilteredServices} cities={cities} categories={categories} />
             </div>
             <div className='services'>
-                {services.length > 0 ? <ServiceBoxes services={services} cities={cities} /> : 'No Services to Show'}
+                {services.length > 0 ? <ServiceBoxes services={services} cities={cities} handleViewMoreClick={handleViewMoreClick} />
+                    : 'No Services to Show'}
                 <ReactPaginate
                     pageCount={totalPages}
                     pageRangeDisplayed={2}
@@ -117,6 +128,13 @@ const ServicesPage = () => {
                     initialPage={page}
                 />
             </div>
+            <ViewMoreModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                service={selectedService}
+                cities={cities}
+                categories={categories}
+            />
         </div>
     );
 };
