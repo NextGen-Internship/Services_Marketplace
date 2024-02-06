@@ -300,8 +300,7 @@ const getServiceById = async (serviceId) => {
   try {
     const response = await axios.get(`${config.baseUrl}${config.getServiceById}/${serviceId}`, {
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('jwt_token')}`
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
       }
     });
     return response.data;

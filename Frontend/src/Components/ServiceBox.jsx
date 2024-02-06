@@ -16,6 +16,8 @@ const ServiceBox = ({ service, cities }) => {
         return serviceCities.filter(Boolean).join(', ');
     };
 
+    const serviceId = service.id;
+
     return (
         <div className="service-box">
             <div className='photo'>
@@ -33,7 +35,10 @@ const ServiceBox = ({ service, cities }) => {
                 </div>
                 <div className="service-details">
                     <p>{getCitiesNames(service, cities)} - {formattedDate}</p>
-                    <Link to={`service-details`} className="view-more-btn">View More</Link>
+                    <Link to={{
+                        pathname:`service-details/${service.id}`
+                    }}
+                        className="view-more-btn">View More</Link>
                 </div>
             </div>
         </div>

@@ -1,50 +1,60 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { getServiceById, getCityById, getCategoryById, getUserById } from '../service/ApiService';
 import '../styles/ServiceDetailsPage.css';
-
+import moment from 'moment';
 
 const ServiceDetailsPage = () => {
     const [service, setService] = useState({
         id: 0,
         title: '',
         providerId: 0,
+        providerName: '',
         description: '',
         price: '',
         categoryId: '',
         cityIds: [],
+        updatedAt: []
     });
-    console.log('Rendering ServiceDetailsPage', service.id); 
-
-
-    useEffect(() => {
-        const getServiceDetails = async () => {
-            const serviceDetails = await getServiceById(service.id);
-            setService(serviceDetails);
-        };
-
-        getServiceDetails();
-    }, [service.id]);
+    const { serviceId } = useParams()
 
     useEffect(() => {
-        const getProvider = async () => {
-            const provider = await getUserById(service.providerId);
-            //setService(providerId:provider);
+        async function loadServiceDetails() {
+            console.log('Rendering ServiceDetailsPage', serviceId);
+
+            const getServiceDetails = async () => {
+                const serviceDetails = await getServiceById(serviceId);
+                setService(serviceDetails);
+                return serviceDetails
+            };
+
+            const localService = await getServiceDetails();
+
+            const getProvider = async () => {
+                const provider = await getUserById(localService.providerId);
+                const providerName = provider.firstName + ' ' + provider.lastName;
+                setService((prevService) => ({ ...prevService, providerName: providerName }))
+            }
+
+            getProvider();
         }
-    })
+
+        loadServiceDetails();
+    }, [serviceId])
 
     if (!service) {
         return <div>Loading...</div>;
     }
+    const formattedDate = moment(service.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
 
     return (
         <div className='service-details'>
             <h2>{service.title}</h2>
-            <p>Service ID: {service.id}</p>
             <p>Provider Name: {service.providerName}</p>
             <p>Description: {service.description}</p>
             <p>Price: {service.price}</p>
             <p>Category: {service.categoryId}</p>
+            <p>Updated At: {formattedDate} </p>
         </div>
     );
 };
