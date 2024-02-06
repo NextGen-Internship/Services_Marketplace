@@ -13,6 +13,7 @@ const ServiceDetailsPage = () => {
         description: '',
         price: '',
         categoryId: '',
+        categoryName: '',
         cityIds: [],
         updatedAt: []
     });
@@ -36,7 +37,14 @@ const ServiceDetailsPage = () => {
                 setService((prevService) => ({ ...prevService, providerName: providerName }))
             }
 
+            const getCategory = async () => {
+                const category = await getCategoryById(localService.categoryId);
+                const categoryName = category.name;
+                setService((prevService) => ({ ...prevService, categoryName: categoryName }))
+            }
+
             getProvider();
+            getCategory();
         }
 
         loadServiceDetails();
@@ -53,7 +61,7 @@ const ServiceDetailsPage = () => {
             <p>Provider Name: {service.providerName}</p>
             <p>Description: {service.description}</p>
             <p>Price: {service.price}</p>
-            <p>Category: {service.categoryId}</p>
+            <p>Category: {service.categoryName}</p>
             <p>Updated At: {formattedDate} </p>
         </div>
     );
