@@ -182,11 +182,9 @@ public class StripeServiceImpl implements StripeService {
         try {
             event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
         } catch (SignatureVerificationException e) {
-            // Invalid signature
             System.out.println("Failed signature verification");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
-            // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
         }
 
@@ -201,7 +199,6 @@ public class StripeServiceImpl implements StripeService {
 
         String userEmail = extractUserEmailFromPayload(payload);
 
-        // Handle the event
         switch (event.getType()) {
             case "checkout.session.completed": {
                 try {
@@ -221,8 +218,6 @@ public class StripeServiceImpl implements StripeService {
                     User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
                     // If there's an active subscription, change the user's role to 'Provider'
                     if (hasActiveSubscription) {
-//                        User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
-
                         if (userToBeUpdated != null) {
                             userService.updateUserRoleToProvider(userToBeUpdated.getId());
                         }
@@ -275,19 +270,14 @@ public class StripeServiceImpl implements StripeService {
         Stripe.apiKey = stripeApiKey;
 
         try {
-            // Retrieve the subscription
             Subscription subscription = Subscription.retrieve(stripeId);
 
-            // Check if the subscription is active before canceling
             if ("active".equals(subscription.getStatus())) {
-                // Cancel the subscription at the end of the current billing period;
                 SubscriptionUpdateParams params =
                         SubscriptionUpdateParams.builder().setCancelAtPeriodEnd(true).build();
 
-                // Update the subscription with the cancellation parameters
                 Subscription canceledSubscription = subscription.update(params);
 
-                // Check if the cancellation was successful
                 if (canceledSubscription.getCancelAtPeriodEnd()) {
                     return ResponseEntity.ok("Subscription is successfully canceled.");
                 } else {
@@ -303,10 +293,8 @@ public class StripeServiceImpl implements StripeService {
 
     private String extractUserEmailFromPayload(String payload) {
         try {
-            // Parse the payload as JSON
             JsonObject jsonObject = JsonParser.parseString(payload).getAsJsonObject();
 
-            // Check if the 'data' field is present and not null
             if (jsonObject.has("data") && !jsonObject.get("data").isJsonNull()) {
                 // Extract the email field from the JSON object
                 JsonObject data = jsonObject.getAsJsonObject("data").getAsJsonObject("object").getAsJsonObject("customer_details");
@@ -322,13 +310,12 @@ public class StripeServiceImpl implements StripeService {
                 return null;
             }
         } catch (Exception e) {
-            // Handle parsing errors or missing fields
             System.err.println("Error extracting user email from payload: " + e.getMessage());
             return null;
         }
     }
 
-    @Scheduled(cron = "0 */1 * * * *") // Runs every one minute
+    @Scheduled(cron = "0 */1 * * * *")
     public void checkSubscriptionsStatus() {
         Stripe.apiKey = stripeApiKey;
 
@@ -343,9 +330,6 @@ public class StripeServiceImpl implements StripeService {
 
                     subscription.setActive(false);
                     subscriptionRepository.save(subscription);
-
-                    // Assuming your roles are stored in a collection
-                    // user.removeRole("PROVIDER"); // Assuming you have a method to remove a specific role
 
                     Set<Role> userRoles = user.getRoles();
                     Role role = new Role("PROVIDER");
