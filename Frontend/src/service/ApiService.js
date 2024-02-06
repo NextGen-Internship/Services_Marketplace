@@ -296,6 +296,22 @@ const getCityById = async (cityId) => {
   }
 };
 
+const getServiceById = async (serviceId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getServiceById}/${serviceId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('jwt_token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching service by ID", error);
+    throw error;
+  }
+};
+
+
 
 
 export {
@@ -316,6 +332,7 @@ export {
   getServicesByCurrentUser,
   updateService,
   getCategoryById,
-  getCityById
+  getCityById,
+  getServiceById
 }
 export default apiService;

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/ServiceBox.css';
-import ViewMoreBtn from './ViewMoreBtn';
 import { getAllCities } from '../service/ApiService';
 import moment from 'moment';
-import ViewMoreModal from './ViewMoreModal';
+import { Link } from 'react-router-dom';
 
-
-const ServiceBox = ({ service, cities, handleViewMoreClick }) => {
+const ServiceBox = ({ service, cities }) => {
     const formattedDate = moment(service.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
 
     const getCitiesNames = (service, cities) => {
@@ -35,7 +33,7 @@ const ServiceBox = ({ service, cities, handleViewMoreClick }) => {
                 </div>
                 <div className="service-details">
                     <p>{getCitiesNames(service, cities)} - {formattedDate}</p>
-                    <button onClick={() => handleViewMoreClick(service)}>View More</button>
+                    <Link to={`service-details`} className="view-more-btn">View More</Link>
                 </div>
             </div>
         </div>

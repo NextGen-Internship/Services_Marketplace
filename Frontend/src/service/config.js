@@ -19,7 +19,8 @@ const config = {
     getServicesByCurrentUser: '/v1/services/user/current',
     updateService: '/v1/services/update',
     getCategoryById: '/v1/categories',
-    getCityById: '/v1/cities'
+    getCityById: '/v1/cities',
+    getServiceById: '/v1/services'
 }
 
 

@@ -1,0 +1,32 @@
+/* ServiceDetailsPage.css */
+.service-details-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.service-title {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.service-detail {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+/* Adjustments for better readability and structure */
+.service-detail label {
+    font-weight: bold;
+}
+
+.service-detail p {
+    display: inline-block;
+    margin-left: 5px;
+    color: #333;
+}

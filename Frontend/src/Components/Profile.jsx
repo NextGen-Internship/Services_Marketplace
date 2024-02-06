@@ -51,6 +51,7 @@ const Profile = () => {
     price: '',
     categoryId: '',
     cityIds: [],
+    providerId: 0,
   });
 
 
