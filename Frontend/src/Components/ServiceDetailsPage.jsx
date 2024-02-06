@@ -40,6 +40,7 @@ const ServiceDetailsPage = () => {
     return (
         <div className='service-details'>
             <h2>{service.title}</h2>
+            <p>Service ID: {service.id}</p>
             <p>Provider Name: {service.providerName}</p>
             <p>Description: {service.description}</p>
             <p>Price: {service.price}</p>

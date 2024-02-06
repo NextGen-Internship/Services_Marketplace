@@ -1,5 +1,4 @@
-/* ServiceDetailsPage.css */
-.service-details-container {
+.service-details {
     max-width: 800px;
     margin: auto;
     padding: 40px;
@@ -20,13 +19,12 @@
     color: #666;
 }
 
-/* Adjustments for better readability and structure */
 .service-detail label {
     font-weight: bold;
 }
 
 .service-detail p {
-    display: inline-block;
+    display: inline;
     margin-left: 5px;
     color: #333;
 }

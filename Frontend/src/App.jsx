@@ -25,7 +25,7 @@ function App() {
           <Route exact path="category-page" element={<Category />} />
           <Route exact path="add-service-page" element={<AddServicePage />} />
           <Route exact path="services" element={<ServicesPage />} />
-          <Route exact path="service-details" element={<ServiceDetailsPage />} />
+          <Route path="/service-details/:service.id" element={<ServiceDetailsPage />} />
           <Route exact path="sign-in" element={<SignIn />} />
           <Route exact path="sign-up" element={<SignUp />} />
           <Route exact path="profile" element={<Profile />} />
