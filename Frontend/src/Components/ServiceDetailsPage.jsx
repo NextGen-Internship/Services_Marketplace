@@ -63,6 +63,7 @@ const ServiceDetailsPage = () => {
             <p>Price: {service.price}</p>
             <p>Category: {service.categoryName}</p>
             <p>Updated At: {formattedDate} </p>
+            <button className='pay-button'>Pay Now</button>
         </div>
     );
 };

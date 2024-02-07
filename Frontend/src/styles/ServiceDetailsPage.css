@@ -1,30 +1,51 @@
 .service-details {
-    max-width: 800px;
+    max-width: 2000px;
     margin: auto;
-    padding: 40px;
-    background-color: #fff;
+    padding: 100px; /* Adjusted padding to a reasonable amount for space around content */
+    background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 3;
+    font-size: 22px;
 }
 
 .service-title {
-    margin-bottom: 20px;
+    margin-bottom: 40px; /* Increased bottom margin for more space */
     color: #333;
-    font-size: 24px;
+    font-size: 32px; /* Increased font size */
     font-weight: bold;
+    line-height: 1.5; /* Adjusted line height for better readability */
 }
 
 .service-detail {
-    margin-bottom: 10px;
+    margin-bottom: 25px; /* Increased  bottom margin for more space between details */
     color: #666;
+    font-size: 20px; /* Increased font size for details */
+    line-height: 1.8; /* Increased line height for better readability */
 }
 
 .service-detail label {
     font-weight: bold;
+    font-size: 22px; /* Increased font size for labels */
 }
 
 .service-detail p {
     display: inline;
     margin-left: 5px;
     color: #333;
+}
+
+.pay-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pay-button:hover {
+    background-color: #5db6ee;
 }
