@@ -74,8 +74,8 @@ public class UserServiceImpl implements UserService {
             try {
                 newPictureUrl = cloudinaryService.uploadFile(pictureFile);
             } catch (IOException e) {
-                // Handle Cloudinary upload error
-                // You can log the error or throw a custom exception
+                String errorMessage = "Error uploading picture for user ID " + userId;
+                throw new RuntimeException(errorMessage, e);
             }
         }
 

@@ -2,23 +2,13 @@ package com.service.marketplace.service.serviceImpl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.service.marketplace.persistence.entity.Files;
-import com.service.marketplace.persistence.entity.Review;
-import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.repository.ReviewRepository;
-import com.service.marketplace.persistence.repository.ServiceRepository;
-import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.CloudinaryService;
-import com.service.marketplace.service.ServiceService;
-import com.service.marketplace.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

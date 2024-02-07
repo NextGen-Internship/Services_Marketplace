@@ -19,7 +19,6 @@ import java.util.Optional;
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
-
     private final StorageService storageService;
 
     @Autowired
@@ -74,13 +73,11 @@ public class UserController {
     }
 
     @Valid
-    @PutMapping()
-    public ResponseEntity<UserResponse> updateCurrentUser(@ModelAttribute UserUpdateRequest userToUpdate,
-                                                          @RequestParam(value = "picture") Optional<MultipartFile> file) {
+    @PutMapping("/updateCurrent")
+    public ResponseEntity<UserResponse> updateCurrentUser(@ModelAttribute UserUpdateRequest userToUpdate, @RequestParam(value = "picture") Optional<MultipartFile> file) {
         try {
             User user = userService.getCurrentUser();
             storageService.uploadFile(file.isPresent() ? file.get() : null);
-
 
             UserResponse updatedUser = userService.updateUser(user.getId(), userToUpdate);
 
