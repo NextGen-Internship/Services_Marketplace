@@ -62,7 +62,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (existingReview != null) {
             existingReview.setDescription(updatedReview.getDescription());
-            existingReview.setActive(updatedReview.get());
             existingReview.setRating(updatedReview.getRating());
             // existingReview.setCities(updatedReview.getCities());
 

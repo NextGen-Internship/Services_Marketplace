@@ -81,9 +81,9 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         return pictureUrls;
     }
 
-//    public String generateFilename(MultipartFile file) {
-//        return folder + "/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-//    }
+    public String generateFilename(MultipartFile file) {
+        return folder + "/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+    }
 
     private String extractPublicIdFromUrl(String url) {
         // Assuming the public ID is the part between the last '/' and the '.' in the URL
