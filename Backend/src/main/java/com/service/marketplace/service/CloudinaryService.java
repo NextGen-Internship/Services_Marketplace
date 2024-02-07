@@ -4,9 +4,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 
 public interface CloudinaryService {
-    String uploadFile(MultipartFile multipartFile, Integer entityId, String entityType) throws IOException;
-    String deleteFile();
-    String getPicture() throws MalformedURLException;
+    String uploadFile(MultipartFile multipartFile) throws IOException;
+    String deleteFile(String pictureUrl);
+    List<String> getAllPictures();
+
+    // String generateFilename(MultipartFile file);
 }

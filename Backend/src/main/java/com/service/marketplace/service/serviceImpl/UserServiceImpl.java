@@ -8,8 +8,10 @@ import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.CloudinaryService;
 import com.service.marketplace.service.JwtService;
 import com.service.marketplace.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final CloudinaryService cloudinaryService;
 
     @Override
     public User getCurrentUser() {
@@ -42,22 +45,6 @@ public class UserServiceImpl implements UserService {
             return userRepository.findByEmail(email).orElse(null);
         }
         return null;
-    }
-
-    @Override
-    public void uploadPicture(String url) {
-        if (url.isEmpty()) {
-            throw new IllegalArgumentException("Url is empty");
-        }
-
-        User currentUser = this.getCurrentUser();
-
-        if (currentUser != null) {
-            currentUser.setPicture(url);
-            userRepository.save(currentUser);
-        } else {
-            throw new IllegalStateException("Current user not found");
-        }
     }
 
     @Override
@@ -78,15 +65,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate) {
-        User existingUser = userRepository.findById(userId).orElse(null);
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
-        if (existingUser != null) {
-            userMapper.updateUserFromRequest(userToUpdate, existingUser);
-            User updatedUser = userRepository.save(existingUser);
-            return userMapper.userToUserResponse(updatedUser);
-        } else {
-            return null;
+        MultipartFile pictureFile = userToUpdate.getPicture();
+
+        String newPictureUrl = null;
+        if (pictureFile != null) {
+            try {
+                newPictureUrl = cloudinaryService.uploadFile(pictureFile);
+            } catch (IOException e) {
+                // Handle Cloudinary upload error
+                // You can log the error or throw a custom exception
+            }
         }
+
+        if (newPictureUrl != null && !newPictureUrl.equals(existingUser.getPicture())) {
+            existingUser.setPicture(newPictureUrl);
+        }
+
+        existingUser.setEmail(userToUpdate.getEmail());
+        existingUser.setFirstName(userToUpdate.getFirstName());
+        existingUser.setLastName(userToUpdate.getLastName());
+        existingUser.setPhoneNumber(userToUpdate.getPhoneNumber());
+        existingUser.setExperience(userToUpdate.getExperience());
+        existingUser.setDescription(userToUpdate.getDescription());
+
+        User updatedUser = userRepository.save(existingUser);
+
+        return userMapper.userToUserResponse(updatedUser);
     }
 
     @Override

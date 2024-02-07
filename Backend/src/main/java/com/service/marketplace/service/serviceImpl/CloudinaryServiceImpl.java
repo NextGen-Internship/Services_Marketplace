@@ -1,6 +1,7 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.service.marketplace.persistence.entity.Files;
 import com.service.marketplace.persistence.entity.Review;
 import com.service.marketplace.persistence.entity.User;
@@ -27,15 +28,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CloudinaryServiceImpl implements CloudinaryService {
     private final Cloudinary cloudinary;
-    private final UserService userService;
-    private final ServiceService serviceService;
 
     @Value("${Cloudinary_cloud_name}")
     private String folder;
 
     @Override
-    public String uploadFile(MultipartFile file, Integer entityId, String entityType) throws IOException {
-        String filename = generateFilename(file);
+    public String uploadFile(MultipartFile file) throws IOException {
         Map<?, ?> options = Map.of(
                 "folder", folder
         );
@@ -43,60 +41,49 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
         String pictureUrl = (String) uploadResult.get("secure_url");
 
-        if (entityId == null) {
-            userService.uploadPicture(pictureUrl);
-        } else {
-            if (entityType.equals("SERVICE")) {
-                serviceService.uploadPicture(pictureUrl, entityId);
-            } else {
-                throw new IllegalArgumentException("Invalid entity type");
-            }
-        }
-
-        switch (entityType) {
-            case "REVIEW":
-                Review review = reviewRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Review not found"));
-                List<Files> reviewFiles = review.getFilesList();
-                Files files = new Files(String.valueOf(pictureUrl), LocalDateTime.now().plusMonths(3));
-                reviewFiles.add(files);
-                review.setFilesList(reviewFiles);
-                reviewRepository.save(review);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid entity type");
-        }
-
         return pictureUrl;
     }
 
     @Override
-    public String deleteFile() {
-        User user = userService.getCurrentUser();
-        String pictureUrl = user.getPicture();
+    public String deleteFile(String pictureUrl) {
         if (pictureUrl == null) {
-            return "User with ID " + user.getId() + " does not have a picture to delete.";
+            return "There is no such a picture.";
         }
 
         String publicId = extractPublicIdFromUrl(pictureUrl);
         try {
             cloudinary.uploader().destroy(publicId, null);
-            user.setPicture(null);
-            return "File for user with ID " + user.getId() + " has been deleted.";
+            return "File has been deleted.";
         } catch (IOException e) {
-            return "Error deleting file for user with ID " + user.getId() + ": " + e.getMessage();
+            return "Error deleting file: " + e.getMessage();
         }
     }
 
     @Override
-    public String getPicture() {
-        int userId = userService.getCurrentUser().getId();
-        User user = userRepository.findById(userId).orElse(null);
-        return user != null ? user.getPicture() : null;
+    public List<String> getAllPictures() {
+        List<String> pictureUrls = new ArrayList<>();
+
+        try {
+            Map response = cloudinary.api().resources(ObjectUtils.asMap("type", "upload", "max_results", 500));
+
+            // Extract URLs from the response
+            List<Map<String, Object>> resources = (List<Map<String, Object>>) response.get("resources");
+            for (Map<String, Object> resource : resources) {
+                String url = (String) resource.get("secure_url");
+                pictureUrls.add(url);
+            }
+        } catch (Exception e) {
+            // Handle exceptions, such as Cloudinary API errors
+            e.printStackTrace();
+            // You might want to log or handle the exception in a different way
+        }
+
+        return pictureUrls;
     }
 
-    private String generateFilename(MultipartFile file) {
-        return folder + "/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-    }
+//    public String generateFilename(MultipartFile file) {
+//        return folder + "/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+//    }
 
     private String extractPublicIdFromUrl(String url) {
         // Assuming the public ID is the part between the last '/' and the '.' in the URL

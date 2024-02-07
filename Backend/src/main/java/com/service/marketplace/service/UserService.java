@@ -22,6 +22,4 @@ public interface UserService {
     UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest);
 
     UserResponse getUserResponseByUser(User user);
-
-    void uploadPicture(String url);
 }

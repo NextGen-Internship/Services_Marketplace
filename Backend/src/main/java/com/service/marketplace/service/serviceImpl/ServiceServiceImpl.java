@@ -11,6 +11,7 @@ import com.service.marketplace.persistence.repository.CategoryRepository;
 import com.service.marketplace.persistence.repository.CityRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.CloudinaryService;
 import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +35,7 @@ public class ServiceServiceImpl implements ServiceService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Override
     public List<ServiceResponse> getAllServices() {

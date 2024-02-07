@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @RequiredArgsConstructor
@@ -29,6 +30,5 @@ public class UserUpdateRequest {
     @NotBlank
     private String description;
 
-
-    //private String picture;
+    private MultipartFile picture;
 }

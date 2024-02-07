@@ -18,20 +18,12 @@ public class CloudinaryController {
     private final CloudinaryService cloudinaryService;
 
     @PutMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile multipartFile,
-                                             @RequestParam(value = "entityId", required = false) Integer entityId,
-                                             @RequestParam(value = "entityType", required = false, defaultValue = "USER") String entityType)
-            throws IOException {
-        return new ResponseEntity<>(cloudinaryService.uploadFile(multipartFile, entityId, entityType), HttpStatus.OK);
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        return new ResponseEntity<>(cloudinaryService.uploadFile(multipartFile), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteFile() {
-        return new ResponseEntity<>(cloudinaryService.deleteFile(), HttpStatus.OK);
-    }
-
-    @GetMapping("/getPicture")
-    public ResponseEntity<String> getPicture() throws MalformedURLException {
-        return new ResponseEntity<>(cloudinaryService.getPicture(), HttpStatus.OK);
+    public ResponseEntity<String> deleteFile(@RequestParam("url") String url) {
+        return new ResponseEntity<>(cloudinaryService.deleteFile(url), HttpStatus.OK);
     }
 }

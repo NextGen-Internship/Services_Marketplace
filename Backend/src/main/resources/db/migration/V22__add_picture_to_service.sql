@@ -1,2 +1,2 @@
 ALTER TABLE service
-ADD COLUMN picture BLOB;
+ADD COLUMN picture VARCHAR(255);

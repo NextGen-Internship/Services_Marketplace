@@ -106,6 +106,36 @@ const Profile = () => {
     }
   };
 
+  // const handleSaveProfile = async (e) => {
+  //   e.preventDefault();
+  //   // Update user data in the database
+  //   try {
+  //     const updatedUserData = {
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       email: user.email,
+  //       phoneNumber: user.phoneNumber
+  //     };
+  //     const updatedUser = await updateUser(userId, updatedUserData);
+  //     setUser(updatedUser);
+  //     setEditMode(false);
+  
+  //     // Check if a new picture file was selected
+  //     if (localFile) {
+  //       const uploadPictureData = new FormData();
+  //       uploadPictureData.append('file', localFile);
+  //       uploadPictureData.append('entityType', 'USER');
+  
+  //       // Upload the new picture to Cloudinary
+  //       const imageUrl = await uploadUserPicture(uploadPictureData);
+  //       console.log('Profile picture updated successfully:', imageUrl);
+  //       setProfilePicture(imageUrl); // Update the profile picture in the UI
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating profile:', error);
+  //   }
+  // };
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     setLocalFile(file);

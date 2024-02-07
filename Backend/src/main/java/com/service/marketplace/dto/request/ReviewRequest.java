@@ -14,14 +14,10 @@ public class ReviewRequest {
     @Size(min = 10, max = 255)
     private String description;
 
-    @NotEmpty
-    @Size(min = 2, max = 200)
-    private String description;
-
-    private ServiceStatus serviceStatus;
+    private boolean isActive;
 
     @NotEmpty
-    private double price;
+    private double rating;
 
     @NotEmpty
     private Integer customerId;
@@ -29,5 +25,5 @@ public class ReviewRequest {
     @NotEmpty
     private Integer serviceId;
 
-    private List<Integer> filesIds;
+    // private List<Integer> filesIds;
 }
