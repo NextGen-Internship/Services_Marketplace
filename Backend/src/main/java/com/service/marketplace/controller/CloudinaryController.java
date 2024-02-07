@@ -19,10 +19,10 @@ public class CloudinaryController {
 
     @PutMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile multipartFile,
-                                             @RequestParam(value = "entityType") String entityType,
-                                             @RequestParam(value = "entityId", required = false) Integer entityId)
+                                             @RequestParam(value = "entityId", required = false) Integer entityId,
+                                             @RequestParam(value = "entityType", required = false, defaultValue = "USER") String entityType)
             throws IOException {
-        return new ResponseEntity<>(cloudinaryService.uploadFile(multipartFile, entityType, entityId), HttpStatus.OK);
+        return new ResponseEntity<>(cloudinaryService.uploadFile(multipartFile, entityId, entityType), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")

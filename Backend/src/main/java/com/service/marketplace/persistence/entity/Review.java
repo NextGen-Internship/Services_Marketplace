@@ -14,14 +14,14 @@ import java.util.List;
 public class Review extends BaseEntity {
 
     @Column(name = "description")
-    private String description;
+    private String description; /////////////
 
     @Column(name = "rating", nullable = false)
-    private double rating;
+    private double rating; ///////////
 
     @JoinColumn(name = "customer_id", nullable = false)
     @ManyToOne
-    private User customer;
+    private User customer; ////////////
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -34,10 +34,10 @@ public class Review extends BaseEntity {
 
     @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne
-    private Service service;
+    private Service service; ////////
 
     @Column(name = "fiels")
     @OneToMany
-    private List<Files> filesList;
+    private List<Files> filesList; /////////
 
 }

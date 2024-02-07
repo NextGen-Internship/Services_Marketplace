@@ -8,6 +8,7 @@ import com.service.marketplace.persistence.repository.ReviewRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.CloudinaryService;
+import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +28,13 @@ import java.util.UUID;
 public class CloudinaryServiceImpl implements CloudinaryService {
     private final Cloudinary cloudinary;
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final ServiceRepository serviceRepository;
-    private final ReviewRepository reviewRepository;
+    private final ServiceService serviceService;
 
     @Value("${Cloudinary_cloud_name}")
     private String folder;
 
     @Override
-    public String uploadFile(MultipartFile file, String entityType, Integer entityId) throws IOException {
+    public String uploadFile(MultipartFile file, Integer entityId, String entityType) throws IOException {
         String filename = generateFilename(file);
         Map<?, ?> options = Map.of(
                 "folder", folder
@@ -44,22 +43,17 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
         String pictureUrl = (String) uploadResult.get("secure_url");
 
+        if (entityId == null) {
+            userService.uploadPicture(pictureUrl);
+        } else {
+            if (entityType.equals("SERVICE")) {
+                serviceService.uploadPicture(pictureUrl, entityId);
+            } else {
+                throw new IllegalArgumentException("Invalid entity type");
+            }
+        }
+
         switch (entityType) {
-            case "USER":
-                User user = userService.getCurrentUser();
-
-                if (user == null) {
-                    throw new EntityNotFoundException("User not found");
-                }
-
-                user.setPicture(String.valueOf(pictureUrl));
-                userRepository.save(user);
-                break;
-            case "SERVICE":
-                com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Service not found"));
-                service.setPicture(String.valueOf(pictureUrl));
-                serviceRepository.save(service);
-                break;
             case "REVIEW":
                 Review review = reviewRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Review not found"));
                 List<Files> reviewFiles = review.getFilesList();

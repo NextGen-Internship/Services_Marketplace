@@ -25,4 +25,6 @@ public interface ServiceService {
     Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest);
 
     List<ServiceResponse> getServicesByCurrentUser();
+
+    void uploadPicture(String url, Integer entityId);
 }

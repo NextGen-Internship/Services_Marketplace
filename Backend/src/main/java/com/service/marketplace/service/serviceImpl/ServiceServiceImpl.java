@@ -13,6 +13,7 @@ import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -146,5 +147,15 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceMapper.toServiceResponseList(userServices);
     }
 
+    @Override
+    public void uploadPicture(String url, Integer entityId) {
+        if (url.isEmpty()) {
+            throw new IllegalArgumentException("Url is empty");
+        }
+
+        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Service not found"));
+        service.setPicture(url);
+        serviceRepository.save(service);
+    }
 
 }

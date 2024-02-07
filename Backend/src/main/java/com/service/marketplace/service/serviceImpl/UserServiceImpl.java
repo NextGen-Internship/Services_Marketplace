@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,22 @@ public class UserServiceImpl implements UserService {
             return userRepository.findByEmail(email).orElse(null);
         }
         return null;
+    }
+
+    @Override
+    public void uploadPicture(String url) {
+        if (url.isEmpty()) {
+            throw new IllegalArgumentException("Url is empty");
+        }
+
+        User currentUser = this.getCurrentUser();
+
+        if (currentUser != null) {
+            currentUser.setPicture(url);
+            userRepository.save(currentUser);
+        } else {
+            throw new IllegalStateException("Current user not found");
+        }
     }
 
     @Override
