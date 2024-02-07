@@ -14,14 +14,15 @@ import ServicesPage from './Components/ServicesPage';
 import CancelPage from './Components/CancelPage';
 import NewSubscription from './Components/NewSubscription';
 import Profile from './Components/Profile';
+import ServiceDetailsPage from './Components/ServiceDetailsPage';
 
 function App() {
-  const[clicked, isClicked] = useState(false)
+  const [clicked, isClicked] = useState(false)
   return (
     <GoogleOAuthProvider clientId="350761079008-0ipa8rk7sumieir1rq4b5ljg3pu78trt.apps.googleusercontent.com">
       <Router>
-        <Navbar clicked={clicked} isClicked={isClicked}/>
-        {clicked? <Menu/>:null}
+        <Navbar clicked={clicked} isClicked={isClicked} />
+        {clicked ? <Menu /> : null}
         <Routes>
           <Route exact path="home-page" element={<Home/>}/>
           <Route exact path="category-page" element={<Category/>}/>

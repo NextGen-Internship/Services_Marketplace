@@ -6,6 +6,7 @@ import { getPaginationServices, getPaginationFilteredServices, getAllCities, get
 import Filters from './Filters';
 import '../styles/ServicesPage.css';
 
+
 const ServicesPage = () => {
     const isNavigationEvent = !sessionStorage.getItem('PageNumber');
     const storedPage = isNavigationEvent ? 0 : sessionStorage.getItem('PageNumber');
@@ -14,11 +15,13 @@ const ServicesPage = () => {
     const [page, setPage] = useState(Number(storedPage));
     const [pageSize, setPageSize] = useState(5);
     const [totalPages, setTotalPages] = useState(0);
+    const [selectedService, setSelectedService] = useState(null);
     const [totalElements, setTotalElements] = useState(0);
     const [sortingField, setSortingField] = useState('updatedAt');
     const [sortingDirection, setSortingDirection] = useState('DESC');
     const [cities, setCities] = useState([]);
     const [categories, setCategories] = useState([]);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -106,7 +109,8 @@ const ServicesPage = () => {
                 <Filters applyFilters={getFilteredServices} cities={cities} categories={categories} />
             </div>
             <div className='services'>
-                {services.length > 0 ? <ServiceBoxes services={services} cities={cities} /> : 'No Services to Show'}
+                {services.length > 0 ? <ServiceBoxes services={services} cities={cities} />
+                    : 'No Services to Show'}
                 <ReactPaginate
                     pageCount={totalPages}
                     pageRangeDisplayed={2}
@@ -117,8 +121,16 @@ const ServicesPage = () => {
                     initialPage={page}
                 />
             </div>
+            <ReactPaginate
+                pageCount={totalPages}
+                pageRangeDisplayed={2}
+                marginPagesDisplayed={1}
+                onPageChange={handlePageChange}
+                containerClassName="pagination"
+                activeClassName="active"
+                initialPage={page}
+            />
         </div>
     );
 };
-
 export default ServicesPage;

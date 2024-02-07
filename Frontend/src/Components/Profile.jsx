@@ -2,27 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getSubscriptionByUserId } from '../service/ApiService.js';
-import { jwtDecode } from "jwt-decode";
-import PhoneInput from 'react-phone-number-input';
-import Modal from './Modal.jsx';
 import SubscriptionComponent from './SubscriptionComponent.jsx';
 import axios from 'axios';
-
+import '../styles/ServicesPage.css';
+import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, getSubscriptionByUserId } from '../service/ApiService.js';
+import { jwtDecode } from "jwt-decode";
+import PhoneInput from 'react-phone-number-input';
+import MyServicesModal from './MyServicesModal';
+import ReactPaginate from 'react-paginate';
+import { FaRegEdit } from "react-icons/fa";
 
 const Profile = () => {
-  const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
+  //const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
 
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
   const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
+  const [userServices, setUserServices] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
+  //const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
   const [localFile, setLocalFile] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [categories, setCategories] = useState([]);
   const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
+  const [areMyServicesVisible, setAreMyServicesVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [cities, setCities] = useState([]);
+  const [beecomeProviderBtn, setBecomeProviderBtn] = useState(true);
+  const [servicesPerPage] = useState(5); // or any number you prefer
+  const [paginatedServices, setPaginatedServices] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [selectedCities, setSelectedCities] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState('');
   const [user, setUser] = useState({
@@ -30,8 +43,17 @@ const Profile = () => {
     lastName: '',
     email: '',
     phoneNumber: '',
-    picture: '',
-    role: ''
+    //picture: '',
+    roles: []
+  });
+  const [editableService, setEditableService] = useState({
+    id: 0,
+    title: '',
+    description: '',
+    price: '',
+    categoryId: '',
+    cityIds: [],
+    providerId: 0,
   });
   const [formData, setFormData] = useState({
     email: '',
@@ -47,7 +69,19 @@ const Profile = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
 
+
+  const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
+
   const [isEditingPicture, setIsEditingPicture] = useState(false);
+
+  const handleCityClick = (cityId) => {
+    const isAlreadySelected = selectedCities.includes(cityId);
+    if (isAlreadySelected) {
+      setSelectedCities(selectedCities.filter(id => id !== cityId));
+    } else {
+      setSelectedCities([...selectedCities, cityId]);
+    }
+  };
 
   const handleImageUrlChange = (e) => {
     setUser({ ...user, imageUrl: e.target.value });
@@ -94,12 +128,13 @@ const Profile = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
+      role: user.role
     };
     console.log(updatedUserData);
 
     try {
-      const updatedUser = await updateUser(userId, updatedUserData);
+      const updatedUser = await updateUser(userId, user);
       console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
@@ -107,41 +142,6 @@ const Profile = () => {
       console.error('Error updating profile:', error);
     }
   };
-
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    setLocalFile(file);
-    // if (file) {
-    //   try {
-    //     const localToken = localStorage.getItem('Jwt_Token');
-    //     if (!localToken) {
-    //       console.error('No token found');
-    //       navigate('/login');
-    //       return;
-    //     }
-
-    //     const decodedToken = jwtDecode(localToken);
-    //     const userId = decodedToken['jti'];
-    //     if (!userId) {
-    //       console.error('No user ID found');
-    //       navigate('/login');
-    //       return;
-    //     }
-
-    //     const imageUrl = await uploadUserPicture(userId, file);
-    //     setPreviewVisible(true);
-    //     setIsEditingPicture(false);
-    //     setProfilePicture(imageUrl);
-    //     setUser(prevUser => ({ ...prevUser, imageUrl: imageUrl }));
-    //     console.log('Profile picture updated successfully');
-    //   } catch (error) {
-    //     console.error('Error updating profile picture:', error);
-    //   }
-    // }
-  };
-
-
-
 
   const handleBecomeProvider = async (newRole) => {
     setShowServices(false);
@@ -169,38 +169,56 @@ const Profile = () => {
 
       console.log('User role updated successfully:', response);
 
-      setUser(prevUser => ({ ...prevUser, role: newRole }));
+      //setUser(prevUser => ({ ...prevUser, roles: prevUser.roles.push() }));
+      setUser(await getCurrentUser())
+      console.log('Updated role:', newRole);
+      console.log('User role:', user.roles);
 
-      //if(response.newToken) {
-      // localStorage.setItem('Jwt_Token', response.newToken);
+      if (isProvider(user)) {
+        setShowPersonalInfo(true);
+        setShowServices(true);
+        setBecomeProviderBtn(false);
+      }
+
     } catch (error) {
       console.error('Error updating user role:', error);
     }
   };
+
+
 
   const handlePhoneChange = (phone) => {
     setPhoneNumber(phone);
     setUser(current => ({ ...current, phoneNumber: phone }));
   };
 
+  const isProvider = (usr) => {
+    return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
+  }
   useEffect(() => {
-    // const getPictureMethod = async () => {
-    //   const localToken = localStorage['Jwt_Token'];
-    //   const decodedToken = jwtDecode(localToken);
-    //   const userId = decodedToken['jti'];
+    const fetchCities = async () => {
+      try {
+        const fetchedCities = await getAllCities();
+        setCities(fetchedCities);
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+      }
+    };
 
-    //   const picUrl = await getPicture(userId);
-    //   console.log('polled url', picUrl);
-    //   setProfilePicture(picUrl);
-    //   setUser(prevUser => ({ ...prevUser, imageUrl: picUrl }));
-    // };
+    fetchCities();
+  }, []);
 
+  useEffect(() => {
     const fetchUserData = async () => {
       const localToken = localStorage['Jwt_Token'];
+      if (!localToken) {
+        console.error('No token found');
+        navigate('/login');
+        return;
+      }
+
       const decodedToken = jwtDecode(localToken);
       const userId = decodedToken['jti'];
-      //const userEmail = decodedToken['sub'];
-
       if (!userId) {
         console.error('No user ID found');
         navigate('/login');
@@ -208,29 +226,19 @@ const Profile = () => {
       }
 
       try {
-        //const userData = await getUserById(userId);
-        const userData = await getCurrentUser();
-        setUser(userData);
-        setPhoneNumber(userData.phoneNumber);
-        console.log('User data:');
-        console.log(userData);
+        const updatedUserData = await getCurrentUser();
+        console.log('User data:', updatedUserData);
+        setUser(updatedUserData);
 
-        // if (user.imageUrl !== defaultImageUrl) {
-        //   console.log("custom avatar!")
-        //   await getPictureMethod();
-        //   console.log('User Avatar img: ', user.imageUrl)
-        //   console.log(profilePicture);
-        //   //setUser(({ ...user, imageUrl: profilePicture }));
-        // }
-        // else {
-        //   console.log("default");
-        // }
+        if (isProvider(updatedUserData)) {
+          setShowPersonalInfo(true);
+          setBecomeProviderBtn(false);
+        }
 
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
-    console.log('Fetched user role:', user.role);
 
     fetchUserData();
   }, [navigate]);
@@ -240,19 +248,32 @@ const Profile = () => {
     setPreviewVisible(false);
     setShowPersonalInfo(false);
   };
-  const becomeProviderButton = user.role !== 'provider' && (
-    <div>
-      <button onClick={handleBecomeProviderToggle}>
-        Become Provider
-      </button>
-    </div>
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await getAllCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  console.log("@@@@@@@@@@@@@@@@@@");
+  console.log(user.roles);
+  const becomeProviderButton = (user.roles == null || !isProvider(user)) && (
+    <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
   );
+  // handleBecomeProviderToggle
 
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
     setEditMode(false);
     setPreviewVisible(false);
-  };
+  };  
 
 
   const handlePersonalInfoToggle = () => {
@@ -262,19 +283,33 @@ const Profile = () => {
     setShowBecomeProviderForm(false);
   };
 
-
-
-
-  const handleServicesToggle = () => {
-    if (user.role !== 'provider') {
+  const handleServicesToggle = async () => {
+    if (!isProvider(user)) {
       console.log('Only providers can see their services');
       return;
+    }
+    try {
+      const services = await getServicesByCurrentUser();
+      setUserServices(services);
+      const indexOfLastService = (currentPage + 1) * servicesPerPage;
+      const indexOfFirstService = indexOfLastService - servicesPerPage;
+      setPaginatedServices(services.slice(indexOfFirstService, indexOfLastService));
+      setTotalPages(Math.ceil(services.length / servicesPerPage));
+      setAreMyServicesVisible(true);
+    } catch (error) {
+      console.error('Error fetching services:', error);
     }
     setShowServices(!showServices);
     setShowPersonalInfo(false);
     setPreviewVisible(false);
+  };
 
-  }
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage);
+    const indexOfLastService = (selectedPage + 1) * servicesPerPage;
+    const indexOfFirstService = indexOfLastService - servicesPerPage;
+    setPaginatedServices(userServices.slice(indexOfFirstService, indexOfLastService));
+  };
 
   const handleEditProfile = () => {
     navigate('/edit-information');
@@ -336,12 +371,127 @@ const Profile = () => {
   }
 
   fetchSubscription(userId);
-}, []);
+ }, []);
+  const saveServiceBox = async () => {
+    try {
+      const updatedService = await updateService(editableService.id, editableService);
+      console.log('Service updated successfully:', updatedService);
+      const updatedServices = userServices.map((service) =>
+        service.id === editableService.id ? { ...service, ...editableService } : service
+      );
+      setUserServices(updatedServices);
+      setServiceBoxIdToEdit(-1);
+    } catch (error) {
+      console.error('Error updating service:', error);
+    }
+  };
+
+
+
+
+  const editServiceBox = (serviceId) => {
+    const serviceToEdit = userServices.find(service => service.id === serviceId);
+    if (serviceToEdit) {
+      setServiceBoxIdToEdit(serviceId);
+      setEditableService({
+        id: serviceToEdit.id,
+        title: serviceToEdit.title,
+        description: serviceToEdit.description,
+        price: serviceToEdit.price,
+        categoryId: serviceToEdit.categoryId,
+        cityIds: serviceToEdit.cityIds || [],
+      });
+    }
+  };
+
+
+  const handleServiceChange = (e, fieldName) => {
+    if (fieldName === 'cityIds') {
+      const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+      setEditableService((prev) => ({
+        ...prev,
+        cityIds: selectedOptions.map(Number),
+      }));
+    } else {
+      setEditableService((prevState) => ({
+        ...prevState,
+        [fieldName]: e.target.value,
+      }));
+    }
+  };
+
+  console.log(editableService);
+
+
+  const renderServiceBox = (service) => {
+    const isEditing = serviceBoxIdToEdit === service.id;
+    const getCityNamesByIds = (cityIds) => {
+      const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
+      console.log(cityNames);
+      return cityNames.filter(Boolean).join(', ');
+    };
+
+    return (
+      <div key={service.id} className="service-box">
+        <div className="service-info">
+          {isEditing ? (
+            <>
+              <label htmlFor="title">Title:</label>
+              <input type="text" value={editableService.title} onChange={(e) => handleServiceChange(e, 'title')} />
+              <label htmlFor="price">Price:</label>
+              <input type="text" value={editableService.price} onChange={(e) => handleServiceChange(e, 'price')} />
+              <label htmlFor="description">Description:</label>
+              <textarea value={editableService.description} onChange={(e) => handleServiceChange(e, 'description')} />
+              <label htmlFor="categoryId">Category:</label>
+              <select
+                value={editableService.categoryId}
+                onChange={(e) => setEditableService(prev => ({ ...prev, categoryId: e.target.value }))}
+              >
+                <option value="">Select a Category</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </select>
+              <label htmlFor="cityIds">Cities:</label>
+              <select
+                multiple
+                value={editableService.cityIds}
+                onChange={(e) => handleServiceChange(e, 'cityIds')}
+              >
+                {cities.map((city) => (
+                  <option
+                    key={city.id}
+                    value={city.id}
+                    selected={editableService.cityIds && editableService.cityIds.includes(city.id)}
+                  >
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+
+              <button onClick={saveServiceBox}>Save</button>
+              <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
+            </>
+          ) : (
+            <>
+              <h3>{service.title}</h3>
+              <p>{service.price}</p>
+              <p>{service.description}</p>
+              <button onClick={() => editServiceBox(service.id)}><FaRegEdit /></button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+
+
 
   return (
     <div className="profile-container">
 
-      <h2 className="profile-title">About me</h2>
+      <h2 className="profile-title">Profile</h2>
       {/* <img
         src={user.picture || profilePicture}
         alt="User"
@@ -349,20 +499,19 @@ const Profile = () => {
       /> */}
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
-        {user.role === 'provider' && (
+        {isProvider(user) && (
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
       </div>
       <div className="provider-info">
           <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
-        </div>
+      </div>
       {isEditingPicture && (
-        <div className="profile-picture-edit">
-          <input type="file" onChange={handleImageChange} accept="image/*" />
-          {user.picture && (
-            <img src={user.picture} alt="Profile Preview" className="profile-preview-image" />
-          )}
-        </div>
+      <MyServicesModal
+        isOpen={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        services={userServices}
+      />
       )}
       {showPersonalInfo && (
         <div className="personal-info">
@@ -462,14 +611,23 @@ const Profile = () => {
 
         </div>
       }
-
       {showServices && (
         <div className="user-services">
-          <p>Services will be listed here...</p>
+          {paginatedServices.length > 0 ? paginatedServices.map(renderServiceBox) : 'No Services to Show'}
+          <div className="pagination-controls">
+            <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={1}
+              onPageChange={({ selected }) => handlePageChange(selected)}
+              containerClassName="pagination"
+              activeClassName="active"
+              initialPage={currentPage}
+            />
+          </div>
         </div>
       )}
     </div>
   );
-};
-
+      };
 export default Profile;
