@@ -4,17 +4,16 @@ import '../styles/Subscription.css';
 
 const Subscription = ({ priceId, onSelected }) => {
     const [productData, setProductData] = useState();
+    const [params] = useState({
+        priceId: priceId
+    });
 
     useEffect(() => {
         const fetchSubscriptionProductData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/subscribe/plan`, {
-                    params: {
-                        priceId: priceId
-                    }
+                const response = await axios.get(`http://localhost:8080/api/subscribe/plan`, {params: params
                 });
                 setProductData(response.data);
-                console.log(response.data);
             } catch (error) {
                 console.error('Error fetching subscription product data:', error);
             }
@@ -41,7 +40,6 @@ const Subscription = ({ priceId, onSelected }) => {
                 return currencyCode;
         }
     }
-    
 
   return (
     <div className='subscription-box' onClick={handleClick} style={{ cursor: 'pointer' }}>

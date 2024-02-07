@@ -57,7 +57,7 @@ const SubscriptionComponent = ({ handleAccountCreation }) => {
                 <Subscription priceId={environment.monthlyPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} />
                 <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} />
-                <button onClick={() => {handleAccountCreation(); 
+                <button className="save-button" onClick={() => {handleAccountCreation(); 
                                         handleCheckout()}}>
                     Subscribe
                 </button>

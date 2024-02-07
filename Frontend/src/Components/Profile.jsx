@@ -129,7 +129,7 @@ const Profile = () => {
       lastName: user.lastName,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      role: user.role
+      roles: user.roles
     };
     console.log(updatedUserData);
 
@@ -143,50 +143,6 @@ const Profile = () => {
     }
   };
 
-  const handleBecomeProvider = async (newRole) => {
-    setShowServices(false);
-    setShowPersonalInfo(false);
-    console.log('Request to become a provider sent');
-
-    const localToken = localStorage.getItem('Jwt_Token');
-    if (!localToken) {
-      console.error('No token found');
-      navigate('/login');
-      return;
-    }
-
-    const decodedToken = jwtDecode(localToken);
-    const userId = decodedToken['jti'];
-    if (!userId) {
-      console.error('No user ID found');
-      navigate('/login');
-      return;
-    }
-
-    try {
-      const response = await updateUserRole(userId, newRole);
-      console.log("Request data:", { userId, newRole });
-
-      console.log('User role updated successfully:', response);
-
-      //setUser(prevUser => ({ ...prevUser, roles: prevUser.roles.push() }));
-      setUser(await getCurrentUser())
-      console.log('Updated role:', newRole);
-      console.log('User role:', user.roles);
-
-      if (isProvider(user)) {
-        setShowPersonalInfo(true);
-        setShowServices(true);
-        setBecomeProviderBtn(false);
-      }
-
-    } catch (error) {
-      console.error('Error updating user role:', error);
-    }
-  };
-
-
-
   const handlePhoneChange = (phone) => {
     setPhoneNumber(phone);
     setUser(current => ({ ...current, phoneNumber: phone }));
@@ -195,6 +151,7 @@ const Profile = () => {
   const isProvider = (usr) => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
+
   useEffect(() => {
     const fetchCities = async () => {
       try {
@@ -242,6 +199,7 @@ const Profile = () => {
 
     fetchUserData();
   }, [navigate]);
+  
   const handleBecomeProviderToggle = () => {
     setShowBecomeProviderForm(!showBecomeProviderForm);
     setShowServices(false);
@@ -264,10 +222,10 @@ const Profile = () => {
 
   console.log("@@@@@@@@@@@@@@@@@@");
   console.log(user.roles);
-  const becomeProviderButton = (user.roles == null || !isProvider(user)) && (
-    <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
+  const becomeProviderButton = !isProvider(user) && (
+    <button onClick={() => handleBecomeProviderToggle()}>Become a Provider</button>
   );
-  // handleBecomeProviderToggle
+  
 
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
@@ -325,8 +283,6 @@ const Profile = () => {
     }
   }
 
-  
-
   const cancelSubscription = async (subscriptionId) => {
     try {
       const response = await axios.post(`http://localhost:8080/api/subscribe/cancel/${subscriptionId}`);
@@ -372,6 +328,7 @@ const Profile = () => {
 
   fetchSubscription(userId);
  }, []);
+
   const saveServiceBox = async () => {
     try {
       const updatedService = await updateService(editableService.id, editableService);
@@ -385,9 +342,6 @@ const Profile = () => {
       console.error('Error updating service:', error);
     }
   };
-
-
-
 
   const editServiceBox = (serviceId) => {
     const serviceToEdit = userServices.find(service => service.id === serviceId);
@@ -503,9 +457,11 @@ const Profile = () => {
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
       </div>
-      <div className="provider-info">
+      {isProvider(user) && 
+      (<div className="provider-info">
           <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
-      </div>
+      </div>)
+}
       {isEditingPicture && (
       <MyServicesModal
         isOpen={isModalVisible}
@@ -564,7 +520,7 @@ const Profile = () => {
           )}
         </div>
       )}
-      {showBecomeProviderForm &&
+      {showBecomeProviderForm && (
         <div className="provider-info">
           <div className="input-group">
             <label>First and Middle:</label>
@@ -605,11 +561,8 @@ const Profile = () => {
           <div>
             <SubscriptionComponent handleAccountCreation={handleAccountCreation} />
           </div>
-
-          <button className='save-button' onClick={handleSaveProfile}>Subscribe</button>
-
-
         </div>
+      )
       }
       {showServices && (
         <div className="user-services">
