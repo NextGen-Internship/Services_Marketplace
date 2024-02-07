@@ -67,7 +67,7 @@ const ServiceDetailsPage = () => {
         console.log('Edit details triggered');
         // Implement the edit functionality here
     };
-    
+
 
     return (
         <div className='service-details'>
@@ -78,11 +78,12 @@ const ServiceDetailsPage = () => {
             <p>Category: {service.categoryName}</p>
             <p>Updated At: {formattedDate} </p>
             <button className='pay-button'>Pay Now</button>
-            <button className='image-upload-button' onClick={handleImageUpload}>
+            {/* <button className='image-upload-button' onClick={handleImageUpload}>
                 <ImFilePicture /> 
-            </button>
+            </button> */}
+            <div className="button-container"></div>
             <button className='edit-button' onClick={handleEditDetails}>
-                <ImFilePicture /> 
+                <FaEdit />
             </button>
         </div>
     );

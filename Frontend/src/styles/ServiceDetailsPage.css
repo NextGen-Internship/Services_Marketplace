@@ -1,7 +1,8 @@
 .service-details {
+    position: relative; 
     max-width: 2000px;
     margin: auto;
-    padding: 100px; /* Adjusted padding to a reasonable amount for space around content */
+    padding: 100px; 
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -11,23 +12,23 @@
 }
 
 .service-title {
-    margin-bottom: 40px; /* Increased bottom margin for more space */
+    margin-bottom: 40px; 
     color: #333;
-    font-size: 32px; /* Increased font size */
+    font-size: 32px; 
     font-weight: bold;
-    line-height: 1.5; /* Adjusted line height for better readability */
+    line-height: 1.5; 
 }
 
 .service-detail {
-    margin-bottom: 25px; /* Increased  bottom margin for more space between details */
+    margin-bottom: 25px; 
     color: #666;
-    font-size: 20px; /* Increased font size for details */
-    line-height: 1.8; /* Increased line height for better readability */
+    font-size: 20px; 
+    line-height: 1.8; 
 }
 
 .service-detail label {
     font-weight: bold;
-    font-size: 22px; /* Increased font size for labels */
+    font-size: 22px; 
 }
 
 .service-detail p {
@@ -54,34 +55,45 @@
     margin: 10px;
     padding: 10px 20px;
     border: none;
-    background-color: #4CAF50; /* A distinct color for differentiation */
+    background-color: #3c96f0;
     color: white;
     border-radius: 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Adds a small space between the icon and the text */
+    gap: 10px; 
+    font-size: 16px; 
+    font-weight: bold;
 }
 
 .image-upload-button:hover {
-    background-color: #45a049;
+    background-color: #5db6ee;
 }
 
 .edit-details-button {
     margin: 10px;
-    padding: 10px 20px;
+    padding: 25px 25px;
     border: none;
-    background-color: #FFC107; /* A yellow color to differentiate it from the upload button */
+    background-color: #FFC107; 
     color: white;
     border-radius: 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Space between the icon and text */
-}
+    gap: 10px; 
+    font-size: 20px; 
+    font-weight: bold;}
 
 .edit-details-button:hover {
-    background-color: #FFB300; /* A slightly darker yellow on hover */
+    background-color: #FFB300; 
+}
+
+.button-container {
+    position: absolute; /* Position the container absolutely within its relative parent */
+    top: 10px; /* Adjust as needed for padding inside the service-details */
+    right: 10px; /* Adjust as needed for padding */
+    display: flex; /* This keeps the buttons inline */
+    gap: 10px; /* Keeps a space between the buttons */
 }
