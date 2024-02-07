@@ -76,17 +76,14 @@ const ServiceDetailsPage = () => {
             <p>Description: {service.description}</p>
             <p>Price: {service.price}</p>
             <p>Category: {service.categoryName}</p>
-            <p>Updated At: {formattedDate} </p>
-            <button className='pay-button'>Pay Now</button>
-            {/* <button className='image-upload-button' onClick={handleImageUpload}>
-                <ImFilePicture /> 
-            </button> */}
-            <div className="button-container"></div>
-            <button className='edit-button' onClick={handleEditDetails}>
-                <FaEdit />
-            </button>
+            <p>Updated At: {formattedDate}</p>
+            <button className='pay-button'>Make a request</button>
+            <div className="button-container">
+                <button className='edit-details-button' onClick={handleEditDetails}>
+                    <FaEdit />
+                </button>
+            </div>
         </div>
     );
 };
-
 export default ServiceDetailsPage;
