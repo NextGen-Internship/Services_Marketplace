@@ -15,7 +15,12 @@ const config = {
     getUsers: '/v1/users',
     uploadUserPicture: '/file/upload',
     getPicture: '/file/getPicture',
-    getCurrentUser: '/v1/users/current'
+    getCurrentUser: '/v1/users/current',
+    getServicesByCurrentUser: '/v1/services/user/current',
+    updateService: '/v1/services/update',
+    getCategoryById: '/v1/categories',
+    getCityById: '/v1/cities',
+    getServiceById: '/v1/services'
 }
 
 

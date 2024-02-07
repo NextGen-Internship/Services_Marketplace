@@ -90,6 +90,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserResponseByUser(User user) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setRoles(user.getRoles());
         return userMapper.userToUserResponse(user);
     }
 

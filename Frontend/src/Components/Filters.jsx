@@ -59,7 +59,7 @@ const Filters = ({ applyFilters, cities, categories }) => {
                     onChange={handlePriceRangeChange}
                 />
             </label>
-            <button onClick={handleApply}>
+            <button className="apply-button" onClick={handleApply}>
                 Apply
             </button>
         </div>
