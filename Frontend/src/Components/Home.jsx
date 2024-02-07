@@ -1,73 +1,47 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/Home.css';
-import { FaSearch } from 'react-icons/fa';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import Category from './Category'; // Import your Category component
+import Footer from './Footer';
+import firstPhoto from '../assets/istockphoto-1127929107-612x612.jpg'
+import secondPhoto from '../assets/photodune-6221194-customer-service-team-s-e1468394369939-742x353.jpg';
+import thirdPhoto from '../assets/social-media-banner-grm.jpg';
+import fourthphoto from '../assets/depositphotos_142638849-stock-illustration-place-your-ads-here-rubber.jpg';
 
 const Home = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const images = [
+    firstPhoto,
+    secondPhoto,
+    thirdPhoto,
+    fourthphoto
+  ];
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // Add your search logic here, using the searchQuery state
-    console.log('Searching for:', searchQuery);
-    // You can implement further logic, such as fetching data or updating the UI based on the searchQuery
+  const carouselSettings = {
+    showThumbs: false,
+    interval: 3000,
+    infiniteLoop: true,
+    autoPlay: true,
+    transitionTime: 600,
+    stopOnHover: false,
+    dynamicHeight: false,
   };
 
   return (
     <div>
+      <Carousel {...carouselSettings}>
+        {images.map((imageUrl, index) => (
+          <div key={index}>
+            <img src={imageUrl} alt={`Photo ${index + 1}`} />
+          </div>
+        ))}
+      </Carousel>
+      <hr className='line-home'/>
       <div className="home-category">
-        <h1>Category</h1>
-        <div className="content-box">
-          <div className="card">
-           
-          </div>
-          <div className="card">
-            {/* Your category content here */}
-          </div>
-          <div className="card">
-            {/* Your category content here */}
-          </div>
-          <div className="card">
-            {/* Your category content here */}
-          </div>
-          <div className="card">
-            {/* Your category content here */}
-          </div>
-          <div className="card">
-            {/* Your category content here */}
-          </div>
-
-          {/* Add more cards as needed */}
-        </div>
-        <button className='view-more-btn' type='Submit'>View More</button>
+        <Category /> {/* Include the Category component here */}
       </div>
-
-      <div className='home-service'>
-        <h1>Service</h1>
-        <div className="content-box">
-          <div className="card">
-            {/* Your service content here */}
-          </div>
-          <div className="card">
-            {/* Your service content here */}
-          </div>
-          <div className="card">
-            {/* Your service content here */}
-          </div>
-          <div className="card">
-            {/* Your service content here */}
-          </div>
-          <div className="card">
-            {/* Your service content here */}
-          </div>
-          <div className="card">
-            {/* Your service content here */}
-          </div>
-          {/* Add more cards as needed */}
-        </div>
-        <button className='view-more-btn' type='Submit'>View More</button>
-      </div>
+      <Footer></Footer>
     </div>
-
   );
 };
 

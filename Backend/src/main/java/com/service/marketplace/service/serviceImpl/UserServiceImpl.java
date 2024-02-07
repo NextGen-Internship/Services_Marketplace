@@ -1,13 +1,19 @@
-package com.service.marketplace.service.impl;
+package com.service.marketplace.service.serviceImpl;
 
+import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.mapper.UserMapper;
+import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.JwtService;
 import com.service.marketplace.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +24,23 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final JwtService jwtService;
 
+    @Override
+    public User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return null;
+        }
+        Object principal = auth.getPrincipal();
+        if (principal instanceof User user) {
+            String email = user.getEmail();
+            return userRepository.findByEmail(email).orElse(null);
+        }
+        return null;
+    }
 
     @Override
     public List<UserResponse> getAllUsers() {
@@ -48,6 +69,28 @@ public class UserServiceImpl implements UserService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest) {
+        User existingUser = userRepository.findById(userId).orElse(null);
+
+        String roleName = providerRequest.getRole();
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new IllegalArgumentException("Role not found: " + roleName));
+
+        if (!existingUser.getRoles().contains(role)) {
+            existingUser.getRoles().add(role);
+            User updatedUser = userRepository.save(existingUser);
+            return userMapper.userToUserResponse(updatedUser);
+        }
+
+        return userMapper.userToUserResponse(existingUser);
+    }
+
+    @Override
+    public UserResponse getUserResponseByUser(User user) {
+        return userMapper.userToUserResponse(user);
     }
 
 

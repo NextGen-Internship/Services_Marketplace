@@ -1,7 +1,6 @@
 package com.service.marketplace.dto.request;
 
 import lombok.Data;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

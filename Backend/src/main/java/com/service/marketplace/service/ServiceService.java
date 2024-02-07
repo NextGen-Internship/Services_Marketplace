@@ -5,7 +5,6 @@ import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import org.springframework.data.domain.Page;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface ServiceService {
@@ -19,7 +18,11 @@ public interface ServiceService {
 
     void deleteServiceById(Integer serviceId);
 
+    List<ServiceResponse> getServicesByUserId(Integer userId);
+
     Page<ServiceResponse> fetchServices(Integer page, Integer pageSize, String sortingField, String sortingDirection);
 
     Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest);
+
+    List<ServiceResponse> getServicesByCurrentUser();
 }

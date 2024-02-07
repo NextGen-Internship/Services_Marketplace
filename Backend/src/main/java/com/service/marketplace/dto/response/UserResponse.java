@@ -11,4 +11,5 @@ public class UserResponse {
     private Integer experience;
     private Double rating;
     private String description;
+    private String picture;
 }

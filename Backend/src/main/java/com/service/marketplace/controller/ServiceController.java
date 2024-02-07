@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -34,6 +33,19 @@ public class ServiceController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ServiceResponse>> getServicesByUserId(@PathVariable("userId") Integer userId) {
+        List<ServiceResponse> userServices = serviceService.getServicesByUserId(userId);
+        return ResponseEntity.ok(userServices);
+    }
+
+    @GetMapping("/user/current")
+    public ResponseEntity<List<ServiceResponse>> getServicesByCurrentUser() {
+        List<ServiceResponse> userServices = serviceService.getServicesByCurrentUser();
+        return ResponseEntity.ok(userServices);
+    }
+
 
     @PostMapping("/create")
     public ResponseEntity<ServiceResponse> createService(@RequestBody ServiceRequest serviceToCreate) {
