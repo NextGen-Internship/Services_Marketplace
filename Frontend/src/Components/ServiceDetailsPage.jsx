@@ -3,6 +3,9 @@ import { useParams, useLocation } from 'react-router-dom';
 import { getServiceById, getCityById, getCategoryById, getUserById } from '../service/ApiService';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
+import { ImFilePicture } from "react-icons/im";
+import { FaEdit } from "react-icons/fa";
+
 
 const ServiceDetailsPage = () => {
     const [service, setService] = useState({
@@ -55,6 +58,17 @@ const ServiceDetailsPage = () => {
     }
     const formattedDate = moment(service.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
 
+    const handleImageUpload = () => {
+        console.log('Image upload triggered');
+        // Implement the upload functionality here
+    };
+
+    const handleEditDetails = () => {
+        console.log('Edit details triggered');
+        // Implement the edit functionality here
+    };
+    
+
     return (
         <div className='service-details'>
             <h2>{service.title}</h2>
@@ -64,6 +78,12 @@ const ServiceDetailsPage = () => {
             <p>Category: {service.categoryName}</p>
             <p>Updated At: {formattedDate} </p>
             <button className='pay-button'>Pay Now</button>
+            <button className='image-upload-button' onClick={handleImageUpload}>
+                <ImFilePicture /> 
+            </button>
+            <button className='edit-button' onClick={handleEditDetails}>
+                <ImFilePicture /> 
+            </button>
         </div>
     );
 };

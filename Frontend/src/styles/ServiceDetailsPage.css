@@ -49,3 +49,39 @@
 .pay-button:hover {
     background-color: #5db6ee;
 }
+
+.image-upload-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #4CAF50; /* A distinct color for differentiation */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Adds a small space between the icon and the text */
+}
+
+.image-upload-button:hover {
+    background-color: #45a049;
+}
+
+.edit-details-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #FFC107; /* A yellow color to differentiate it from the upload button */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Space between the icon and text */
+}
+
+.edit-details-button:hover {
+    background-color: #FFB300; /* A slightly darker yellow on hover */
+}
