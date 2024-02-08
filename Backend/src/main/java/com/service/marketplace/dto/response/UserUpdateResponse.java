@@ -11,7 +11,7 @@ public class UserUpdateResponse {
     private String phoneNumber;
     private Integer experience;
     private String description;
-    // private String pictureUrl;
+    private String pictureUrl;
     private Double rating;
 
 }

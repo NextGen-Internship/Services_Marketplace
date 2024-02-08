@@ -11,9 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserUpdateRequest {
 
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email should be valid")
-    private String email;
+//    @NotBlank(message = "Email cannot be blank")
+//    @Email(message = "Email should be valid")
+//    private String email;
 
     @NotBlank(message = "First name cannot be blank")
     private String firstName;

@@ -280,7 +280,7 @@ const Profile = () => {
       <h2 className="profile-title">About me</h2>
       {previewVisible ? (
         <img
-        src={localFile}
+        src={localFile ? URL.createObjectURL(localFile) : defaultImageUrl}
         alt="User"
         className="profile-image"
       />

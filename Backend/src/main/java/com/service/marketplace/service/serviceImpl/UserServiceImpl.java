@@ -67,11 +67,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile) {
         User existingUser = null;
-        String newPictureUrl = null;
 
         if (userId != null) {
             existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         } else {
+            existingUser = this.getCurrentUser();
+        }
+
+        if (multipartFile != null) {
+            String newPictureUrl = null;
+
             existingUser = this.getCurrentUser();
 
             if (existingUser == null) {
@@ -86,15 +91,21 @@ public class UserServiceImpl implements UserService {
                     throw new RuntimeException(errorMessage, e);
                 }
             }
+
+            existingUser.setPicture(newPictureUrl);
+        }
+
+        String phoneNum = "";
+        if (userToUpdate.getPhoneNumber() != null) {
+            phoneNum = userToUpdate.getPhoneNumber();
         }
 
         // existingUser.setEmail(userToUpdate.getEmail());
         existingUser.setFirstName(userToUpdate.getFirstName());
         existingUser.setLastName(userToUpdate.getLastName());
-        existingUser.setPhoneNumber(userToUpdate.getPhoneNumber());
-        existingUser.setExperience(userToUpdate.getExperience());
+        existingUser.setPhoneNumber(phoneNum);
+        // existingUser.setExperience(userToUpdate.getExperience());
         existingUser.setDescription(userToUpdate.getDescription());
-        existingUser.setPicture(newPictureUrl);
 
         userRepository.save(existingUser);
 

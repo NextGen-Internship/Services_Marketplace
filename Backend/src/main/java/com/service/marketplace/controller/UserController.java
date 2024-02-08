@@ -74,7 +74,7 @@ public class UserController {
     @PutMapping("/update/current")
     public ResponseEntity<UserResponse> updateCurrentUser(@RequestParam(value = "userId", required = false) Integer userId,
                                                           @ModelAttribute UserUpdateRequest userToUpdate,
-                                                          @RequestParam(value = "file") MultipartFile file) {
+                                                          @RequestParam(value = "file", required = false) MultipartFile file) {
         return new ResponseEntity<>(userService.updateUser(userId, userToUpdate, file), HttpStatus.OK);
     }
 
