@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
-import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, uploadUserPicture, updateUserEmail, getCurrentUser, updateCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 
@@ -58,7 +58,8 @@ const Profile = () => {
   useEffect(() => {
     const fetchPicture = async () => {
       try {
-        const pictureUrl = await getPicture();
+        const currentUser = await getCurrentUser();
+        const pictureUrl = currentUser.picture;
         setProfilePicture(pictureUrl);
       } catch (error) {
         console.error('Error fetching user picture:', error);
@@ -88,6 +89,7 @@ const Profile = () => {
       return;
     }
 
+    /////
     const updatedUserData = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -97,7 +99,9 @@ const Profile = () => {
     console.log(updatedUserData);
 
     try {
-      const updatedUser = await updateUser(userId, updatedUserData);
+      const updatedUser = await updateCurrentUser(updatedUserData, localFile);
+      console.log(updatedUser.picture);
+      setProfilePicture(updatedUser.picture);
       console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
@@ -157,17 +161,8 @@ const Profile = () => {
           return;
         }
 
-        const entityType = 'USER';
-
-        const uploadPictureData = new FormData();
-        uploadPictureData.append('file', file);
-        uploadPictureData.append('entityType', entityType);
-
-        const imageUrl = await uploadUserPicture(uploadPictureData);
-        console.log(imageUrl);
         setPreviewVisible(true);
         setIsEditingPicture(false);
-        setProfilePicture(imageUrl);
         console.log('Profile picture updated successfully');
       } catch (error) {
         console.error('Error updating profile picture:', error);
@@ -216,7 +211,8 @@ const Profile = () => {
 
   useEffect(() => {
     const getPictureMethod = async () => {
-      const picUrl = await getPicture();
+      const currentUser = await getCurrentUser();
+      const picUrl = currentUser.picture;
       console.log('polled url', picUrl);
       setProfilePicture(picUrl);
       setUser(prevUser => ({ ...prevUser, picture: picUrl }));
@@ -282,11 +278,20 @@ const Profile = () => {
     <div className="profile-container">
 
       <h2 className="profile-title">About me</h2>
+      {previewVisible ? (
+        <img
+        src={localFile}
+        alt="User"
+        className="profile-image"
+      />
+      ) : (
       <img
         src={user.picture || profilePicture || defaultImageUrl}
         alt="User"
         className="profile-image"
       />
+      )
+}
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         {user.role === 'provider' && (
@@ -336,7 +341,7 @@ const Profile = () => {
                 <label>Profile Picture:</label>
                 <input type="file" onChange={handleImageChange} accept="image/*" />
                 {user.imageUrl && (
-                  <img src={user.imageUrl} alt="Profile Preview" className="profile-preview-image" />
+                  <img src={user.picture} alt="Profile Preview" className="profile-preview-image" />
                 )}
               </div>
               <button className='save-button' onClick={handleSaveProfile}>Save</button>

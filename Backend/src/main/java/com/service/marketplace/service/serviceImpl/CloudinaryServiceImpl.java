@@ -29,9 +29,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         );
 
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
-        String pictureUrl = (String) uploadResult.get("secure_url");
 
-        return pictureUrl;
+        return (String) uploadResult.get("secure_url");
     }
 
     @Override

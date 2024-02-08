@@ -29,6 +29,4 @@ public class UserUpdateRequest {
 
     @NotBlank
     private String description;
-
-    private MultipartFile picture;
 }

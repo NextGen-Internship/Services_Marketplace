@@ -7,7 +7,9 @@ import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.StorageService;
 import com.service.marketplace.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,16 +18,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
-    private final StorageService storageService;
-
-    @Autowired
-    public UserController(UserService userService, StorageService storageService) {
-        this.userService = userService;
-        this.storageService = storageService;
-    }
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -57,9 +53,11 @@ public class UserController {
 
     @Valid
     @PutMapping("/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId, @RequestBody UserUpdateRequest userToUpdate) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId,
+                                                   @RequestBody UserUpdateRequest userToUpdate,
+                                                   @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         try {
-            UserResponse updatedUser = userService.updateUser(userId, userToUpdate);
+            UserResponse updatedUser = userService.updateUser(userId, userToUpdate, multipartFile);
 
             if (updatedUser == null) {
                 return ResponseEntity.notFound().build();
@@ -73,23 +71,11 @@ public class UserController {
     }
 
     @Valid
-    @PutMapping("/updateCurrent")
-    public ResponseEntity<UserResponse> updateCurrentUser(@ModelAttribute UserUpdateRequest userToUpdate, @RequestParam(value = "picture") Optional<MultipartFile> file) {
-        try {
-            User user = userService.getCurrentUser();
-            storageService.uploadFile(file.isPresent() ? file.get() : null);
-
-            UserResponse updatedUser = userService.updateUser(user.getId(), userToUpdate);
-
-            if (updatedUser == null) {
-                return ResponseEntity.notFound().build();
-            } else {
-                return ResponseEntity.ok(updatedUser);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+    @PutMapping("/update/current")
+    public ResponseEntity<UserResponse> updateCurrentUser(@RequestParam(value = "userId", required = false) Integer userId,
+                                                          @ModelAttribute UserUpdateRequest userToUpdate,
+                                                          @RequestParam(value = "file") MultipartFile file) {
+        return new ResponseEntity<>(userService.updateUser(userId, userToUpdate, file), HttpStatus.OK);
     }
 
     @Valid

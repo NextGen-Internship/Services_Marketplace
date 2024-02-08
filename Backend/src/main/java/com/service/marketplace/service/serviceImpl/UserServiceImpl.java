@@ -14,6 +14,7 @@ import com.service.marketplace.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -64,35 +65,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate) {
-        User existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-
-        MultipartFile pictureFile = userToUpdate.getPicture();
-
+    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile) {
+        User existingUser = null;
         String newPictureUrl = null;
-        if (pictureFile != null) {
-            try {
-                newPictureUrl = cloudinaryService.uploadFile(pictureFile);
-            } catch (IOException e) {
-                String errorMessage = "Error uploading picture for user ID " + userId;
-                throw new RuntimeException(errorMessage, e);
+
+        if (userId != null) {
+            existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        } else {
+            existingUser = this.getCurrentUser();
+
+            if (existingUser == null) {
+                throw new EntityNotFoundException("User not found");
+            }
+
+            if (multipartFile != null) {
+                try {
+                    newPictureUrl = cloudinaryService.uploadFile(multipartFile);
+                } catch (IOException e) {
+                    String errorMessage = "Error uploading picture";
+                    throw new RuntimeException(errorMessage, e);
+                }
             }
         }
 
-        if (newPictureUrl != null && !newPictureUrl.equals(existingUser.getPicture())) {
-            existingUser.setPicture(newPictureUrl);
-        }
-
-        existingUser.setEmail(userToUpdate.getEmail());
+        // existingUser.setEmail(userToUpdate.getEmail());
         existingUser.setFirstName(userToUpdate.getFirstName());
         existingUser.setLastName(userToUpdate.getLastName());
         existingUser.setPhoneNumber(userToUpdate.getPhoneNumber());
         existingUser.setExperience(userToUpdate.getExperience());
         existingUser.setDescription(userToUpdate.getDescription());
+        existingUser.setPicture(newPictureUrl);
 
-        User updatedUser = userRepository.save(existingUser);
+        userRepository.save(existingUser);
 
-        return userMapper.userToUserResponse(updatedUser);
+        return userMapper.userToUserResponse(existingUser);
     }
 
     @Override

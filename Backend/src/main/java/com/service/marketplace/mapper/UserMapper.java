@@ -15,11 +15,11 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    // User userUpdateRequestToUser(UserUpdateRequest request);
+    User userUpdateRequestToUser(UserUpdateRequest request);
 
     UserUpdateResponse userToUserUpdateResponse(User user);
 
-    // void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
+    void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
 
     UserResponse userToUserResponse(User user);
 

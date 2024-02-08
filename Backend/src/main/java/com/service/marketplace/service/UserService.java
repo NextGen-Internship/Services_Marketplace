@@ -15,7 +15,7 @@ public interface UserService {
 
     UserResponse getUserById(Integer userId);
 
-    UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate);
+    UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile);
 
     boolean deleteUserById(Integer userId);
 
