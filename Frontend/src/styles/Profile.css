@@ -14,7 +14,7 @@
     left: 50%;
     transform: translate(-50%, -20%);
     overflow: hidden;
-    height: 700px;
+    height: auto;
 }
 
 .profile-image {
