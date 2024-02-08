@@ -63,12 +63,12 @@ const ServiceDetailsPage = () => {
 
 
     return (
-        <div className='service-details'>
+        <div className='service-details-container'>
             <h2>{service.title}</h2>
+            <p>Category: {service.categoryName}</p>
             <p>Provider Name: {service.providerName}</p>
             <p>Description: {service.description}</p>
             <p>Price: {service.price}</p>
-            <p>Category: {service.categoryName}</p>
             <p>Updated At: {formattedDate}</p>
             <button className='pay-button'>Make a request</button>
             <div className="button-container">

@@ -32,6 +32,7 @@ function App() {
           <Route exact path="success" element={<SuccessPage/>} />
           <Route exact path="cancel" element={<CancelPage/>} />
           <Route exact path='/new-subscription' element={<NewSubscription />} />
+          <Route exact path="services/service-details/:serviceId" element={<ServiceDetailsPage />} />
           <Route exact path="profile" element={<Profile/>}/>
         </Routes>
       </Router>

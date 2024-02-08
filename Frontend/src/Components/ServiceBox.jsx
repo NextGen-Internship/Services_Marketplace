@@ -28,7 +28,7 @@ const ServiceBox = ({ service, cities }) => {
                     <h3>{service.title}</h3>
                 </div>
                 <div className="service-price">
-                    <p>{service.price}</p>
+                    <p>Price: {service.price} BGN.</p>
                 </div>
                 <div className="service-description">
                     <p>{service.description}</p>
