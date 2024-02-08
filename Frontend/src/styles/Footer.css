@@ -1,4 +1,3 @@
-/* Footer.css */
 
 .title-footer {
     color: #333;
@@ -30,8 +29,8 @@
   .rights {
     margin-top: 20px;
     text-align: center;
-    color: #090707; /* Цвят на текста за поддръжка */
-    font-weight: bold; /* Стил за болд текст */
-    text-decoration: underline; /* Подчертаване на текста */
+    color: #090707; 
+    font-weight: bold; 
+    text-decoration: underline; 
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
