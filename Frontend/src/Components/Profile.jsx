@@ -11,10 +11,11 @@ import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
+import Multiselect from 'multiselect-react-dropdown';
 
 const Profile = () => {
   const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
-
+  const [chosen, setChosen] = useState([]);
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
   const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
@@ -546,7 +547,7 @@ useEffect(() => {
     };
 
     return (
-      <div key={service.id} className="service-box">
+      <div key={service.id} className="service-box-profile">
         <div className="service-info">
           {isEditing ? (
             <>
@@ -556,7 +557,15 @@ useEffect(() => {
               <input type="text" value={editableService.price} onChange={(e) => handleServiceChange(e, 'price')} />
               <label htmlFor="description">Description:</label>
               <textarea value={editableService.description} onChange={(e) => handleServiceChange(e, 'description')} />
-              <label htmlFor="categoryId">Category:</label>
+              <label htmlFor="cityIds">Cities:</label>
+              <Multiselect
+            options={cities}
+            selectedValues={chosen}
+            onSelect={(selectedList) => setChosen(selectedList)}
+            onRemove={(selectedList) => setChosen(selectedList)}
+            displayValue='name'
+          />
+                <label htmlFor="categoryId">Category:</label>
               <select
                 value={editableService.categoryId}
                 onChange={(e) => setEditableService(prev => ({ ...prev, categoryId: e.target.value }))}
@@ -566,22 +575,7 @@ useEffect(() => {
                   <option key={category.id} value={category.id}>{category.name}</option>
                 ))}
               </select>
-              <label htmlFor="cityIds">Cities:</label>
-              <select
-                multiple
-                value={editableService.cityIds}
-                onChange={(e) => handleServiceChange(e, 'cityIds')}
-              >
-                {cities.map((city) => (
-                  <option
-                    key={city.id}
-                    value={city.id}
-                    selected={editableService.cityIds && editableService.cityIds.includes(city.id)}
-                  >
-                    {city.name}
-                  </option>
-                ))}
-              </select>
+             
 
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
@@ -734,9 +728,9 @@ useEffect(() => {
       )
       }
       {showServices && (
-        <div className="user-services">
+        <div className="user-services-profile">
           {paginatedServices.length > 0 ? paginatedServices.map(renderServiceBox) : 'No Services to Show'}
-          <div className="pagination-controls">
+          <div className="pagination-controls-profile">
             <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={2}

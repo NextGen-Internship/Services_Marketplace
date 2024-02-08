@@ -16,7 +16,7 @@ const ServiceBox = ({ service, cities }) => {
         return serviceCities.filter(Boolean).join(', ');
     };
 
-    const serviceId = service.id;
+  
 
     return (
         <div className="service-box">
