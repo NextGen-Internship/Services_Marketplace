@@ -121,15 +121,6 @@ const ServicesPage = () => {
                     initialPage={page}
                 />
             </div>
-            <ReactPaginate
-                pageCount={totalPages}
-                pageRangeDisplayed={2}
-                marginPagesDisplayed={1}
-                onPageChange={handlePageChange}
-                containerClassName="pagination"
-                activeClassName="active"
-                initialPage={page}
-            />
         </div>
     );
 };
