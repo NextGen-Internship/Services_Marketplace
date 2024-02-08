@@ -8,14 +8,19 @@ import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.CloudinaryService;
 import com.service.marketplace.service.JwtService;
 import com.service.marketplace.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final CloudinaryService cloudinaryService;
 
     @Override
     public User getCurrentUser() {
@@ -62,16 +68,51 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate) {
-        User existingUser = userRepository.findById(userId).orElse(null);
+    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile) {
+        User existingUser = null;
 
-        if (existingUser != null) {
-            userMapper.updateUserFromRequest(userToUpdate, existingUser);
-            User updatedUser = userRepository.save(existingUser);
-            return userMapper.userToUserResponse(updatedUser);
+        if (userId != null) {
+            existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         } else {
-            return null;
+            existingUser = this.getCurrentUser();
         }
+
+        if (multipartFile != null) {
+            String newPictureUrl = null;
+
+            existingUser = this.getCurrentUser();
+
+            if (existingUser == null) {
+                throw new EntityNotFoundException("User not found");
+            }
+
+            if (multipartFile != null) {
+                try {
+                    newPictureUrl = cloudinaryService.uploadFile(multipartFile);
+                } catch (IOException e) {
+                    String errorMessage = "Error uploading picture";
+                    throw new RuntimeException(errorMessage, e);
+                }
+            }
+
+            existingUser.setPicture(newPictureUrl);
+        }
+
+        String phoneNum = "";
+        if (userToUpdate.getPhoneNumber() != null) {
+            phoneNum = userToUpdate.getPhoneNumber();
+        }
+
+        // existingUser.setEmail(userToUpdate.getEmail());
+        existingUser.setFirstName(userToUpdate.getFirstName());
+        existingUser.setLastName(userToUpdate.getLastName());
+        existingUser.setPhoneNumber(phoneNum);
+        // existingUser.setExperience(userToUpdate.getExperience());
+        existingUser.setDescription(userToUpdate.getDescription());
+
+        userRepository.save(existingUser);
+
+        return userMapper.userToUserResponse(existingUser);
     }
 
     @Override

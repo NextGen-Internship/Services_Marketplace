@@ -68,8 +68,8 @@ body {
   background: rgba(255, 255, 255, 0.954);
   border-radius: 30px;
   height: 140px;
-  flex-basis: calc(19% - 5%); /* Adjusted width for five cards per row with margin */
-  margin-right: 4%; /* Adjusted margin for better spacing */
+  flex-basis: calc(19% - 5%); 
+  margin-right: 4%; 
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -3,7 +3,6 @@ import { useParams, useLocation } from 'react-router-dom';
 import { getServiceById, getCityById, getCategoryById, getUserById } from '../service/ApiService';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
-import { ImFilePicture } from "react-icons/im";
 import { FaEdit } from "react-icons/fa";
 
 
@@ -58,14 +57,8 @@ const ServiceDetailsPage = () => {
     }
     const formattedDate = moment(service.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
 
-    const handleImageUpload = () => {
-        console.log('Image upload triggered');
-        // Implement the upload functionality here
-    };
-
     const handleEditDetails = () => {
         console.log('Edit details triggered');
-        // Implement the edit functionality here
     };
 
 

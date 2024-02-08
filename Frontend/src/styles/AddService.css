@@ -63,10 +63,9 @@
     background: rgb(195, 237, 55);
 }
 
-/* Basic styling for Multiselect container */
 .multiselect-container {
     font-family: 'Arial', sans-serif;
-    width: 300px; /* Set the desired width */
+    width: 300px; 
     border: 1px solid #ccc;
     border-radius: 4px;
     position: relative;
@@ -75,7 +74,6 @@
     color: black;
   }
   
-  /* Styling for selected values */
   .selected-list {
     padding: 8px;
     overflow: hidden;
@@ -83,24 +81,20 @@
     white-space: nowrap;
   }
   
-  /* Styling for each option in the dropdown */
   .option {
     padding: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
   
-  /* Hover effect for options */
   .option:hover {
     background-color: #f0f0f0;
   }
   
-  /* Styling for the checkbox in front of each option */
   .checkbox {
     margin-right: 8px;
   }
   
-  /* Styling for the search input */
   .search-input {
     padding: 8px;
     border: none;
@@ -110,7 +104,6 @@
     outline: none;
   }
   
-  /* Styling for the clear button */
   .clear-button {
     padding: 8px;
     background-color: #f5f5f5;
@@ -118,7 +111,6 @@
     border: none;
   }
   
-  /* Styling for the dropdown arrow */
   .dropdown-icon {
     position: absolute;
     top: 50%;
@@ -127,19 +119,16 @@
     pointer-events: none;
   }
   
-  /* Styling for the dropdown menu */
   .dropdown-menu {
     max-height: 200px;
     overflow-y: auto;
     border-top: 1px solid #ccc;
   }
   
-  /* Styling for the no options message */
   .no-options {
     padding: 8px;
   }
   
-  /* Styling for the footer */
   .footer {
     padding: 8px;
     border-top: 1px solid #ccc;

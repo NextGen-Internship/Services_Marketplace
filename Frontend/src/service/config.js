@@ -13,6 +13,7 @@ const config = {
     updateUser: '/v1/users',
     updateUserRole: '/v1/users/role',
     getUsers: '/v1/users',
+    updateCurrentUser: '/v1/users/update/current',
     uploadUserPicture: '/file/upload',
     getPicture: '/file/getPicture',
     getCurrentUser: '/v1/users/current',
@@ -21,7 +22,7 @@ const config = {
     updateService: '/v1/services/update',
     getCategoryById: '/v1/categories',
     getCityById: '/v1/cities',
-    getServiceById: '/v1/services'
+    getServiceById: '/v1/services',
 }
 
 
