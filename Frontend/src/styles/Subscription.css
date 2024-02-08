@@ -6,6 +6,10 @@
     margin-bottom: 20px;
 }
 
+.subscription-box.selected {
+    border: 2px solid blue;
+}
+
 .subscription-info {
     cursor: pointer;
 }

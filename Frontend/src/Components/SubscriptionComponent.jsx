@@ -51,12 +51,12 @@ const SubscriptionComponent = ({ handleAccountCreation }) => {
     };
 
     return (
-        <div className="example-card">
+        <div className="subscription-component">
             <h2>Subscribe now!</h2>
             <div>
-                <Subscription priceId={environment.monthlyPriceId} onSelected={setSelectedPriceId} />
-                <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} />
-                <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} />
+                <Subscription priceId={environment.monthlyPriceId} onSelected={setSelectedPriceId} isSelected={selectedPriceId === environment.monthlyPriceId} />
+                <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} isSelected={selectedPriceId === environment.halfYearPriceId} />
+                <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} isSelected={selectedPriceId === environment.yearlyPriceId} />
                 <button className="save-button" onClick={() => {handleAccountCreation(); 
                                         handleCheckout()}}>
                     Subscribe
