@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, uploadUserPicture, getPicture, updateUserEmail, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
@@ -13,7 +13,7 @@ import { FaRegEdit } from "react-icons/fa";
 
 
 const Profile = () => {
-  //const defaultImageUrl = 'https://m.media-amazon.com/images/I/51ZjBEW+qNL._AC_UF894,1000_QL80_.jpg';
+  const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
 
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
@@ -22,7 +22,7 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
-  //const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
+  const [profilePicture, setProfilePicture] = useState(defaultImageUrl);
   const [localFile, setLocalFile] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [categories, setCategories] = useState([]);
@@ -41,7 +41,7 @@ const Profile = () => {
     lastName: '',
     email: '',
     phoneNumber: '',
-    //picture: '',
+    picture: '',
     roles: []
   });
   const [editableService, setEditableService] = useState({
@@ -58,6 +58,26 @@ const Profile = () => {
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
 
   const [isEditingPicture, setIsEditingPicture] = useState(false);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem('Jwt_Token');
+        if (token) {
+          const userDetails = await getCurrentUser();
+          setUser(userDetails);
+        } else {
+          console.error('No token found');
+          navigate('/login');
+          return;
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
 
   const handleCityClick = (cityId) => {
     const isAlreadySelected = selectedCities.includes(cityId);
@@ -76,9 +96,19 @@ const Profile = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    const fetchPicture = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        const pictureUrl = currentUser.picture;
+        setProfilePicture(pictureUrl);
+      } catch (error) {
+        console.error('Error fetching user picture:', error);
+      }
+    };
+    fetchPicture();
+  }, []);
+
   const handleSaveProfile = async (e) => {
     const localToken = localStorage.getItem('Jwt_Token');
     if (!localToken) {
@@ -105,17 +135,49 @@ const Profile = () => {
       lastName: user.lastName,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      role: user.role
+      roles: user.roles
     };
     console.log(updatedUserData);
 
     try {
-      const updatedUser = await updateUser(userId, user);
+      const updatedUser = await updateCurrentUser(updatedUserData, localFile);
+      console.log(updatedUser.picture);
+      setProfilePicture(updatedUser.picture);
       console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
     } catch (error) {
       console.error('Error updating profile:', error);
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    setLocalFile(file);
+
+    if (file) {
+      try {
+        const localToken = localStorage.getItem('Jwt_Token');
+        if (!localToken) {
+          console.error('No token found');
+          navigate('/login');
+          return;
+        }
+
+        const decodedToken = jwtDecode(localToken);
+        const userId = decodedToken['jti'];
+        if (!userId) {
+          console.error('No user ID found');
+          navigate('/login');
+          return;
+        }
+
+        setPreviewVisible(true);
+        setIsEditingPicture(false);
+        console.log('Profile picture updated successfully');
+      } catch (error) {
+        console.error('Error updating profile picture:', error);
+      }
     }
   };
 
@@ -172,6 +234,16 @@ const Profile = () => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
   useEffect(() => {
+    const getPictureMethod = async () => {
+      const currentUser = await getCurrentUser();
+      const picUrl = currentUser.picture;
+      console.log('polled url', picUrl);
+      setProfilePicture(picUrl);
+      setUser(prevUser => ({ ...prevUser, picture: picUrl }));
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchCities = async () => {
       try {
         const fetchedCities = await getAllCities();
@@ -219,6 +291,50 @@ const Profile = () => {
     fetchUserData();
   }, [navigate], [user.roles]);
 
+useEffect(() => {
+  const getPictureMethod = async () => {
+    const currentUser = await getCurrentUser();
+    const picUrl = currentUser.picture;
+    console.log('polled url', picUrl);
+    setProfilePicture(picUrl);
+    setUser(prevUser => ({ ...prevUser, picture: picUrl }));
+  };
+
+  const fetchUserData = async () => {
+    const localToken = localStorage['Jwt_Token'];
+
+    if (!localToken) {
+      console.error('No user found');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const userData = await getCurrentUser();
+      setUser(userData);
+      setPhoneNumber(userData.phoneNumber);
+      console.log('User data:');
+      console.log(userData);
+
+      if (user.picture !== defaultImageUrl) {
+        console.log("custom avatar!")
+        await getPictureMethod();
+        console.log('User Avatar img: ', user.picture)
+        console.log(profilePicture);
+      }
+      else {
+        console.log("default");
+      }
+
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+  console.log('Fetched user role:', user.roles);
+
+  fetchUserData();
+}, [profilePicture]);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -243,7 +359,6 @@ const Profile = () => {
     setEditMode(false);
     setPreviewVisible(false);
   };  
-
 
   const handlePersonalInfoToggle = () => {
     setShowPersonalInfo(!showPersonalInfo);
@@ -402,12 +517,21 @@ const Profile = () => {
   return (
     <div className="profile-container">
 
-      <h2 className="profile-title">Profile</h2>
-      {/* <img
-        src={user.picture || profilePicture}
+      <h2 className="profile-title">About me</h2>
+      {previewVisible ? (
+        <img
+        src={localFile ? URL.createObjectURL(localFile) : defaultImageUrl}
         alt="User"
         className="profile-image"
-      /> */}
+      />
+      ) : (
+      <img
+        src={user.picture || profilePicture || defaultImageUrl}
+        alt="User"
+        className="profile-image"
+      />
+      )
+    }
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         {isProvider(user) && (
@@ -458,13 +582,13 @@ const Profile = () => {
                   name="phoneNumber"
                 />
               </div> */}
-              {/* <div className="input-group">
+              <div className="input-group">
                 <label>Profile Picture:</label>
                 <input type="file" onChange={handleImageChange} accept="image/*" />
                 {user.imageUrl && (
-                  <img src={user.imageUrl} alt="Profile Preview" className="profile-preview-image" />
+                  <img src={user.picture} alt="Profile Preview" className="profile-preview-image" />
                 )}
-              </div> */}
+              </div>
               <button className='save-button' onClick={handleSaveProfile}>Save</button>
             </>
           ) : (

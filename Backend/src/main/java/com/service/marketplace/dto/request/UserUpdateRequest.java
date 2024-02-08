@@ -5,14 +5,15 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @RequiredArgsConstructor
 public class UserUpdateRequest {
 
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email should be valid")
-    private String email;
+//    @NotBlank(message = "Email cannot be blank")
+//    @Email(message = "Email should be valid")
+//    private String email;
 
     @NotBlank(message = "First name cannot be blank")
     private String firstName;
@@ -28,7 +29,4 @@ public class UserUpdateRequest {
 
     @NotBlank
     private String description;
-
-
-    //private String picture;
 }
