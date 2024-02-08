@@ -1,6 +1,6 @@
 .profile-container {
-    width: calc(50% - 10px);
-    height: calc(70% - 10px);
+    width: 80%; /* Adjusted width */
+    max-width: 500px;
     max-width: none;
     margin: 0 auto;
     padding: 20px;
@@ -11,7 +11,8 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -20%);
+    overflow: hidden;
 }
 
 .profile-image {
@@ -126,3 +127,88 @@
     width: 50px;
     height: 50px;
   }
+  .service-box {
+    background-color: #f9fafc;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.service-info {
+    margin-bottom: 15px;
+}
+
+.service-info label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+.service-info input[type="text"],
+.service-info textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Make sure padding doesn't affect overall width */
+    font-size: 16px; /* Larger font size for better readability */
+}
+
+.service-info textarea {
+    resize: vertical; /* Allows vertical resize */
+    height: 100px; /* Initial height */
+}
+
+.service-info button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Matching button font size with input fields */
+    margin-right: 10px; /* Spacing between buttons */
+}
+
+.service-info button:hover {
+    background-color: #5db6ee;
+}
+
+.input-group select {
+    width: 100%; /* Ensures full width within its container */
+    padding: 10px; /* Matches the padding of input fields for consistency */
+    margin-top: 10px; /* Provides spacing above the select field */
+    margin-bottom: 10px; /* Provides spacing below the select field */
+    border-radius: 4px; /* Rounds the corners to match input fields */
+    border: 1px solid #ccc; /* Matches the border of input fields */
+    box-sizing: border-box; /* Ensures padding does not affect overall width */
+    background-color: white; /* Ensures a consistent background */
+    font-size: 16px; /* Matches the font size of input fields */
+}
+
+/* Style to visually indicate focus on the select element */
+.input-group select:focus {
+    border-color: #3c96f0; /* Highlight color when focused */
+    outline: none; /* Removes default focus outline */
+    box-shadow: 0 0 0 2px rgba(60, 150, 240, 0.5); /* Custom focus glow */
+}
+
+
+.input-group select[multiple] {
+    height: auto; /* Adjust height for multiple select */
+    overflow-y: auto; /* Scrollbar for overflow */
+}
+
+.input-group input[type="checkbox"] {
+    margin-right: 10px; /* Spacing before the label */
+}
+
+.selected-cities {
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+}

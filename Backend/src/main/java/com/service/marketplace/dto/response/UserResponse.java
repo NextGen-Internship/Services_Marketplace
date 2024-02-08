@@ -1,6 +1,9 @@
 package com.service.marketplace.dto.response;
 
+import com.service.marketplace.persistence.entity.Role;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 public class UserResponse {
@@ -12,4 +15,5 @@ public class UserResponse {
     private Double rating;
     private String description;
     private String picture;
+    private Set<Role> roles;
 }

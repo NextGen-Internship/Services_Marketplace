@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
+    "@stripe/react-stripe-js": "^2.4.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -23,11 +24,13 @@
     "react-multiple-select-dropdown-lite": "^2.0.6",
     "react-paginate": "^8.2.0",
     "react-phone-number-input": "^3.3.9",
-    "react-router-dom": "^6.21.3",
+    "react-responsive-carousel": "^3.2.23",
+    "react-router-dom": "^6.22.0",
     "react-scripts": "^5.0.1",
     "react-select": "^5.8.0",
     "reactstrap": "^9.2.1",
     "stream-browserify": "^3.0.0",
+    "stripe": "^14.13.0",
     "util": "^0.12.5",
     "web-vitals": "^2.1.4"
   },

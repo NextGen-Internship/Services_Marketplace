@@ -1,0 +1,99 @@
+.service-details {
+    position: relative; 
+    max-width: 2000px;
+    margin: auto;
+    padding: 100px; 
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 3;
+    font-size: 22px;
+}
+
+.service-title {
+    margin-bottom: 40px; 
+    color: #333;
+    font-size: 32px; 
+    font-weight: bold;
+    line-height: 1.5; 
+}
+
+.service-detail {
+    margin-bottom: 25px; 
+    color: #666;
+    font-size: 20px; 
+    line-height: 1.8; 
+}
+
+.service-detail label {
+    font-weight: bold;
+    font-size: 22px; 
+}
+
+.service-detail p {
+    display: inline;
+    margin-left: 5px;
+    color: #333;
+}
+
+.pay-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pay-button:hover {
+    background-color: #5db6ee;
+}
+
+.image-upload-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; 
+    font-size: 16px; 
+    font-weight: bold;
+}
+
+.image-upload-button:hover {
+    background-color: #5db6ee;
+}
+
+.edit-details-button {
+    margin: 10px;
+    padding: 10px 25px;
+    border: none;
+    background-color: #3c96f0; 
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; 
+    font-size: 20px; 
+    font-weight: bold;}
+
+.edit-details-button:hover {
+    background-color: #5db6ee; 
+}
+
+.button-container {
+    position: absolute; 
+    top: 80px; 
+    right: 10px; 
+    display: flex; 
+    gap: 10px; 
+}

@@ -279,6 +279,75 @@ const updateCurrentUser = async (userToUpdate, file) => {
     }
   };
 
+const getServicesByCurrentUser = async() => {
+    try {
+        const response = await axios.get(`${config.baseUrl}${config.getServicesByCurrentUser}`,{ 
+          headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
+      });
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching my services", error);
+        throw error;
+      }
+}
+
+const updateService = async (serviceId, newServiceData) => {
+  try {
+    const response = await axios.put(`${config.baseUrl}${config.updateService}/${serviceId}`, newServiceData, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating my services", error);
+    throw error;
+  }
+};
+
+
+
+const getCategoryById = async (categoryId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getCategoryById}/${categoryId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching category", error);
+    throw error;
+  }
+};
+
+const getCityById = async (cityId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getCityById}/${cityId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching city", error);
+    throw error;
+  }
+};
+
+const getServiceById = async (serviceId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getServiceById}/${serviceId}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching service by ID", error);
+    throw error;
+  }
+};
+
+
+
+
 export {
   getAllServices,
   getAllCategories,
@@ -294,5 +363,10 @@ export {
   updateUserRole,
   getCurrentUser,
   updateCurrentUser,
+  getServicesByCurrentUser,
+  updateService,
+  getCategoryById,
+  getCityById,
+  getServiceById,
 }
 export default apiService;
