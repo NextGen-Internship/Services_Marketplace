@@ -37,14 +37,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth == null || !auth.isAuthenticated()) {
             return null;
         }
+
         Object principal = auth.getPrincipal();
         if (principal instanceof User user) {
             String email = user.getEmail();
             return userRepository.findByEmail(email).orElse(null);
         }
+
         return null;
     }
 
@@ -127,6 +130,21 @@ public class UserServiceImpl implements UserService {
         }
 
         return userMapper.userToUserResponse(existingUser);
+    }
+
+    @Override
+    public UserResponse updateUserRoleToProvider(Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        Role role = roleRepository.findByName("PROVIDER").orElseThrow(() -> new IllegalArgumentException("Role not found."));
+
+        if (!user.getRoles().contains(role)) {
+            user.getRoles().add(role);
+            User updatedUser = userRepository.save(user);
+            return userMapper.userToUserResponse(updatedUser);
+        }
+
+        return userMapper.userToUserResponse(user);
     }
 
     @Override

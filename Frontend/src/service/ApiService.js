@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import config from './config.js';
 import isTokenExpired from "../utils/Utils.js";
 
@@ -168,6 +168,16 @@ const postRegister = async (formData) => {
     throw error;
   }
 };
+
+const getSubscriptionByUserId = async (userId) => {
+    try {
+      const response = await axios.get(`${config.baseUrl}${config.getSubscriptionByUserId}/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user data", error);
+      throw error;
+    }
+  };
 
 const getUserById = async (userId) => {
   try {
@@ -362,6 +372,7 @@ export {
   updateUser,
   updateUserRole,
   getCurrentUser,
+  getSubscriptionByUserId,
   updateCurrentUser,
   getServicesByCurrentUser,
   updateService,

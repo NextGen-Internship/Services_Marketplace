@@ -28,7 +28,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
 
-
     public AuthenticationResponse register(RegisterRequest request) {
         Role role = roleRepository.findByName("CUSTOMER").orElseThrow();
         Set<Role> roles = new HashSet<>();

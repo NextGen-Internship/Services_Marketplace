@@ -2,21 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Navbar.jsx"
 import '../styles/Profile.css';
+import SubscriptionComponent from './SubscriptionComponent.jsx';
+import axios from 'axios';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
 
-
-
 const Profile = () => {
   const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
 
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
+  const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
   const [userServices, setUserServices] = useState([]);
   const [editMode, setEditMode] = useState(false);
@@ -36,6 +37,7 @@ const Profile = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [selectedCities, setSelectedCities] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [subscriptionId, setSubscriptionId] = useState('');
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
@@ -53,6 +55,19 @@ const Profile = () => {
     cityIds: [],
     providerId: 0,
   });
+  const [formData, setFormData] = useState({
+    email: '',
+    firstMiddleName: '',
+    lastName: '',
+    dateOfBirth: '',
+    phoneNumber: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    iban: '',
+  });
+
+  const [modalOpen, setModalOpen] = useState(false);
 
 
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
@@ -94,6 +109,18 @@ const Profile = () => {
 
   const handleInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleProviderInfoChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   };
 
   useEffect(() => {
@@ -223,8 +250,6 @@ const Profile = () => {
     }
   };
 
-
-
   const handlePhoneChange = (phone) => {
     setPhoneNumber(phone);
     setUser(current => ({ ...current, phoneNumber: phone }));
@@ -233,6 +258,7 @@ const Profile = () => {
   const isProvider = (usr) => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
+
   useEffect(() => {
     const getPictureMethod = async () => {
       const currentUser = await getCurrentUser();
@@ -289,7 +315,14 @@ const Profile = () => {
     };
 
     fetchUserData();
-  }, [navigate], [user.roles]);
+  }, [navigate]);
+  
+  const handleBecomeProviderToggle = () => {
+    setShowBecomeProviderForm(!showBecomeProviderForm);
+    setShowServices(false);
+    setPreviewVisible(false);
+    setShowPersonalInfo(false);
+  };
 
 useEffect(() => {
   const getPictureMethod = async () => {
@@ -350,9 +383,10 @@ useEffect(() => {
 
   console.log("@@@@@@@@@@@@@@@@@@");
   console.log(user.roles);
-  const becomeProviderButton = (user.roles == null || !isProvider(user)) && (
-    <button onClick={() => handleBecomeProvider('provider')}>Become a Provider</button>
+  const becomeProviderButton = !isProvider(user) && (
+    <button onClick={() => handleBecomeProviderToggle()}>Become a Provider</button>
   );
+  
 
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
@@ -364,6 +398,7 @@ useEffect(() => {
     setShowPersonalInfo(!showPersonalInfo);
     setShowServices(false);
     setPreviewVisible(false);
+    setShowBecomeProviderForm(false);
   };
 
   const handleServicesToggle = async () => {
@@ -398,6 +433,62 @@ useEffect(() => {
     navigate('/edit-information');
   };
 
+  const handleAccountCreation = async () => {
+    try {
+      console.log(formData);
+      const response = await axios.post('http://localhost:8080/api/subscribe/createAccount', formData);
+      console.log('Stripe account created:', response.data);
+    } catch (error) {
+      console.error('Error creating Stripe account:', error);
+    }
+  }
+
+  const cancelSubscription = async (subscriptionId) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/api/subscribe/cancel/${subscriptionId}`);
+      console.log('Stripe subscription cancelled:', response.data);
+    } catch (error) {
+      console.error('Error cancelling Stripe subscription:', error);
+    }
+  };
+
+  const fetchSubscription = async (userId) => {
+    try {
+      const response = await getSubscriptionByUserId(userId);
+      console.log(response);
+      setSubscriptionId(response.stripeId);
+    } catch (error) {
+      console.error('Error fetching subscription data:', error);
+    }
+  };
+
+  const handleSubscriptionCancel = async () => {
+    if (subscriptionId) {
+      cancelSubscription(subscriptionId);
+    } else {
+      console.error('No subscription ID found');
+    }
+  };
+
+  useEffect(() => {
+  const localToken = localStorage.getItem('Jwt_Token');
+  if (!localToken) {
+    console.error('No token found');
+    navigate('/login');
+    return null;
+  }
+
+  const decodedToken = jwtDecode(localToken);
+  const userId = decodedToken['jti'];
+  if (!userId) {
+    console.error('No user ID found');
+    navigate('/login');
+    return null;
+  }
+
+  fetchSubscription(userId);
+ }, []);
+
   const saveServiceBox = async () => {
     try {
       const updatedService = await updateService(editableService.id, editableService);
@@ -411,9 +502,6 @@ useEffect(() => {
       console.error('Error updating service:', error);
     }
   };
-
-
-
 
   const editServiceBox = (serviceId) => {
     const serviceToEdit = userServices.find(service => service.id === serviceId);
@@ -538,19 +626,18 @@ useEffect(() => {
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
       </div>
+      {isProvider(user) && 
+      (<div className="provider-info">
+          <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
+      </div>)
+}
+      {isEditingPicture && (
       <MyServicesModal
         isOpen={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         services={userServices}
       />
-      {/* {isEditingPicture && (
-        <div className="profile-picture-edit">
-          <input type="file" onChange={handleImageChange} accept="image/*" />
-          {user.picture && (
-            <img src={user.picture} alt="Profile Preview" className="profile-preview-image" />
-          )}
-        </div>
-      )} */}
+      )}
       {showPersonalInfo && (
         <div className="personal-info">
           {editMode ? (
@@ -602,6 +689,50 @@ useEffect(() => {
           )}
         </div>
       )}
+      {showBecomeProviderForm && (
+        <div className="provider-info">
+          <div className="input-group">
+            <label>First and Middle:</label>
+            <input type="text" name="firstMiddleName" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>Last Name:</label>
+            <input type="text" name="lastName" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>Date of birth:</label>
+            <input type="date" name="dateOfBirth" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>Phone number:</label>
+            <input type="text" name="phoneNumber" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>Email:</label>
+            <input type="email" name="email" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>Address:</label>
+            <input type="address" name="address" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>City:</label>
+            <input type="city" name="city" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>Postal code:</label>
+            <input type="Postal code" name="postalCode" onChange={handleProviderInfoChange} />
+          </div>
+          <div className="input-group">
+            <label>IBAN:</label>
+            <input type="text" name="iban" onChange={handleProviderInfoChange} />
+          </div>
+          <div>
+            <SubscriptionComponent handleAccountCreation={handleAccountCreation} />
+          </div>
+        </div>
+      )
+      }
       {showServices && (
         <div className="user-services">
           {paginatedServices.length > 0 ? paginatedServices.map(renderServiceBox) : 'No Services to Show'}
@@ -620,6 +751,5 @@ useEffect(() => {
       )}
     </div>
   );
-};
-
+      };
 export default Profile;

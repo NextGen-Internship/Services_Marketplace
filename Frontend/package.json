@@ -29,6 +29,7 @@
     "react-scripts": "^5.0.1",
     "react-select": "^5.8.0",
     "reactstrap": "^9.2.1",
+    "stripe": "^14.13.0",
     "stream-browserify": "^3.0.0",
     "stripe": "^14.13.0",
     "util": "^0.12.5",

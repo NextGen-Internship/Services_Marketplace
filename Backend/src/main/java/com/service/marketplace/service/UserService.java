@@ -22,4 +22,6 @@ public interface UserService {
     UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest);
 
     UserResponse getUserResponseByUser(User user);
+
+    UserResponse updateUserRoleToProvider(Integer userId);
 }

@@ -7,9 +7,12 @@ import Home from './Components/Home';
 
 import { SignIn } from './Components/Access/SignIn';
 import SignUp from './Components/Access/SignUp';
+import SuccessPage from './Components/SuccessPage';
 import AddServicePage from './Components/AddServicePage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ServicesPage from './Components/ServicesPage';
+import CancelPage from './Components/CancelPage';
+import NewSubscription from './Components/NewSubscription';
 import Profile from './Components/Profile';
 import ServiceDetailsPage from './Components/ServiceDetailsPage';
 
@@ -21,18 +24,15 @@ function App() {
         <Navbar clicked={clicked} isClicked={isClicked} />
         {clicked ? <Menu /> : null}
         <Routes>
-          <Route path="/home-page" element={<Home />} />
-
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="*" element={<Navigate to="/home-page" />} />
-          <Route exact path="home-page" element={<Home />} />
-
-          <Route exact path="add-service-page" element={<AddServicePage />} />
-          <Route exact path="services" element={<ServicesPage />} />
-          <Route exact path="sign-in" element={<SignIn />} />
-          <Route exact path="sign-up" element={<SignUp />} />
-          <Route exact path="profile" element={<Profile />} />
+          <Route exact path="home-page" element={<Home/>}/>
+          <Route exact path="add-service-page" element={<AddServicePage/>}/>
+          <Route exact path="services" element={<ServicesPage/>}/>
+          <Route exact path="sign-in" element={<SignIn/>}/>
+          <Route exact path="sign-up" element={<SignUp/>}/>
+          <Route exact path="success" element={<SuccessPage/>} />
+          <Route exact path="cancel" element={<CancelPage/>} />
+          <Route exact path='/new-subscription' element={<NewSubscription />} />
+          <Route exact path="profile" element={<Profile/>}/>
         </Routes>
       </Router>
     </GoogleOAuthProvider>
