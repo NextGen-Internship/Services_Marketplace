@@ -54,11 +54,6 @@ function Navbar({ clicked, isClicked }) {
                     </NavLink>
                 </li>
                 <li className="NavElements">
-                    <NavLink className="Link" to="/category-page" onClick={handlePagination}>
-                        Categories
-                    </NavLink>
-                </li>
-                <li className="NavElements">
                     <NavLink className="Link" to="/services" onClick={handlePagination}>
                         Services
                     </NavLink>
