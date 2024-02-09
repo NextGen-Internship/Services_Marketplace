@@ -15,6 +15,7 @@ import CancelPage from './Components/CancelPage';
 import NewSubscription from './Components/NewSubscription';
 import Profile from './Components/Profile';
 import ServiceDetailsPage from './Components/ServiceDetailsPage';
+import ContactUsPage from './Components/ContactUsPage';
 
 function App() {
   const [clicked, isClicked] = useState(false);
@@ -31,6 +32,7 @@ function App() {
           <Route exact path="sign-up" element={<SignUp/>}/>
           <Route exact path="success" element={<SuccessPage/>} />
           <Route exact path="cancel" element={<CancelPage/>} />
+          <Route exact path="/contact-us" element={<ContactUsPage />} />
           <Route exact path='/new-subscription' element={<NewSubscription />} />
           <Route exact path="services/service-details/:serviceId" element={<ServiceDetailsPage />} />
           <Route exact path="profile" element={<Profile/>}/>
