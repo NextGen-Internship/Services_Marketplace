@@ -1,0 +1,20 @@
+INSERT INTO service (provider_id, category_id, title, description, service_status, price, created_at, updated_at)
+VALUES
+    (1, 1, 'Service 1', 'Description for Service 1', 'ACTIVE', 50.00, NOW(), NOW()),
+    (2, 2, 'Service 2', 'Description for Service 2', 'ACTIVE', 60.00, NOW(), NOW()),
+    (3, 3, 'Service 3', 'Description for Service 3', 'ACTIVE', 70.00, NOW(), NOW()),
+    (1, 4, 'Service 4', 'Description for Service 4', 'ACTIVE', 80.00, NOW(), NOW()),
+    (2, 5, 'Service 5', 'Description for Service 5', 'ACTIVE', 90.00, NOW(), NOW()),
+    (3, 6, 'Service 6', 'Description for Service 6', 'ACTIVE', 100.00, NOW(), NOW()),
+    (1, 7, 'Service 7', 'Description for Service 7', 'ACTIVE', 110.00, NOW(), NOW()),
+    (2, 8, 'Service 8', 'Description for Service 8', 'ACTIVE', 120.00, NOW(), NOW()),
+    (3, 9, 'Service 9', 'Description for Service 9', 'ACTIVE', 130.00, NOW(), NOW()),
+    (1, 10, 'Service 10', 'Description for Service 10', 'ACTIVE', 140.00, NOW(), NOW()),
+    (2, 11, 'Service 11', 'Description for Service 11', 'ACTIVE', 150.00, NOW(), NOW()),
+    (3, 12, 'Service 12', 'Description for Service 12', 'ACTIVE', 160.00, NOW(), NOW()),
+    (1, 13, 'Service 13', 'Description for Service 13', 'ACTIVE', 170.00, NOW(), NOW()),
+    (2, 14, 'Service 14', 'Description for Service 14', 'ACTIVE', 180.00, NOW(), NOW()),
+    (3, 15, 'Service 15', 'Description for Service 15', 'ACTIVE', 190.00, NOW(), NOW()),
+    (1, 16, 'Service 16', 'Description for Service 16', 'ACTIVE', 200.00, NOW(), NOW()),
+    (2, 17, 'Service 17', 'Description for Service 17', 'ACTIVE', 210.00, NOW(), NOW()),
+    (3, 18, 'Service 18', 'Description for Service 18', 'ACTIVE', 220.00, NOW(), NOW());
