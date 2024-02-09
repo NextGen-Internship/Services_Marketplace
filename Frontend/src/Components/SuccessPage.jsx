@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles/SuccessPage.css';
+
 
 const SuccessPage = () => {
     const location = useLocation();
@@ -18,7 +20,7 @@ const SuccessPage = () => {
     }
 
     return (
-        <div>
+        <div className="success-page-container"> 
             <h1>Subscription Successful!</h1>
             <p>Thank you for subscribing to our service.</p>
             <button onClick={onButtonClick}>Go Home</button>
