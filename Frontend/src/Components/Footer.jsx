@@ -1,27 +1,42 @@
 // Footer.jsx
-
 import React from 'react';
-import "../styles/Footer.css";
+import '../styles/Footer.css';
 
 const Footer = () => {
   return (
-    <div className='footer-container'>
-      <h1 className='title-footer'>Service Marketplace</h1>
-      <div className='text-footer'>
-        <p>
-          Created with a focus on user convenience, our application offers you an easy and intuitive way to publish service. The time required to post your ad is minimized while simultaneously providing you with rich customization options.
-        </p>
-      </div>
-      <div className='text-footer'>
-        <p>
-          Our diverse categories allow you to find exactly what you're looking for or reach the right audience for your service. Whether you are in a big city or a small village, our application connects you with numerous users from across the country. Discover new opportunities and establish connections with people who share your interests.
-        </p>
-      </div>
-      <div className='rights'>
-        <p>All rights reserved by BlankFactor</p>
-      </div>
-    </div>
+    <>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+      
+      {/* GOOGLE FONTS */}
+      <link rel="preconnect" href="https://fonts.gstatic.com" />
+      <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Play&display=swap" rel="stylesheet" />
+
+      <footer>
+        <div class="footer">
+          <div class="row">
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="#"><i class="fa fa-instagram"></i></a>
+            <a href="#"><i class="fa fa-youtube"></i></a>
+            <a href="#"><i class="fa fa-twitter"></i></a>
+          </div>
+
+          <div class="row">
+            <ul>
+              <li><a href="#">Contact us</a></li>
+              <li><a href="services">Our Services</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms & Conditions</a></li>
+              
+            </ul>
+          </div>
+
+          <div class="row">
+            Blankfactor Copyright © 2024 Blankfactor - All rights reserved 
+          </div>
+        </div>
+      </footer>
+    </>
   );
-}
+};
 
 export default Footer;
