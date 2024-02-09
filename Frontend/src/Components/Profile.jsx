@@ -583,7 +583,7 @@ useEffect(() => {
           ) : (
             <>
               <h3>{service.title}</h3>
-              <p>{service.price}</p>
+              <p>Price: {service.price} BGN.</p>
               <p>{service.description}</p>
               <button onClick={() => editServiceBox(service.id)}><FaRegEdit /></button>
             </>

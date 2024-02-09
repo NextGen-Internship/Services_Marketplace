@@ -1,5 +1,5 @@
 .profile-container {
-    width: 50%; 
+    width: 50%;
     max-width: none;
     margin: 0 auto;
     padding: 150px;
@@ -17,7 +17,7 @@
     height: auto;
 }
 
-.user-services-profile .pagination-controls-profile{
+.user-services-profile .pagination-controls-profile {
     color: #000;
 }
 
@@ -36,12 +36,12 @@
     color: white;
     border-radius: 5px;
     cursor: pointer;
-    
+
 }
 
 .profile-title {
-    font-size: 32px; 
-    margin-bottom: 20px; 
+    font-size: 32px;
+    margin-bottom: 20px;
 }
 
 .edit-button {
@@ -76,34 +76,36 @@
     background-color: #5db6ee;
 }
 
-.personal-info, .user-services {
+.personal-info,
+.user-services {
     text-align: left;
     margin-top: 30px;
     background-color: #ffffff;
-    padding: 25px; 
+    padding: 25px;
     border-radius: 5px;
-    font-size: 1.1em; 
-    width: 100%; 
-    max-width: 10000px; 
-    margin: 20px auto; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+    font-size: 1.1em;
+    width: 100%;
+    max-width: 10000px;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.personal-info p, .user-services p {
+.personal-info p,
+.user-services p {
     margin: 25px 0;
-    line-height: 1.6; 
+    line-height: 1.6;
     margin-top: 30px;
 }
-    
+
 
 
 .personal-info input {
-    width: 100%; 
-    padding: 10px; 
+    width: 100%;
+    padding: 10px;
     margin: 10px 0;
     border-radius: 4px;
     border: 1px solid #ccc;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); 
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .input-group {
@@ -114,51 +116,59 @@
 
 .input-group label {
     margin-right: 10px;
-    min-width: 150px; 
+    min-width: 150px;
     text-align: right;
 }
 
 .input-group input {
-    flex: 1; 
+    flex: 1;
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
 }
 
 .PhoneInputCountryIcon {
-    width: 40px; 
+    width: 40px;
     height: auto;
 }
-.custom-phone-input .PhoneInputCountrySelect {
-    flex-shrink: 0; 
-  }
-  
-  .custom-phone-input .PhoneInputInput {
-    flex-grow: 1;
-  }
 
-  .profile-preview-image {
+.custom-phone-input .PhoneInputCountrySelect {
+    flex-shrink: 0;
+}
+
+.custom-phone-input .PhoneInputInput {
+    flex-grow: 1;
+}
+
+.profile-preview-image {
     width: 50px;
     height: 50px;
-  }
-  .service-box-profile {
-    background-color: #f9fafc;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 900px;
+}
+
+.service-box-profile {
+    border: 1px solid #523b3b;
+    padding: 10px;
+    margin: 10px 0;
 }
 
 .service-info {
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 .service-info label {
-    display: block;
     margin-bottom: 5px;
-    color: #333;
-    font-weight: bold;
+}
+
+.service-info label {
+    margin-bottom: 5px;
+}
+
+.service-info input,
+.service-info textarea,
+.service-info select {
+    margin-bottom: 10px;
+    padding: 8px;
 }
 
 .service-info input[type="text"],
@@ -167,57 +177,77 @@
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; 
-    font-size: 16px; 
+    border-radius: 14px;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
 .service-info textarea {
-    resize: vertical; 
-    height: 100px; 
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 14px;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
 .service-info button {
-    padding: 10px 20px;
-    border: none;
+    padding: 8px 12px;
+    margin-top: 4px;
+    width: 550px;
+    margin-left: 210px;
     background-color: #3c96f0;
     color: white;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px; 
-    margin-right: 10px; 
+    margin-right: 10px;
+    
 }
 
 .service-info button:hover {
-    background-color: #5db6ee;
-}
+    background-color: #45a049;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  
+  p {
+    margin: 5px 0;
+  }
+  
+  .fa-edit {
+    font-size: 1.2rem;
+    margin-left: 5px;
+  }
+  
 
 .input-group select {
-    width: 100%; 
-    padding: 10px; 
-    margin-top: 10px; 
-    margin-bottom: 10px; 
-    border-radius: 4px; 
-    border: 1px solid #ccc; 
-    box-sizing: border-box; 
-    background-color: white; 
-    font-size: 16px; 
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: white;
+    font-size: 16px;
 }
 
 .input-group select:focus {
-    border-color: #3c96f0; 
-    outline: none; 
-    box-shadow: 0 0 0 2px rgba(60, 150, 240, 0.5); 
+    border-color: #3c96f0;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(60, 150, 240, 0.5);
 }
 
 
 .input-group select[multiple] {
-    height: auto; 
-    overflow-y: auto; 
+    height: auto;
+    overflow-y: auto;
 }
 
 .input-group input[type="checkbox"] {
-    margin-right: 10px; 
+    margin-right: 10px;
 }
 
 .selected-cities {
@@ -226,4 +256,3 @@
     background-color: #f2f2f2;
     border-radius: 5px;
 }
-
