@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import '../styles/Subscription.css';
 
-const Subscription = ({ priceId, onSelected }) => {
+const Subscription = ({ priceId, onSelected, isSelected }) => {
     const [productData, setProductData] = useState();
     const [params] = useState({
         priceId: priceId
@@ -42,7 +42,7 @@ const Subscription = ({ priceId, onSelected }) => {
     }
 
   return (
-    <div className='subscription-box' onClick={handleClick} style={{ cursor: 'pointer' }}>
+    <div className={`subscription-box ${isSelected ? 'selected' : ''}`} onClick={handleClick} style={{ cursor: 'pointer' }}>
         {productData ? (
                 <div className='subscription-info'>
                     <h3 className='subscription-name'>{productData.recurring.interval === 'month' ? (productData.recurring.interval_count === 1 ? 'Monthly' : 'Half Year') : 'Yearly'} Subscription</h3>

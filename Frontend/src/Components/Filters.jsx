@@ -3,6 +3,7 @@ import FilterElement from './FilterElement';
 import { getAllCategories, getAllCities } from '../service/ApiService';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import '../styles/Filters.css'
 
 const Filters = ({ applyFilters, cities, categories }) => {
     const [priceRange, setPriceRange] = useState([0, 1000]);
@@ -35,7 +36,7 @@ const Filters = ({ applyFilters, cities, categories }) => {
     };
 
     return (
-        <div>
+        <div className='filter-container'>
             <h2>Filter</h2>
             <FilterElement
                 title='Cities'

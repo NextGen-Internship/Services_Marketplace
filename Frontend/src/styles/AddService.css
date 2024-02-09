@@ -1,4 +1,4 @@
-.add-service {
+   .add-service {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,130 +8,125 @@
 }
 
 .add-service h1 {
-    font-size: 36px;
+    font-size: 24px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
 .add-service .add-service-form {
     width: 400px;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
 }
 
 .add-service .form-control {
-    position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .add-service .form-control label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 16px;
+    font-weight: bold;
+    color: black;
 }
 
 .add-service .form-control input,
-.add-service .form-control select {
+.add-service .form-control select,
+.add-service .form-control textarea {
     width: 100%;
-    height: 40px;
-    background: transparent;
-    border: 2px solid rgba(255, 255, 255, .2);
-    border-radius: 40px;
-    font-size: 16px;
-    color: white;
-    padding: 10px 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     box-sizing: border-box;
 }
 
-.add-service .form-control input::placeholder {
+.add-service .form-control textarea {
+    resize: vertical;
+}
+
+.add-service .btn {
+    background-color: #4CAF50;
     color: white;
-}
-
-.add-service .btn-block {
-    width: 100%;
-    height: 45px;
-    background-color: #fff;
+    padding: 10px 20px;
     border: none;
-    outline: none;
-    border-radius: 40px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    color: #333;
-    font-weight: 700;
-    transition: .5s;
+    display: block;
+    width: 100%;
+    text-align: center;
 }
 
-.add-service .btn-block:hover {
-    background: rgb(195, 237, 55);
+.add-service .btn:hover {
+    background-color: #45a049;
 }
 
 .multiselect-container {
     font-family: 'Arial', sans-serif;
-    width: 300px; 
+    width: 300px;
     border: 1px solid #ccc;
     border-radius: 4px;
     position: relative;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     color: black;
-  }
-  
-  .selected-list {
+}
+
+.selected-list {
     padding: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  
-  .option {
+}
+
+.option {
     padding: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .option:hover {
+}
+
+.option:hover {
     background-color: #f0f0f0;
-  }
-  
-  .checkbox {
+}
+
+.checkbox {
     margin-right: 8px;
-  }
-  
-  .search-input {
+}
+
+.search-input {
     padding: 8px;
     border: none;
     border-bottom: 1px solid #ccc;
     width: 100%;
     box-sizing: border-box;
     outline: none;
-  }
-  
-  .clear-button {
+}
+
+.clear-button {
     padding: 8px;
     background-color: #f5f5f5;
     cursor: pointer;
     border: none;
-  }
-  
-  .dropdown-icon {
+}
+
+.dropdown-icon {
     position: absolute;
     top: 50%;
     right: 10px;
     transform: translateY(-50%);
     pointer-events: none;
-  }
-  
-  .dropdown-menu {
+}
+
+.dropdown-menu {
     max-height: 200px;
     overflow-y: auto;
     border-top: 1px solid #ccc;
-  }
-  
-  .no-options {
+}
+
+.no-options {
     padding: 8px;
-  }
-  
-  .footer {
+}
+
+.footer {
     padding: 8px;
     border-top: 1px solid #ccc;
     background-color: #ffffff;
-  }
-  
+}

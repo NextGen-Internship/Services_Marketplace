@@ -17,6 +17,8 @@
     flex-direction: column;
     align-items: center;
     margin-left: 20px;
+    margin-top: -260px;
+    
   }
   
   .services header {
@@ -27,16 +29,16 @@
 .service-box {
   background-color: #fff;
     display: flex;
-    width: 100%;
-    max-width: 4000px;
-    margin: 10px;
-    padding: 15px;
+    width: 60%;
+    height: 60%;
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    margin-left: 470px;
+    
   }
   
   .service-box .photo {
@@ -78,7 +80,10 @@
     display: flex;
     justify-content: center;
     list-style: none;
-    padding: 0;
+    margin-left: 250px;
+    color: #ffffff;
+    margin-top: 5px;
+    
   }
   
   .pagination li {
@@ -87,7 +92,7 @@
   }
   
   .pagination a {
-    color: #333;
+    
     padding: 8px 12px;
     text-decoration: none;
     border: 1px solid #ccc;
@@ -106,13 +111,13 @@
   }
   
   .pagination .disabled a {
-    color: #ccc;
+    
     cursor: not-allowed;
   }
   
   .pagination span {
     padding: 8px 12px;
-    border: 1px solid #ccc;
+    
     border-radius: 4px;
     margin: 0 5px;
   }
