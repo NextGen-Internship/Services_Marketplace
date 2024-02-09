@@ -518,7 +518,6 @@ useEffect(() => {
     }
   };
 
-
   const handleServiceChange = (e, fieldName) => {
     if (fieldName === 'cityIds') {
       const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
