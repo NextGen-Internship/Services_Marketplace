@@ -26,5 +26,5 @@ public interface ServiceService {
 
     List<ServiceResponse> getServicesByCurrentUser();
 
-    void uploadPicture(String url, Integer entityId);
+//    void uploadPicture(String url, Integer entityId);
 }

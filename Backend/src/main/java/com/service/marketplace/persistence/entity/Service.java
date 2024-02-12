@@ -52,7 +52,7 @@ public class Service extends BaseEntity {
     )
     private List<City> cities;
 
-    @Column(name = "picture")
-    private String picture;
+//    @Column(name = "picture")
+//    private String picture;
 
 }

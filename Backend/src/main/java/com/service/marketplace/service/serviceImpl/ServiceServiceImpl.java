@@ -149,15 +149,15 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceMapper.toServiceResponseList(userServices);
     }
 
-    @Override
-    public void uploadPicture(String url, Integer entityId) {
-        if (url.isEmpty()) {
-            throw new IllegalArgumentException("Url is empty");
-        }
-
-        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Service not found"));
-        service.setPicture(url);
-        serviceRepository.save(service);
-    }
+//    @Override
+//    public void uploadPicture(String url, Integer entityId) {
+//        if (url.isEmpty()) {
+//            throw new IllegalArgumentException("Url is empty");
+//        }
+//
+//        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Service not found"));
+//        service.setPicture(url);
+//        serviceRepository.save(service);
+//    }
 
 }
