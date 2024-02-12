@@ -39,4 +39,9 @@ public class StripeController {
     public ResponseEntity<String> cancelSubscription(@PathVariable String stripeId) {
         return stripeService.cancelSubscription(stripeId);
     }
+
+    @PostMapping("/vip")
+    public String vipWithCheckoutPage(@RequestBody Checkout checkout) throws StripeException {
+        return stripeService.vipWithCheckoutPage(checkout);
+    }
 }

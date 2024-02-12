@@ -345,4 +345,33 @@ public class StripeServiceImpl implements StripeService {
         }
     }
 
+    @Override
+    public String vipWithCheckoutPage(Checkout checkout) {
+        Stripe.apiKey = stripeApiKey;
+
+        SessionCreateParams params = new SessionCreateParams.Builder()
+                .setSuccessUrl(checkout.getSuccessUrl())
+                .setCancelUrl(checkout.getCancelUrl())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .addLineItem(new SessionCreateParams.LineItem.Builder()
+                        .setQuantity(1L)
+                        .setPrice(checkout.getPriceId())
+                        .build())
+                .build();
+
+        try {
+            Session session = Session.create(params);
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("sessionId", session.getId());
+            return gson.toJson(responseData);
+        } catch (Exception e) {
+            Map<String, Object> messageData = new HashMap<>();
+            messageData.put("message", e.getMessage());
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("error", messageData);
+            return gson.toJson(responseData);
+        }
+    }
+
 }
