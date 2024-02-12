@@ -1,6 +1,8 @@
+// Category.js
 import React, { useState, useEffect } from 'react';
 import '../styles/Category.css';
 import { FaSearch } from 'react-icons/fa';
+import { getAllCategories } from '../service/ApiService';
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -24,6 +26,19 @@ const Category = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categoriesList = await getAllCategories();
+        setCategories(categoriesList);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const filteredCategories = categories.filter((category) =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -32,25 +47,17 @@ const Category = () => {
     e.preventDefault();
   };
 
+  const handleCategoryClick = (categoryId) => {
+    // Add logic to handle the click event, e.g., navigate to a specific category page
+    console.log(`Category ${categoryId} clicked!`);
+  };
+
   return (
     <div className='category-wrapper'>
       <div className='category-page'>
         <div className='search-box'>
           <form onSubmit={handleSearch}>
-            <div>
-              <input
-                className='input-search'
-                type='text'
-                placeholder='Search here...'
-                autoComplete='off'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                required
-              />
-              <button type='submit' className='search-btn'>
-                <FaSearch className='icon-input' />
-              </button>
-            </div>
+            {/* Add your search input here */}
           </form>
         </div>
 
@@ -63,10 +70,14 @@ const Category = () => {
               </p>
             ) : (
               filteredCategories.map((category) => (
-                <a key={category.id} href={`#${category.name}`} className='category-card'>
+                <button
+                  key={category.id}
+                  className='category-card'
+                  onClick={() => handleCategoryClick(category.id)}
+                >
                   <h3>{category.name}</h3>
-                  <p>{category.description}</p>
-                </a>
+                  {/* Add more details or styling as needed */}
+                </button>
               ))
             )}
           </div>

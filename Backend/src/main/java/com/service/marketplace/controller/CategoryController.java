@@ -2,10 +2,8 @@ package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.CategoryRequest;
 import com.service.marketplace.dto.response.CategoryResponse;
-import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.service.CategoryService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,14 +16,14 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
-        List<Category> categories = categoryService.getAllCategories();
+    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
+        List<CategoryResponse> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable("categoryId") Integer categoryId) {
-        Category category = categoryService.getCategoryById(categoryId);
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable("categoryId") Integer categoryId) {
+        CategoryResponse category = categoryService.getCategoryById(categoryId);
 
         if (category != null) {
             return ResponseEntity.ok(category);
@@ -35,15 +33,15 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Category> createCategory(@RequestBody CategoryRequest categoryToCreate) {
-        Category newCategory = categoryService.createCategory(categoryToCreate);
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryToCreate) {
+        CategoryResponse newCategory = categoryService.createCategory(categoryToCreate);
         return ResponseEntity.ok(newCategory);
     }
 
     @PutMapping("/update/{categoryId}")
-    public ResponseEntity<Category> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryToUpdate) {
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryToUpdate) {
         try {
-            Category updatedCategory = categoryService.updateCategory(categoryId, categoryToUpdate);
+            CategoryResponse updatedCategory = categoryService.updateCategory(categoryId, categoryToUpdate);
 
             if (updatedCategory == null) {
                 return ResponseEntity.notFound().build();

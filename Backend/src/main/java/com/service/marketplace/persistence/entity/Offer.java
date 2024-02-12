@@ -2,12 +2,11 @@ package com.service.marketplace.persistence.entity;
 
 import com.service.marketplace.persistence.enums.OfferStatus;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data

@@ -1,6 +1,5 @@
 package com.service.marketplace.persistence.entity;
 
-import com.service.marketplace.persistence.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +10,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +34,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "phone_number", unique = true)
-    private int phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "experience")
     private int experience;
@@ -47,22 +45,30 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "description")
     private String description;
 
-    @Lob
     @Column(name = "picture")
-    private byte[] picture;
+    private String picture;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
+    @Column(name = "media_key")
+    private String mediaKey;
 
+    @Column(name = "is_active")
+    private boolean isActive = true;
+
+    @Column(name = "stripe_account_id")
+    private String stripeAccountId;
+
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
+        return Set.of(new SimpleGrantedAuthority(roles.stream().map(Role::getName).collect(Collectors.joining())));
     }
 
     @Override

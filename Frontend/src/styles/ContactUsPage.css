@@ -1,0 +1,37 @@
+.contact-us-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .contact-list {
+    margin-top: 20px;
+  }
+  
+  .contact-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .contact-item h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .contact-item p {
+    margin: 5px 0;
+  }
+  
+  .contact-item a {
+    color: #0066cc;
+    text-decoration: none;
+  }
+  
+  .contact-item a:hover {
+    text-decoration: underline;
+  }
+  

@@ -1,12 +1,15 @@
 package com.service.marketplace.persistence.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "city")
 public class City extends BaseEntity {
@@ -19,8 +22,5 @@ public class City extends BaseEntity {
 
     @Column(name = "address", nullable = false)
     private String address;
-
-    @ManyToMany(mappedBy = "cities")
-    private List<Service> services;
 
 }

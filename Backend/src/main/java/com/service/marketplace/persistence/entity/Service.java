@@ -4,7 +4,6 @@ import com.service.marketplace.persistence.enums.ServiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -13,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "service")
 public class Service extends BaseEntity {
@@ -30,7 +30,7 @@ public class Service extends BaseEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @JoinColumn(name = "provider_id", nullable = false)
+    @JoinColumn(name = "provider_id")
     @ManyToOne
     private User provider;
 
@@ -40,7 +40,7 @@ public class Service extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     @ManyToOne
     private Category category;
 
@@ -52,5 +52,7 @@ public class Service extends BaseEntity {
     )
     private List<City> cities;
 
+    @Column(name = "picture")
+    private String picture;
 
 }
