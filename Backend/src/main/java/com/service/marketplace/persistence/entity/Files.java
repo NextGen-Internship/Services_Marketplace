@@ -21,10 +21,11 @@ public class Files extends BaseEntity {
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
 
-    @Column(name = "source_id")
-    private Integer sourceId;
+    @JoinColumn(name = "service_id")
+    @ManyToOne
+    private Service service;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "source_type")
-    private SourceType sourceType;
+    @JoinColumn(name = "review_id")
+    @ManyToOne
+    private Review review;
 }
