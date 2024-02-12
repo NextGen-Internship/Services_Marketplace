@@ -1,0 +1,2 @@
+ALTER TABLE service
+add column isVip BOOLEAN NOT NULL DEFAULT FALSE;

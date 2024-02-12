@@ -55,4 +55,7 @@ public class Service extends BaseEntity {
     @Column(name = "picture")
     private String picture;
 
+    @Column(name = "isVip")
+    private String isVip;
+
 }
