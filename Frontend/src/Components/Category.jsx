@@ -4,7 +4,7 @@ import '../styles/Category.css';
 import { FaSearch } from 'react-icons/fa';
 import { getAllCategories } from '../service/ApiService';
 
-const Category = () => {
+const Category = ({ handleCategoryClick }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -45,11 +45,6 @@ const Category = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-  };
-
-  const handleCategoryClick = (categoryId) => {
-    // Add logic to handle the click event, e.g., navigate to a specific category page
-    console.log(`Category ${categoryId} clicked!`);
   };
 
   return (

@@ -27,6 +27,12 @@ const Home = () => {
     dynamicHeight: false,
   };
 
+  const handleCategoryClick = (categoryId) => {
+    // Redirect to services page with selected category as filter
+    sessionStorage.setItem('CategoryFilter', categoryId);
+    window.location.href = '/services';
+  };
+
   return (
     <div>
       <Carousel {...carouselSettings}>
@@ -38,7 +44,7 @@ const Home = () => {
       </Carousel>
       <hr className='line-home'/>
       <div className="home-category">
-        <Category /> {/* Include the Category component here */}
+        <Category handleCategoryClick={handleCategoryClick} /> {/* Include the Category component here */}
       </div>
       <Footer></Footer>
     </div>

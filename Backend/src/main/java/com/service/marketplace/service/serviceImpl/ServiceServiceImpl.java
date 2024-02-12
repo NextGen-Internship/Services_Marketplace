@@ -139,6 +139,19 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
+    public List<ServiceResponse> getServicesByCategory(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+
+        if (category != null) {
+            List<com.service.marketplace.persistence.entity.Service> categoryServices = serviceRepository.findByCategory(category);
+
+            return serviceMapper.toServiceResponseList(categoryServices);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
     public List<ServiceResponse> getServicesByCurrentUser() {
         User currentUser = userService.getCurrentUser();
         if (currentUser == null) {
