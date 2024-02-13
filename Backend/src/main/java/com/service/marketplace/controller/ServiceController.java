@@ -1,13 +1,17 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.request.ServiceCreateRequest;
 import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import com.service.marketplace.service.ServiceService;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -48,10 +52,18 @@ public class ServiceController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<ServiceResponse> createService(@RequestBody ServiceRequest serviceToCreate) {
-        ServiceResponse newService = serviceService.createService(serviceToCreate);
+    public ResponseEntity<ServiceResponse> createService(@ModelAttribute ServiceRequest serviceToCreate, @RequestParam(value = "file", required = false) MultipartFile file) {
+        ServiceResponse newService = serviceService.createService(serviceToCreate, file);
         return ResponseEntity.ok(newService);
     }
+
+//    @PostMapping(value = "/create", consumes = {"application/json"})
+//    public ResponseEntity<ServiceResponse> createService(
+//            @RequestPart("serviceRequest") @Valid ServiceRequest serviceToCreate,
+//            @RequestPart("file") MultipartFile multipartFile) {
+//        ServiceResponse newService = serviceService.createService(serviceToCreate, multipartFile);
+//        return ResponseEntity.ok(newService);
+//    }
 
     @PutMapping("/update/{serviceId}")
     public ResponseEntity<ServiceResponse> updateService(@PathVariable("serviceId") Integer serviceId, @RequestBody ServiceRequest serviceToUpdate) {

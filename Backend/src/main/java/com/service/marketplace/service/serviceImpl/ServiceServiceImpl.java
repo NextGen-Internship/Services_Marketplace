@@ -1,5 +1,7 @@
 package com.service.marketplace.service.serviceImpl;
 
+import com.service.marketplace.dto.request.FilesRequest;
+import com.service.marketplace.dto.request.ServiceCreateRequest;
 import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
@@ -12,6 +14,7 @@ import com.service.marketplace.persistence.repository.CityRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.CloudinaryService;
+import com.service.marketplace.service.FilesService;
 import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +40,7 @@ public class ServiceServiceImpl implements ServiceService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final CloudinaryService cloudinaryService;
+    private final FilesService filesService;
 
     @Override
     public List<ServiceResponse> getAllServices() {
@@ -61,16 +66,19 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ServiceResponse createService(ServiceRequest serviceToCreate) {
+    public ServiceResponse createService(ServiceRequest serviceToCreate, MultipartFile file) {
         List<City> cities = cityRepository.findAllById(serviceToCreate.getCityIds());
         User provider = userRepository.findById(serviceToCreate.getProviderId()).orElse(null);
         Category category = categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null);
 
-        com.service.marketplace.persistence.entity.Service newService = serviceMapper.serviceRequestToService(serviceToCreate,
-                provider, category, cities);
+        com.service.marketplace.persistence.entity.Service newService = serviceMapper.serviceRequestToService(serviceToCreate, provider, category, cities);
 
+        ServiceResponse serviceResponse = serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
 
-        return serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
+        FilesRequest filesRequest = new FilesRequest(file, serviceResponse.getId(), null);
+        filesService.createFile(filesRequest);
+
+        return serviceResponse;
     }
 
     @Override

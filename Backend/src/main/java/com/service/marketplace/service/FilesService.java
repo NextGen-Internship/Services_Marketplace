@@ -11,8 +11,8 @@ import java.util.List;
 public interface FilesService {
     List<FilesResponse> getAllFiles();
     FilesResponse getFileById(Integer fileId);
-    FilesResponse createFile(FilesRequest fileToCreate, MultipartFile multipartFile);
-    FilesResponse updateFile(Integer fileId, FilesRequest fileToUpdate, MultipartFile multipartFile);
+    FilesResponse createFile(FilesRequest fileToCreate);
+    // FilesResponse updateFile(Integer fileId, FilesRequest fileToUpdate);
     void deleteFileById(Integer fileID);
     List<FilesResponse> getFilesByServiceId(Integer serviceId);
     List<FilesResponse> getFilesByReviewId(Integer reviewId);

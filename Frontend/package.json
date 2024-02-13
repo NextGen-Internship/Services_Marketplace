@@ -31,7 +31,6 @@
     "reactstrap": "^9.2.1",
     "stripe": "^14.13.0",
     "stream-browserify": "^3.0.0",
-    "stripe": "^14.13.0",
     "util": "^0.12.5",
     "web-vitals": "^2.1.4"
   },

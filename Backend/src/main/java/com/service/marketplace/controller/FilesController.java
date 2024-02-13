@@ -49,22 +49,22 @@ public class FilesController {
     }
 
 
-    @PostMapping("/create")
-    public ResponseEntity<FilesResponse> createFile(@RequestBody FilesRequest fileToCreate, @RequestParam(value = "file") MultipartFile multipartFile) {
-        FilesResponse newFile = filesService.createFile(fileToCreate, multipartFile);
-        return ResponseEntity.ok(newFile);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<List<FilesResponse>> createFile(@RequestBody FilesRequest fileToCreate) {
+//        List<FilesResponse> newFiles = filesService.createFile(fileToCreate);
+//        return ResponseEntity.ok(newFiles);
+//    }
 
-    @PutMapping("/update/{fileId}")
-    public ResponseEntity<FilesResponse> updateFile(@PathVariable("fileId") Integer fileId, @RequestBody FilesRequest fileToUpdate, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
-        FilesResponse updatedFile = filesService.updateFile(fileId, fileToUpdate, multipartFile);
-
-        if (updatedFile != null) {
-            return ResponseEntity.ok(updatedFile);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @PutMapping("/update/{fileId}")
+//    public ResponseEntity<FilesResponse> updateFile(@PathVariable("fileId") Integer fileId, @RequestBody FilesRequest fileToUpdate) {
+//        FilesResponse updatedFile = filesService.updateFile(fileId, fileToUpdate);
+//
+//        if (updatedFile != null) {
+//            return ResponseEntity.ok(updatedFile);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @DeleteMapping("/delete/{fileId}")
     public ResponseEntity<Void> deleteFile(@PathVariable("fileId") Integer fileId) {

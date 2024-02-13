@@ -86,14 +86,21 @@ const getAllCities = async () => {
   }
 };
 
-const createService = async (serviceData) => {
+const createService = async (serviceData, file) => {
   try {
+    const formData = new FormData();
+      Object.entries(serviceData).forEach(([key, value]) => {
+        formData.append(key, value); // Append user update request fields
+      });
+      formData.append('file', file); // Append the profile picture file
+
     const response = await axios.post(
       config.baseUrl + config.createService,
-      serviceData,
+      formData,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
         },
       }
     );

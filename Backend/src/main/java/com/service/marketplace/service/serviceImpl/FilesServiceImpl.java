@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,7 +49,8 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public FilesResponse createFile(FilesRequest fileToCreate, MultipartFile multipartFile) {
+    public FilesResponse createFile(FilesRequest fileToCreate) {
+        // List<FilesResponse> filesResponseList = new ArrayList<>();
         Review review = null;
         com.service.marketplace.persistence.entity.Service service = null;
 
@@ -71,66 +73,71 @@ public class FilesServiceImpl implements FilesService {
         } else {
             String newPictureUrl;
 
-            try {
-                newPictureUrl = cloudinaryService.uploadFile(multipartFile);
-            } catch (IOException e) {
-                String errorMessage = "Error uploading picture";
-                throw new RuntimeException(errorMessage, e);
-            }
+            // for (MultipartFile multipartFile: fileToCreate.getMultipartFiles()) {
+                try {
+                    newPictureUrl = cloudinaryService.uploadFile(fileToCreate.getMultipartFile());
+                } catch (IOException e) {
+                    String errorMessage = "Error uploading picture";
+                    throw new RuntimeException(errorMessage, e);
+                }
 
-            newFile.setUrl(newPictureUrl);
-            return filesMapper.filesToFilesResponse(filesRepository.save(newFile));
+                newFile.setUrl(newPictureUrl);
+                // filesResponseList.add(filesMapper.filesToFilesResponse(filesRepository.save(newFile)));
+            // }
         }
+
+        return filesMapper.filesToFilesResponse(filesRepository.save(newFile));
+        // return filesResponseList;
     }
 
-    @Override
-    public FilesResponse updateFile(Integer fileId, FilesRequest fileToUpdate, MultipartFile multipartFile) {
-        Files existingFile = filesRepository.findById(fileId).orElse(null);
-
-        Review review = null;
-        com.service.marketplace.persistence.entity.Service service = null;
-
-        if (fileToUpdate.getReviewId() != null) {
-            review = reviewRepository.findById(fileToUpdate.getReviewId()).orElse(null);
-        } else if (fileToUpdate.getServiceId() != null) {
-            service = serviceRepository.findById(fileToUpdate.getServiceId()).orElse(null);
-        }
-
-        Files updatedFile = null;
-
-        if (review != null) {
-            updatedFile = filesMapper.filesRequestToFiles(fileToUpdate, review);
-        } else if (service != null) {
-            updatedFile = filesMapper.filesRequestToFiles(fileToUpdate, service);
-        }
-
-        if (multipartFile != null) {
-            String newPictureUrl;
-
-            try {
-                newPictureUrl = cloudinaryService.uploadFile(multipartFile);
-            } catch (IOException e) {
-                String errorMessage = "Error uploading picture";
-                throw new RuntimeException(errorMessage, e);
-            }
-
-            if (updatedFile != null) {
-                updatedFile.setUrl(newPictureUrl);
-            } else {
-                throw new RuntimeException("The updated file is null.");
-            }
-        }
-
-        if (existingFile != null) {
-            if (multipartFile != null) {
-                existingFile.setUrl(updatedFile.getUrl());
-            }
-
-            return filesMapper.filesToFilesResponse(filesRepository.save(existingFile));
-        } else {
-            return null;
-        }
-    }
+//    @Override
+//    public FilesResponse updateFile(Integer fileId, FilesRequest fileToUpdate) {
+//        Files existingFile = filesRepository.findById(fileId).orElse(null);
+//
+//        Review review = null;
+//        com.service.marketplace.persistence.entity.Service service = null;
+//
+//        if (fileToUpdate.getReviewId() != null) {
+//            review = reviewRepository.findById(fileToUpdate.getReviewId()).orElse(null);
+//        } else if (fileToUpdate.getServiceId() != null) {
+//            service = serviceRepository.findById(fileToUpdate.getServiceId()).orElse(null);
+//        }
+//
+//        Files updatedFile = null;
+//
+//        if (review != null) {
+//            updatedFile = filesMapper.filesRequestToFiles(fileToUpdate, review);
+//        } else if (service != null) {
+//            updatedFile = filesMapper.filesRequestToFiles(fileToUpdate, service);
+//        }
+//
+//        if (fileToUpdate.getMultipartFile() != null) {
+//            String newPictureUrl;
+//
+//            try {
+//                newPictureUrl = cloudinaryService.uploadFile(fileToUpdate.getMultipartFile());
+//            } catch (IOException e) {
+//                String errorMessage = "Error uploading picture";
+//                throw new RuntimeException(errorMessage, e);
+//            }
+//
+//            if (updatedFile != null) {
+//                updatedFile.setUrl(newPictureUrl);
+//            } else {
+//                throw new RuntimeException("The updated file is null.");
+//            }
+//        }
+//
+//        if (existingFile != null) {
+//            if (fileToUpdate.getMultipartFile() != null) {
+//                existingFile.setUrl(updatedFile.getUrl());
+//            }
+//
+//            return filesMapper.filesToFilesResponse(filesRepository.save(existingFile));
+//        } else {
+//            return null;
+//        }
+//    }
 
     @Override
     public void deleteFileById(Integer fileId) {
