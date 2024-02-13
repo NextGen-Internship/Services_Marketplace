@@ -362,7 +362,20 @@ const getServiceById = async (serviceId) => {
   }
 };
 
-
+const getFilesByServiceId = async(serviceId) => {
+  try {
+      const response = await axios.get(`${config.baseUrl}${config.getFilesByServiceId}/${serviceId}`,{ 
+        headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching my services", error);
+      throw error;
+    }
+}
 
 
 export {
@@ -386,5 +399,6 @@ export {
   getCategoryById,
   getCityById,
   getServiceById,
+  getFilesByServiceId,
 }
 export default apiService;

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities } from '../service/ApiService';
+import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, getFilesByServiceId } from '../service/ApiService';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
 import { FaEdit } from "react-icons/fa";
-
-
-
+import { Carousel } from 'react-responsive-carousel';
 
 const ServiceDetailsPage = () => {
+    const [images, setImages] = useState([]);
     const [service, setService] = useState({
         id: 0,
         title: '',
@@ -21,7 +20,7 @@ const ServiceDetailsPage = () => {
         cityIds: [],
         updatedAt: []
     });
-    const { serviceId } = useParams()
+    const { serviceId } = useParams();
     const [cities, setCities] = useState([]);
     const getCitiesNames = (service, cities) => {
         const serviceCities = service.cityIds.map((cityId) => {
@@ -43,6 +42,22 @@ const ServiceDetailsPage = () => {
                 }));
 
                 setCities(citiesWithLabel);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await getFilesByServiceId(serviceId);
+
+                const imagesUrls = response.map((image) => image.url);
+
+                setImages(imagesUrls);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -91,17 +106,34 @@ const ServiceDetailsPage = () => {
         console.log('Edit details triggered');
     };
 
+    const carouselSettings = {
+        showThumbs: false,
+        interval: 3000,
+        infiniteLoop: true,
+        autoPlay: true,
+        transitionTime: 600,
+        stopOnHover: false,
+        dynamicHeight: false,
+    };
+
 
     return (
         <div className='service-details-container'>
             <h2>{service.title}</h2>
+            <Carousel {...carouselSettings}>
+                {images.map((imageUrl, index) => (
+                    <div key={index}>
+                        <img src={imageUrl} alt={`Photo ${index + 1}`} />
+                    </div>
+                ))}
+            </Carousel>
             <p>{service.categoryName}</p>
             <p>Provider Name: {service.providerName}</p>
             <p>Description: {service.description}</p>
             <p>Price: {service.price} BGN.</p>
             <p>{getCitiesNames(service, cities)} </p>
             <p> {formattedDate}</p>
-           
+
             <button className='pay-button'>Make a request</button>
             <div className="button-container">
                 <button className='edit-details-button' onClick={handleEditDetails}>
