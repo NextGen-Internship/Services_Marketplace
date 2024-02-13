@@ -127,12 +127,19 @@ const ServiceDetailsPage = () => {
                     </div>
                 ))}
             </Carousel>
+            <h3>{service.price} BGN</h3>
+            <hr/>
             <p>{service.categoryName}</p>
-            <p>Provider Name: {service.providerName}</p>
-            <p>Description: {service.description}</p>
-            <p>Price: {service.price} BGN.</p>
+            <hr/>
+            <h3>Description</h3>
+            <p>{service.description}</p>
+            <hr/>
+            <p>Provider: {service.providerName}</p>
+            <hr/>
+            <h3>Location</h3>
             <p>{getCitiesNames(service, cities)} </p>
-            <p> {formattedDate}</p>
+            <hr/>
+            <p>Added on: {formattedDate}</p>
 
             <button className='pay-button'>Make a request</button>
             <div className="button-container">
