@@ -66,7 +66,7 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ServiceResponse createService(ServiceRequest serviceToCreate, MultipartFile file) {
+    public ServiceResponse createService(ServiceRequest serviceToCreate, List<MultipartFile> files) {
         List<City> cities = cityRepository.findAllById(serviceToCreate.getCityIds());
         User provider = userRepository.findById(serviceToCreate.getProviderId()).orElse(null);
         Category category = categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null);
@@ -75,8 +75,10 @@ public class ServiceServiceImpl implements ServiceService {
 
         ServiceResponse serviceResponse = serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
 
-        FilesRequest filesRequest = new FilesRequest(file, serviceResponse.getId(), null);
-        filesService.createFile(filesRequest);
+        for (MultipartFile multipartFile : files) {
+            FilesRequest filesRequest = new FilesRequest(multipartFile, serviceResponse.getId(), null);
+            filesService.createFile(filesRequest);
+        }
 
         return serviceResponse;
     }

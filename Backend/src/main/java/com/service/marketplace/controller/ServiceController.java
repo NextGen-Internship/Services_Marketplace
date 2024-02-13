@@ -52,8 +52,8 @@ public class ServiceController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<ServiceResponse> createService(@ModelAttribute ServiceRequest serviceToCreate, @RequestParam(value = "file", required = false) MultipartFile file) {
-        ServiceResponse newService = serviceService.createService(serviceToCreate, file);
+    public ResponseEntity<ServiceResponse> createService(@ModelAttribute ServiceRequest serviceToCreate, @RequestParam(value = "files", required = false) List<MultipartFile> files) {
+        ServiceResponse newService = serviceService.createService(serviceToCreate, files);
         return ResponseEntity.ok(newService);
     }
 

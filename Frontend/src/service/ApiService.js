@@ -86,13 +86,16 @@ const getAllCities = async () => {
   }
 };
 
-const createService = async (serviceData, file) => {
+const createService = async (serviceData, files) => {
   try {
     const formData = new FormData();
       Object.entries(serviceData).forEach(([key, value]) => {
         formData.append(key, value); // Append user update request fields
       });
-      formData.append('file', file); // Append the profile picture file
+      // formData.append('file', file); // Append the profile picture file
+      files.forEach((file) => {
+        formData.append('files', file);
+    });
 
     const response = await axios.post(
       config.baseUrl + config.createService,

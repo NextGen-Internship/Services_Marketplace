@@ -14,7 +14,7 @@ const AddService = ({ onAdd }) => {
   const [providerId, setProviderId] = useState();
   const [cities, setCities] = useState([]);
   const [chosen, setChosen] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -88,8 +88,8 @@ const AddService = ({ onAdd }) => {
   };
 
   const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
+    const files = event.target.files;
+    setSelectedFiles(files);
 }
 
   const onSubmit = (e) => {
@@ -140,14 +140,14 @@ const AddService = ({ onAdd }) => {
       cityIds: chosen.map((city) => city.id)
     };
 
-    onAdd(serviceRequest, selectedFile);
+    onAdd(serviceRequest, selectedFiles);
 
     setServiceTitle('');
     setServiceDescription('');
     setServicePrice('');
     setServiceCategory('');
     setChosen([]);
-    setSelectedFile(null);
+    setSelectedFiles([]);
   };
 
   return (
@@ -207,7 +207,7 @@ const AddService = ({ onAdd }) => {
         </div>
         <div className="form-control">
           <label>Pictures</label>
-          <input type="file" onChange={handleImageChange} accept="image/*" />
+          <input type="file" onChange={handleImageChange} accept="image/*" multiple/>
         </div>
         <input type='submit' value='Add Service' className='btn btn-block' />
       </form>

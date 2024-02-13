@@ -3,6 +3,7 @@ import { createReview } from '../service/ApiService';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 import { useState } from 'react';
+import '../styles/ReviewAddForm.css';
 
 const ReviewAddForm = ({ serviceId }) => {
     const [reviewDescription, setReviewDescription] = useState('');
@@ -71,30 +72,35 @@ const ReviewAddForm = ({ serviceId }) => {
     };
 
     return (
-        <div>
-            <h2>Add Review</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
+        <div className='review-add-form-container'>
+            <hr/>
+            <h2 className="review-add-form-title">Add Review</h2>
+            <form className="review-add-form" onSubmit={handleSubmit}>
+                <div className="form-control">
                     <label>Description:</label>
                     <input
                         type="text"
+                        className="review-description-input"
                         value={reviewDescription}
                         onChange={(e) => setReviewDescription(e.target.value)}
                     />
                 </div>
-                <div>
+                <div className="form-control">
                     <label>Rating:</label>
                     <input
                         type="number"
+                        className="review-rating-input"
                         value={reviewRating}
                         onChange={(e) => setReviewRating(e.target.value)}
                         min="0"
                         max="5"
                     />
                 </div>
-                <button type="submit">Submit</button>
+                <button className="submit-button" type="submit">Submit</button>
             </form>
+            <hr className='bottom'/>
         </div>
+
     );
 };
 

@@ -20,9 +20,9 @@ function AddServicePage() {
         fetchData();
     }, []);
 
-    const addService = async (service, file) => {
+    const addService = async (service, files) => {
         try {
-            const newService = await createService(service, file);
+            const newService = await createService(service, files);
 
             console.log(newService);
             setServices([...services, newService]);

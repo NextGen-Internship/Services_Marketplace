@@ -14,7 +14,7 @@ public interface ServiceService {
 
     ServiceResponse getServiceById(Integer serviceId);
 
-    ServiceResponse createService(ServiceRequest serviceToCreate, MultipartFile file);
+    ServiceResponse createService(ServiceRequest serviceToCreate, List<MultipartFile> files);
 
     ServiceResponse updateService(Integer serviceId, ServiceRequest serviceToUpdate);
 
