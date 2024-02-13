@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, getFilesByServiceId } from '../service/ApiService';
+import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, getFilesByServiceId, getReviewsByServiceId } from '../service/ApiService';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
 import { FaEdit } from "react-icons/fa";
 import { Carousel } from 'react-responsive-carousel';
+import ReviewAddForm from './ReviewAddForm';
 
 const ServiceDetailsPage = () => {
     const [images, setImages] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [showReviews, setShowReviews] = useState(false);
+    const [showAddReviewForm, setShowAddReviewForm] = useState(false);
     const [service, setService] = useState({
         id: 0,
         title: '',
@@ -116,6 +120,40 @@ const ServiceDetailsPage = () => {
         dynamicHeight: false,
     };
 
+    const handleReviewToggle = async () => {
+        try {
+            const reviewsResponse = await getReviewsByServiceId(serviceId);
+            setReviews(reviewsResponse);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        }
+        setShowReviews(!showReviews);
+    }
+
+    const handleReviewFormToggle = async () => {
+        setShowAddReviewForm(!showAddReviewForm);
+    }
+
+    const renderReviewBox = (review) => {
+        const reviewDate = moment(review.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
+
+        return (
+            <div key={review.id} className="review-box-service">
+                <div className="review-info">
+                    {(
+                        <>
+                            <h3>Customer: {review.customerId}</h3>
+                            <p>Added on: {reviewDate}</p>
+                            <p>{review.description}</p>
+                            <p>{service.description}</p>
+                            <p>Rating: {review.rating}/5</p>
+
+                        </>
+                    )}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className='service-details-container'>
@@ -128,25 +166,36 @@ const ServiceDetailsPage = () => {
                 ))}
             </Carousel>
             <h3>{service.price} BGN</h3>
-            <hr/>
+            <hr />
             <p>{service.categoryName}</p>
-            <hr/>
+            <hr />
             <h3>Description</h3>
             <p>{service.description}</p>
-            <hr/>
+            <hr />
             <p>Provider: {service.providerName}</p>
-            <hr/>
+            <hr />
             <h3>Location</h3>
             <p>{getCitiesNames(service, cities)} </p>
-            <hr/>
+            <hr />
             <p>Added on: {formattedDate}</p>
 
             <button className='pay-button'>Make a request</button>
+            <button className='add-review-btn' onClick={handleReviewFormToggle} >Add review</button>
             <div className="button-container">
                 <button className='edit-details-button' onClick={handleEditDetails}>
                     <FaEdit />
                 </button>
             </div>
+
+            <button onClick={handleReviewToggle}>Reviews</button>
+            {showAddReviewForm && (
+                <ReviewAddForm serviceId={serviceId} />
+            )}
+            {showReviews && (
+                <div className='reviews-container'>
+                    {reviews.length > 0 ? reviews.map(renderReviewBox) : 'No reviews to show'}
+                </div>
+            )}
         </div>
     );
 };

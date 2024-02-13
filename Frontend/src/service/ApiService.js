@@ -377,6 +377,50 @@ const getFilesByServiceId = async(serviceId) => {
     }
 }
 
+const getReviewsByServiceId = async(serviceId) => {
+  try {
+      const response = await axios.get(`${config.baseUrl}${config.getReviewsByServiceId}/${serviceId}`,{ 
+        headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching my services", error);
+      throw error;
+    }
+}
+
+// const getAllReviews = async() => {
+//   try {
+//       const response = await axios.get(`${config.baseUrl}${config.getReviewsByServiceId}/${serviceId}`,{ 
+//         headers: {
+//         "Content-Type": "application/json",
+//         "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+//       }
+//     });
+//       return response.data;
+//     } catch (error) {
+//       console.error("Error fetching my services", error);
+//       throw error;
+//     }
+// }
+
+const createReview = async (review) => {
+  try {
+    const response = await axios.post(`${config.baseUrl}${config.createReview}`, review, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user data", error);
+    throw error;
+  }
+};
 
 export {
   getAllServices,
@@ -400,5 +444,7 @@ export {
   getCityById,
   getServiceById,
   getFilesByServiceId,
+  getReviewsByServiceId,
+  createReview,
 }
 export default apiService;
