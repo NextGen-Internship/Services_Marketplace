@@ -24,7 +24,8 @@ const config = {
     getCityById: '/v1/cities',
     getServiceById: '/v1/services',
     createRequest: '/v1/request/create',
-    getRequestByProvider: '/v1/request/currentUser'
+    getRequestByProvider: '/v1/request/currentUser',
+    createOffer: '/v1/offer/create',
 }
 
 

@@ -387,7 +387,23 @@ const getRequestByProvider = async () => {
   }
 };
 
-
+const createOffer = async (offerData) => {
+  try {
+    const response = await axios.post(
+      config.baseUrl + config.createOffer,
+      offerData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating request", error);
+    throw error;
+  }
+};
 
 
 
@@ -413,7 +429,10 @@ export {
   getCityById,
   getServiceById,
   createRequest,
-  getRequestByProvider
+  getRequestByProvider,
+  createOffer,
 
 }
 export default apiService;
+
+
