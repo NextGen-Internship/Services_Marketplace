@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities } from '../service/ApiService';
+import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, createRequest } from '../service/ApiService';
+import RequestAddForm from './RequestAddForm';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
 import { FaEdit } from "react-icons/fa";
@@ -9,6 +10,7 @@ import { FaEdit } from "react-icons/fa";
 
 
 const ServiceDetailsPage = () => {
+    const [showAddRequestForm, setShowAddRequestForm] = useState(false);
     const [service, setService] = useState({
         id: 0,
         title: '',
@@ -91,6 +93,18 @@ const ServiceDetailsPage = () => {
         console.log('Edit details triggered');
     };
 
+    const handleRequestFormToggle = () => {
+        setShowAddRequestForm(!showAddRequestForm);
+    }
+
+    const addRequest = async (request) => {
+        try {
+            const newRequest = await createRequest(request);
+            console.log(newRequest);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <div className='service-details-container'>
@@ -102,7 +116,10 @@ const ServiceDetailsPage = () => {
             <p>{getCitiesNames(service, cities)} </p>
             <p> {formattedDate}</p>
            
-            <button className='pay-button'>Make a request</button>
+            <button className='pay-button' onClick={handleRequestFormToggle}>Make a request</button>
+            {showAddRequestForm && (
+                <RequestAddForm onAdd={addRequest} serviceId={serviceId} />
+            )}
             <div className="button-container">
                 <button className='edit-details-button' onClick={handleEditDetails}>
                     <FaEdit />
