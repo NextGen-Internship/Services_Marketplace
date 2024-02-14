@@ -12,6 +12,7 @@ import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
 import Multiselect from 'multiselect-react-dropdown';
+import RequestsBox from './RequestsBox.jsx';
 
 const Profile = () => {
   const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
@@ -23,6 +24,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [userServices, setUserServices] = useState([]);
   const [userRequest, setUserRequest] = useState([]);
+  const [showReviews, setShowReviews] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -435,16 +437,13 @@ const Profile = () => {
     }
     try {
       const requests = await getRequestByProvider();
+
       setUserRequest(requests);
-      const indexOfLastRequest = (currentPage + 1) * servicesPerPage;
-      const indexOfFirstRequest = indexOfLastRequest - servicesPerPage;
-      const paginatedRequests = requests.slice(indexOfFirstRequest, indexOfLastRequest);
-      setPaginatedRequest(paginatedRequests);
-      setTotalPages(Math.ceil(requests.length / servicesPerPage));
       setAreMyRequestVisible(true);
     } catch (error) {
       console.error('Error fetching requests:', error);
     }
+    setShowRequest(!showRequest);
   };
 
 
@@ -560,16 +559,9 @@ const Profile = () => {
       }));
     }
   };
-  const renderRequestBox = (request) => (
-    <div key={request.serviceId} className="service-box">
-      <p>Description: {request.description}</p>
-      <p>Customer ID: {request.customerId}</p>
-      <p>Service ID: {request.serviceId}</p>
-      <button onClick={() => handleRequest(request)}>Show Details</button>
-    </div>
-  );
+
   const showRequestsButton = (
-    <button onClick={() => setShowRequest(!showRequest)}>Requests</button>
+    <button onClick={handleRequest}>Requests</button>
   );
   // const handleRequestDetails = (request) => {
   //   setSelectedRequest(request);
@@ -586,11 +578,6 @@ const Profile = () => {
       console.log(cityNames);
       return cityNames.filter(Boolean).join(', ');
     };
-
-
-
-
-
 
     return (
       <div key={service.id} className="service-box-profile">
@@ -665,12 +652,14 @@ const Profile = () => {
         {isProvider(user) && (
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
-        {showRequestsButton}
-        {handleRequest}
+        {isProvider(user) && showRequestsButton}
+
+
+
+
         <div></div>
-       }
-        <button onClick={handleRequest}>Requests</button>
-        {handleRequest}
+
+
       </div>
       {isProvider(user) &&
         (<div className="provider-info">
@@ -793,6 +782,17 @@ const Profile = () => {
               initialPage={currentPage}
             />
           </div>
+        </div>
+      )}
+      {showRequest && (
+        <div className="user-requests-profile">
+          {userRequest.length > 0 ? (
+            userRequest.map((request, index) => (
+              <RequestsBox key={index} request={request} />
+            ))
+          ) : (
+            'No reviews to show'
+          )}
         </div>
       )}
     </div>
