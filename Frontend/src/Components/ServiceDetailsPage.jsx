@@ -134,13 +134,7 @@ const ServiceDetailsPage = () => {
         dynamicHeight: false,
     };
 
-    const handleReviewToggle = /*async*/ () => {
-        // try {
-        //     const reviewsResponse = await getReviewsByServiceId(serviceId);
-        //     setReviews(reviewsResponse);
-        // } catch (error) {
-        //     console.error('Error fetching services:', error);
-        // }
+    const handleReviewToggle = () => {
         setShowReviews(!showReviews);
     }
 

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import moment from 'moment';
-import { getFilesByReviewId } from '../service/ApiService';
+import { getFilesByReviewId, getUserById } from '../service/ApiService';
 import '../styles/ReviewBox.css';
 
 const ReviewBox = ({ review }) => {
     const [reviewImages, setReviewImages] = useState([]);
     const reviewDate = moment(review.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
+    const [customer, setCustomer] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,6 +25,16 @@ const ReviewBox = ({ review }) => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const getCustomer = async () => {
+            const customer = await getUserById(review.customerId);
+            const customerName = customer.firstName + ' ' + customer.lastName;
+            setCustomer(customerName);
+        }
+
+        getCustomer();
+    }, []);
+
     const carouselSettings = {
         showThumbs: false,
         interval: 3000,
@@ -39,7 +50,7 @@ const ReviewBox = ({ review }) => {
             <div className="review-info">
                 {(
                     <>
-                        <h3>Customer: {review.customerId}</h3>
+                        <h3>Customer: {customer}</h3>
                         <p>Added on: {reviewDate}</p>
                         <div className='review-carousel'>
                             <Carousel {...carouselSettings}>
