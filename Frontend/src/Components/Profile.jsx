@@ -663,34 +663,15 @@ const Profile = () => {
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         {isProvider(user) && (
-         <button onClick={handleServicesToggle}>My Services</button>
-         )}
-         {becomeProviderButton}
-         {showRequestsButton}
-         {handleRequest}
-       </div>
+          <button onClick={handleServicesToggle}>My Services</button>
+        )}        {becomeProviderButton}
+        {showRequestsButton}
+        {handleRequest}
+        <div></div>
+       }
         <button onClick={handleRequest}>Requests</button>
         {handleRequest}
       </div>
-  );
-      {showRequest && (
-        <div className="user-requests-profile">
-          {requests.length > 0 ? requests.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage).map(renderRequestBox) : 'No Requests to Show'}
-          <div className="pagination-controls-profile">
-            <ReactPaginate
-              pageCount={Math.ceil(requests.length / itemsPerPage)}
-              pageRangeDisplayed={2}
-              marginPagesDisplayed={1}
-              onPageChange={({ selected }) => handlePageChange(selected)}
-              containerClassName="pagination"
-              activeClassName="active"
-              initialPage={currentPage}
-            />
-          </div>
-        </div>
-      )}
-  
-
       {isProvider(user) &&
         (<div className="provider-info">
           <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
