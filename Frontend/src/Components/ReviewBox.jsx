@@ -3,6 +3,7 @@ import { Carousel } from 'react-responsive-carousel';
 import moment from 'moment';
 import { getFilesByReviewId, getUserById } from '../service/ApiService';
 import '../styles/ReviewBox.css';
+import { FaEdit } from "react-icons/fa";
 
 const ReviewBox = ({ review }) => {
     const [reviewImages, setReviewImages] = useState([]);
@@ -45,6 +46,10 @@ const ReviewBox = ({ review }) => {
         dynamicHeight: false,
     };
 
+    const handleEditDetails = () => {
+        console.log('Edit details triggered');
+    };
+
     return (
         <div key={review.id} className="review-box-service">
             <div className="review-info">
@@ -63,7 +68,11 @@ const ReviewBox = ({ review }) => {
                         </div>
                         <p>{review.description}</p>
                         <p>Rating: {review.rating}/5</p>
-
+                        <div className="button-container">
+                            <button className='edit-details-button' onClick={handleEditDetails}>
+                                <FaEdit />
+                            </button>
+                        </div>
                     </>
                 )}
             </div>

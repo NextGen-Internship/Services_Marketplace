@@ -3,7 +3,6 @@ import { useParams, useLocation } from 'react-router-dom';
 import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, getFilesByServiceId, getReviewsByServiceId, createReview } from '../service/ApiService';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
-import { FaEdit } from "react-icons/fa";
 import { Carousel } from 'react-responsive-carousel';
 import ReviewAddForm from './ReviewAddForm';
 import ReviewBox from './ReviewBox';
@@ -120,10 +119,6 @@ const ServiceDetailsPage = () => {
     }
     const formattedDate = moment(service.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
 
-    const handleEditDetails = () => {
-        console.log('Edit details triggered');
-    };
-
     const carouselSettings = {
         showThumbs: false,
         interval: 3000,
@@ -179,11 +174,6 @@ const ServiceDetailsPage = () => {
 
             <button className='pay-button'>Make a request</button>
             <button className='add-review-btn' onClick={handleReviewFormToggle} >Add review</button>
-            <div className="button-container">
-                <button className='edit-details-button' onClick={handleEditDetails}>
-                    <FaEdit />
-                </button>
-            </div>
 
             <button onClick={handleReviewToggle}>Reviews</button>
             {showAddReviewForm && (
