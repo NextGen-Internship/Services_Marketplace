@@ -66,7 +66,7 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ServiceResponse createService(ServiceRequest serviceToCreate, List<MultipartFile> files) {
+    public ServiceResponse createService(ServiceRequest serviceToCreate, MultipartFile[] files) {
         List<City> cities = cityRepository.findAllById(serviceToCreate.getCityIds());
         User provider = userRepository.findById(serviceToCreate.getProviderId()).orElse(null);
         Category category = categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null);

@@ -52,18 +52,10 @@ public class ServiceController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<ServiceResponse> createService(@ModelAttribute ServiceRequest serviceToCreate, @RequestParam(value = "files", required = false) List<MultipartFile> files) {
+    public ResponseEntity<ServiceResponse> createService(@ModelAttribute ServiceRequest serviceToCreate, @RequestParam(value = "files", required = false) MultipartFile[] files) {
         ServiceResponse newService = serviceService.createService(serviceToCreate, files);
         return ResponseEntity.ok(newService);
     }
-
-//    @PostMapping(value = "/create", consumes = {"application/json"})
-//    public ResponseEntity<ServiceResponse> createService(
-//            @RequestPart("serviceRequest") @Valid ServiceRequest serviceToCreate,
-//            @RequestPart("file") MultipartFile multipartFile) {
-//        ServiceResponse newService = serviceService.createService(serviceToCreate, multipartFile);
-//        return ResponseEntity.ok(newService);
-//    }
 
     @PutMapping("/update/{serviceId}")
     public ResponseEntity<ServiceResponse> updateService(@PathVariable("serviceId") Integer serviceId, @RequestBody ServiceRequest serviceToUpdate) {
