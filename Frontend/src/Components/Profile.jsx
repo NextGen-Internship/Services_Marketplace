@@ -5,7 +5,7 @@ import '../styles/Profile.css';
 import SubscriptionComponent from './SubscriptionComponent.jsx';
 import axios from 'axios';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
@@ -18,9 +18,11 @@ const Profile = () => {
   const [chosen, setChosen] = useState([]);
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
+  const [showRequest, setShowRequest] = useState(false);
   const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
   const [userServices, setUserServices] = useState([]);
+  const [userRequest, setUserRequest] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -30,15 +32,18 @@ const Profile = () => {
   const [categories, setCategories] = useState([]);
   const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
   const [areMyServicesVisible, setAreMyServicesVisible] = useState(false);
+  const [areMyRequestVisible, setAreMyRequestVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [cities, setCities] = useState([]);
   const [beecomeProviderBtn, setBecomeProviderBtn] = useState(true);
   const [servicesPerPage] = useState(5); // or any number you prefer
   const [paginatedServices, setPaginatedServices] = useState([]);
+  const [paginatedRequest, setPaginatedRequest] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [selectedCities, setSelectedCities] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState('');
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
@@ -317,7 +322,7 @@ const Profile = () => {
 
     fetchUserData();
   }, [navigate]);
-  
+
   const handleBecomeProviderToggle = () => {
     setShowBecomeProviderForm(!showBecomeProviderForm);
     setShowServices(false);
@@ -325,49 +330,49 @@ const Profile = () => {
     setShowPersonalInfo(false);
   };
 
-useEffect(() => {
-  const getPictureMethod = async () => {
-    const currentUser = await getCurrentUser();
-    const picUrl = currentUser.picture;
-    console.log('polled url', picUrl);
-    setProfilePicture(picUrl);
-    setUser(prevUser => ({ ...prevUser, picture: picUrl }));
-  };
+  useEffect(() => {
+    const getPictureMethod = async () => {
+      const currentUser = await getCurrentUser();
+      const picUrl = currentUser.picture;
+      console.log('polled url', picUrl);
+      setProfilePicture(picUrl);
+      setUser(prevUser => ({ ...prevUser, picture: picUrl }));
+    };
 
-  const fetchUserData = async () => {
-    const localToken = localStorage['Jwt_Token'];
+    const fetchUserData = async () => {
+      const localToken = localStorage['Jwt_Token'];
 
-    if (!localToken) {
-      console.error('No user found');
-      navigate('/login');
-      return;
-    }
-
-    try {
-      const userData = await getCurrentUser();
-      setUser(userData);
-      setPhoneNumber(userData.phoneNumber);
-      console.log('User data:');
-      console.log(userData);
-
-      if (user.picture !== defaultImageUrl) {
-        console.log("custom avatar!")
-        await getPictureMethod();
-        console.log('User Avatar img: ', user.picture)
-        console.log(profilePicture);
-      }
-      else {
-        console.log("default");
+      if (!localToken) {
+        console.error('No user found');
+        navigate('/login');
+        return;
       }
 
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-  console.log('Fetched user role:', user.roles);
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+        setPhoneNumber(userData.phoneNumber);
+        console.log('User data:');
+        console.log(userData);
 
-  fetchUserData();
-}, [profilePicture]);
+        if (user.picture !== defaultImageUrl) {
+          console.log("custom avatar!")
+          await getPictureMethod();
+          console.log('User Avatar img: ', user.picture)
+          console.log(profilePicture);
+        }
+        else {
+          console.log("default");
+        }
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    console.log('Fetched user role:', user.roles);
+
+    fetchUserData();
+  }, [profilePicture]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -387,13 +392,13 @@ useEffect(() => {
   const becomeProviderButton = !isProvider(user) && (
     <button onClick={() => handleBecomeProviderToggle()}>Become a Provider</button>
   );
-  
+
 
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
     setEditMode(false);
     setPreviewVisible(false);
-  };  
+  };
 
   const handlePersonalInfoToggle = () => {
     setShowPersonalInfo(!showPersonalInfo);
@@ -422,6 +427,26 @@ useEffect(() => {
     setShowPersonalInfo(false);
     setPreviewVisible(false);
   };
+
+  const handleRequest = async () => {
+    if (!isProvider(user)) {
+      console.log('Only providers can see their requests');
+      return;
+    }
+    try {
+      const requests = await getRequestByProvider();
+      setUserRequest(requests);
+      const indexOfLastRequest = (currentPage + 1) * servicesPerPage;
+      const indexOfFirstRequest = indexOfLastRequest - servicesPerPage;
+      const paginatedRequests = requests.slice(indexOfFirstRequest, indexOfLastRequest);
+      setPaginatedRequest(paginatedRequests);
+      setTotalPages(Math.ceil(requests.length / servicesPerPage));
+      setAreMyRequestVisible(true);
+    } catch (error) {
+      console.error('Error fetching requests:', error);
+    }
+  };
+
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage);
@@ -472,23 +497,23 @@ useEffect(() => {
   };
 
   useEffect(() => {
-  const localToken = localStorage.getItem('Jwt_Token');
-  if (!localToken) {
-    console.error('No token found');
-    navigate('/login');
-    return null;
-  }
+    const localToken = localStorage.getItem('Jwt_Token');
+    if (!localToken) {
+      console.error('No token found');
+      navigate('/login');
+      return null;
+    }
 
-  const decodedToken = jwtDecode(localToken);
-  const userId = decodedToken['jti'];
-  if (!userId) {
-    console.error('No user ID found');
-    navigate('/login');
-    return null;
-  }
+    const decodedToken = jwtDecode(localToken);
+    const userId = decodedToken['jti'];
+    if (!userId) {
+      console.error('No user ID found');
+      navigate('/login');
+      return null;
+    }
 
-  fetchSubscription(userId);
- }, []);
+    fetchSubscription(userId);
+  }, []);
 
   const saveServiceBox = async () => {
     try {
@@ -503,6 +528,8 @@ useEffect(() => {
       console.error('Error updating service:', error);
     }
   };
+
+
 
   const editServiceBox = (serviceId) => {
     const serviceToEdit = userServices.find(service => service.id === serviceId);
@@ -533,6 +560,21 @@ useEffect(() => {
       }));
     }
   };
+  const renderRequestBox = (request) => (
+    <div key={request.serviceId} className="service-box">
+      <p>Description: {request.description}</p>
+      <p>Customer ID: {request.customerId}</p>
+      <p>Service ID: {request.serviceId}</p>
+      <button onClick={() => handleRequest(request)}>Show Details</button>
+    </div>
+  );
+  const showRequestsButton = (
+    <button onClick={() => setShowRequest(!showRequest)}>Requests</button>
+  );
+  // const handleRequestDetails = (request) => {
+  //   setSelectedRequest(request);
+  //   // You can perform additional actions here if needed
+  // };
 
   console.log(editableService);
 
@@ -544,6 +586,11 @@ useEffect(() => {
       console.log(cityNames);
       return cityNames.filter(Boolean).join(', ');
     };
+
+
+
+
+
 
     return (
       <div key={service.id} className="service-box-profile">
@@ -558,13 +605,13 @@ useEffect(() => {
               <textarea value={editableService.description} onChange={(e) => handleServiceChange(e, 'description')} />
               <label htmlFor="cityIds">Cities:</label>
               <Multiselect
-            options={cities}
-            selectedValues={chosen}
-            onSelect={(selectedList) => setChosen(selectedList)}
-            onRemove={(selectedList) => setChosen(selectedList)}
-            displayValue='name'
-          />
-                <label htmlFor="categoryId">Category:</label>
+                options={cities}
+                selectedValues={chosen}
+                onSelect={(selectedList) => setChosen(selectedList)}
+                onRemove={(selectedList) => setChosen(selectedList)}
+                displayValue='name'
+              />
+              <label htmlFor="categoryId">Category:</label>
               <select
                 value={editableService.categoryId}
                 onChange={(e) => setEditableService(prev => ({ ...prev, categoryId: e.target.value }))}
@@ -574,7 +621,7 @@ useEffect(() => {
                   <option key={category.id} value={category.id}>{category.name}</option>
                 ))}
               </select>
-             
+
 
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
@@ -601,35 +648,60 @@ useEffect(() => {
       <h2 className="profile-title">About me</h2>
       {previewVisible ? (
         <img
-        src={localFile ? URL.createObjectURL(localFile) : defaultImageUrl}
-        alt="User"
-        className="profile-image"
-      />
+          src={localFile ? URL.createObjectURL(localFile) : defaultImageUrl}
+          alt="User"
+          className="profile-image"
+        />
       ) : (
-      <img
-        src={user.picture || profilePicture || defaultImageUrl}
-        alt="User"
-        className="profile-image"
-      />
+        <img
+          src={user.picture || profilePicture || defaultImageUrl}
+          alt="User"
+          className="profile-image"
+        />
       )
-    }
+      }
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         {isProvider(user) && (
-          <button onClick={handleServicesToggle}>My Services</button>
-        )}        {becomeProviderButton}
+         <button onClick={handleServicesToggle}>My Services</button>
+         )}
+         {becomeProviderButton}
+         {showRequestsButton}
+         {handleRequest}
+       </div>
+        <button onClick={handleRequest}>Requests</button>
+        {handleRequest}
       </div>
-      {isProvider(user) && 
-      (<div className="provider-info">
+  );
+      {showRequest && (
+        <div className="user-requests-profile">
+          {requests.length > 0 ? requests.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage).map(renderRequestBox) : 'No Requests to Show'}
+          <div className="pagination-controls-profile">
+            <ReactPaginate
+              pageCount={Math.ceil(requests.length / itemsPerPage)}
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={1}
+              onPageChange={({ selected }) => handlePageChange(selected)}
+              containerClassName="pagination"
+              activeClassName="active"
+              initialPage={currentPage}
+            />
+          </div>
+        </div>
+      )}
+  
+
+      {isProvider(user) &&
+        (<div className="provider-info">
           <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
-      </div>)
-}
+        </div>)
+      }
       {isEditingPicture && (
-      <MyServicesModal
-        isOpen={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        services={userServices}
-      />
+        <MyServicesModal
+          isOpen={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          services={userServices}
+        />
       )}
       {showPersonalInfo && (
         <div className="personal-info">
@@ -744,5 +816,5 @@ useEffect(() => {
       )}
     </div>
   );
-      };
+};
 export default Profile;

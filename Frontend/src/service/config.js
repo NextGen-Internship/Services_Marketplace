@@ -23,6 +23,8 @@ const config = {
     getCategoryById: '/v1/categories',
     getCityById: '/v1/cities',
     getServiceById: '/v1/services',
+    createRequest: '/v1/request/create',
+    getRequestByProvider: '/v1/request/currentUser'
 }
 
 

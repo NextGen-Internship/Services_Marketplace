@@ -63,4 +63,10 @@ public class RequestController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/currentUser")
+    public ResponseEntity<List<RequestResponse>> getRequestsByProvider() {
+        List<RequestResponse> requests = requestService.getRequestsByProvider();
+        return ResponseEntity.ok(requests);
+    }
+
 }

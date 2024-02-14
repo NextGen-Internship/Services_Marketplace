@@ -104,6 +104,7 @@ const createService = async (serviceData) => {
   }
 };
 
+
 const getPaginationServices = async (page, pageSize, sortingField, sortingDirection) => {
   try {
     const response = await axios.get(config.baseUrl + config.getPaginationServices + '/' + page + '/' + pageSize + '/' + sortingField + '/' + sortingDirection);
@@ -355,6 +356,38 @@ const getServiceById = async (serviceId) => {
   }
 };
 
+const createRequest = async (requestData) => {
+  try {
+    const response = await axios.post(
+      config.baseUrl + config.createRequest,
+      requestData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating request", error);
+    throw error;
+  }
+};
+const getRequestByProvider = async () => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getRequestByProvider}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('Jwt_Token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching requests by provider:", error.message);
+    throw error;
+  }
+};
+
+
 
 
 
@@ -379,5 +412,8 @@ export {
   getCategoryById,
   getCityById,
   getServiceById,
+  createRequest,
+  getRequestByProvider
+
 }
 export default apiService;
