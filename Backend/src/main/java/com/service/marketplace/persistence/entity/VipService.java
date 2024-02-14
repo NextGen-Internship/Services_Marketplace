@@ -3,8 +3,7 @@ package com.service.marketplace.persistence.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDateTime;
+;
 import java.util.Date;
 
 @Entity
@@ -27,4 +26,8 @@ public class VipService extends BaseEntity {
 
     @Column(name = "stripe_id", nullable = false)
     private String stripeId;
+
+    public void setActive(boolean active) {
+        isActive = true;
+    }
 }
