@@ -6,6 +6,7 @@ import com.service.marketplace.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -46,8 +47,8 @@ public class ReviewController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<ReviewResponse> createReview(@RequestBody ReviewRequest reviewToCreate) {
-        ReviewResponse newReview = reviewService.createReview(reviewToCreate);
+    public ResponseEntity<ReviewResponse> createReview(@ModelAttribute ReviewRequest reviewToCreate, @RequestParam(value = "files", required = false) MultipartFile[] files) {
+        ReviewResponse newReview = reviewService.createReview(reviewToCreate, files);
         return ResponseEntity.ok(newReview);
     }
 

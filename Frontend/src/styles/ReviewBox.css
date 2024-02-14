@@ -1,0 +1,42 @@
+.review-box-service {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.review-info {
+    font-family: Arial, sans-serif;
+}
+
+.review-info h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.review-info p {
+    margin-bottom: 10px;
+}
+
+.review-carousel {
+    max-width: 300px; /* Adjust as needed */
+    margin-top: 15px;
+}
+
+.review-carousel img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Additional styles for the carousel arrows, if needed */
+.slick-prev,
+.slick-next {
+    font-size: 24px;
+    color: #333;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+    color: #000;
+}

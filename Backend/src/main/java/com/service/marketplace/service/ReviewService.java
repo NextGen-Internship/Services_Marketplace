@@ -4,6 +4,7 @@ import com.service.marketplace.dto.request.ReviewRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ReviewResponse;
 import com.service.marketplace.dto.response.ServiceResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ReviewService {
 
     ReviewResponse getReviewById(Integer reviewId);
 
-    ReviewResponse createReview(ReviewRequest reviewToCreate);
+    ReviewResponse createReview(ReviewRequest reviewToCreate, MultipartFile[] files);
 
     ReviewResponse updateReview(Integer reviewId, ReviewRequest reviewToUpdate);
 

@@ -97,10 +97,10 @@ const createService = async (serviceData, files) => {
     Object.entries(serviceData).forEach(([key, value]) => {
       formData.append(key, value);
     });
-    
-    filesArray.forEach((file) => { 
-      formData.append('files', file); 
-    }); 
+
+    filesArray.forEach((file) => {
+      formData.append('files', file);
+    });
 
     const response = await axios.post(
       config.baseUrl + config.createService,
@@ -401,26 +401,43 @@ const getReviewsByServiceId = async (serviceId) => {
   }
 }
 
-// const getAllReviews = async() => {
-//   try {
-//       const response = await axios.get(`${config.baseUrl}${config.getReviewsByServiceId}/${serviceId}`,{ 
-//         headers: {
-//         "Content-Type": "application/json",
-//         "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-//       }
-//     });
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error fetching my services", error);
-//       throw error;
-//     }
-// }
-
-const createReview = async (review) => {
+const getFilesByReviewId = async (reviewId) => {
   try {
-    const response = await axios.post(`${config.baseUrl}${config.createReview}`, review, {
+    const response = await axios.get(`${config.baseUrl}${config.getReviewsByReviewId}/${reviewId}`, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my services", error);
+    throw error;
+  }
+}
+
+const createReview = async (review, files) => {
+  try {
+    console.log(review);
+    console.log(files);
+
+    let filesArray = [];
+    for (let i = 0; i < files.length; i++) {
+      filesArray[i] = files[i];
+    }
+
+    const formData = new FormData();
+    Object.entries(review).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    filesArray.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    const response = await axios.post(`${config.baseUrl}${config.createReview}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
       }
     });
@@ -455,5 +472,6 @@ export {
   getFilesByServiceId,
   getReviewsByServiceId,
   createReview,
+  getFilesByReviewId,
 }
 export default apiService;

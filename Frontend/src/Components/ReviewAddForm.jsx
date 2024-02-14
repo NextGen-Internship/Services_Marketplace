@@ -5,10 +5,10 @@ import { jwtDecode } from "jwt-decode";
 import { useState } from 'react';
 import '../styles/ReviewAddForm.css';
 
-const ReviewAddForm = ({ serviceId }) => {
+const ReviewAddForm = ({ onAdd, serviceId }) => {
     const [reviewDescription, setReviewDescription] = useState('');
     const [reviewRating, setReviewRating] = useState('');
-    const [reviews, setReviews] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const navigate = useNavigate();
     const localToken = localStorage.getItem('Jwt_Token');
 
@@ -21,13 +21,10 @@ const ReviewAddForm = ({ serviceId }) => {
     const decodedToken = jwtDecode(localToken);
     const userId = decodedToken['jti'];
 
-    const addReview = async (review) => {
-        try {
-            const newReview = await createReview(review);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    const handleImageChange = (event) => {
+        const files = event.target.files;
+        setSelectedFiles(files);
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -65,7 +62,10 @@ const ReviewAddForm = ({ serviceId }) => {
             isActive: true
         };
 
-        addReview(reviewRequest);
+        console.log(selectedFiles);
+        console.log(reviewRequest);
+
+        onAdd(reviewRequest, selectedFiles);
 
         setReviewDescription('');
         setReviewRating('');
@@ -73,7 +73,7 @@ const ReviewAddForm = ({ serviceId }) => {
 
     return (
         <div className='review-add-form-container'>
-            <hr/>
+            <hr />
             <h2 className="review-add-form-title">Add Review</h2>
             <form className="review-add-form" onSubmit={handleSubmit}>
                 <div className="form-control">
@@ -88,17 +88,19 @@ const ReviewAddForm = ({ serviceId }) => {
                 <div className="form-control">
                     <label>Rating:</label>
                     <input
-                        type="number"
+                        type="text"
                         className="review-rating-input"
                         value={reviewRating}
                         onChange={(e) => setReviewRating(e.target.value)}
-                        min="0"
-                        max="5"
                     />
+                </div>
+                <div className='form-control'>
+                    <label>Pictures</label>
+                    <input type="file" onChange={handleImageChange} accept="image/*" multiple />
                 </div>
                 <button className="submit-button" type="submit">Submit</button>
             </form>
-            <hr className='bottom'/>
+            <hr className='bottom' />
         </div>
 
     );

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, getFilesByServiceId, getReviewsByServiceId } from '../service/ApiService';
+import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, getFilesByServiceId, getReviewsByServiceId, createReview } from '../service/ApiService';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
 import { FaEdit } from "react-icons/fa";
 import { Carousel } from 'react-responsive-carousel';
 import ReviewAddForm from './ReviewAddForm';
+import ReviewBox from './ReviewBox';
 
 const ServiceDetailsPage = () => {
     const [images, setImages] = useState([]);
@@ -71,6 +72,19 @@ const ServiceDetailsPage = () => {
     }, []);
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const reviews = await getReviewsByServiceId(serviceId);
+                setReviews(reviews);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
         async function loadServiceDetails() {
             console.log('Rendering ServiceDetailsPage', serviceId);
 
@@ -120,13 +134,13 @@ const ServiceDetailsPage = () => {
         dynamicHeight: false,
     };
 
-    const handleReviewToggle = async () => {
-        try {
-            const reviewsResponse = await getReviewsByServiceId(serviceId);
-            setReviews(reviewsResponse);
-        } catch (error) {
-            console.error('Error fetching services:', error);
-        }
+    const handleReviewToggle = /*async*/ () => {
+        // try {
+        //     const reviewsResponse = await getReviewsByServiceId(serviceId);
+        //     setReviews(reviewsResponse);
+        // } catch (error) {
+        //     console.error('Error fetching services:', error);
+        // }
         setShowReviews(!showReviews);
     }
 
@@ -134,25 +148,15 @@ const ServiceDetailsPage = () => {
         setShowAddReviewForm(!showAddReviewForm);
     }
 
-    const renderReviewBox = (review) => {
-        const reviewDate = moment(review.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
+    const addReview = async (review, files) => {
+        try {
+            const newReview = await createReview(review, files);
 
-        return (
-            <div key={review.id} className="review-box-service">
-                <div className="review-info">
-                    {(
-                        <>
-                            <h3>Customer: {review.customerId}</h3>
-                            <p>Added on: {reviewDate}</p>
-                            <p>{review.description}</p>
-                            <p>{service.description}</p>
-                            <p>Rating: {review.rating}/5</p>
-
-                        </>
-                    )}
-                </div>
-            </div>
-        );
+            console.log(newReview);
+            setReviews([...reviews, newReview]);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -189,11 +193,17 @@ const ServiceDetailsPage = () => {
 
             <button onClick={handleReviewToggle}>Reviews</button>
             {showAddReviewForm && (
-                <ReviewAddForm serviceId={serviceId} />
+                <ReviewAddForm onAdd={addReview} serviceId={serviceId} />
             )}
             {showReviews && (
                 <div className='reviews-container'>
-                    {reviews.length > 0 ? reviews.map(renderReviewBox) : 'No reviews to show'}
+                    {reviews.length > 0 ? (
+                        reviews.map((review, index) => (
+                            <ReviewBox key={index} review={review} />
+                        ))
+                    ) : (
+                        'No reviews to show'
+                    )}
                 </div>
             )}
         </div>

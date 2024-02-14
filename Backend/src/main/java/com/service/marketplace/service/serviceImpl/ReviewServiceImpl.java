@@ -1,16 +1,22 @@
 package com.service.marketplace.service.serviceImpl;
 
+import com.service.marketplace.dto.request.FilesRequest;
 import com.service.marketplace.dto.request.ReviewRequest;
 import com.service.marketplace.dto.response.ReviewResponse;
+import com.service.marketplace.dto.response.ServiceResponse;
 import com.service.marketplace.mapper.ReviewMapper;
+import com.service.marketplace.persistence.entity.Category;
+import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.entity.Review;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.ReviewRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.FilesService;
 import com.service.marketplace.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +28,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewMapper reviewMapper;
     private final UserRepository userRepository;
     private final ServiceRepository serviceRepository;
+    private final FilesService filesService;
 
     @Override
     public List<ReviewResponse> getAllReviews() {
@@ -42,13 +49,19 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewResponse createReview(ReviewRequest reviewToCreate) {
+    public ReviewResponse createReview(ReviewRequest reviewToCreate, MultipartFile[] files) {
         User customer = userRepository.findById(reviewToCreate.getCustomerId()).orElse(null);
         com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(reviewToCreate.getServiceId()).orElse(null);
 
         Review newReview = reviewMapper.reviewRequestToReview(reviewToCreate, customer, service);
+        ReviewResponse reviewResponse = reviewMapper.reviewToReviewResponse(reviewRepository.save(newReview));
 
-        return reviewMapper.reviewToReviewResponse(reviewRepository.save(newReview));
+        for (MultipartFile multipartFile : files) {
+            FilesRequest filesRequest = new FilesRequest(multipartFile, null, reviewResponse.getId());
+            filesService.createFile(filesRequest);
+        }
+
+        return reviewResponse;
     }
 
     @Override
