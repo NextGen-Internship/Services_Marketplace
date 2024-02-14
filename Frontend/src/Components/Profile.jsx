@@ -12,6 +12,9 @@ import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
 import Multiselect from 'multiselect-react-dropdown';
+import VIP from './VIP';
+import { loadStripe } from '@stripe/stripe-js';
+import { environment } from '../environment.js';
 
 const Profile = () => {
   const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
@@ -402,6 +405,43 @@ useEffect(() => {
     setShowBecomeProviderForm(false);
   };
 
+  const handleBecomeVIP = async (serviceId) => {
+    const vipPriceId = environment.vipPriceId;
+
+    const localToken = localStorage.getItem('Jwt_Token');
+    if (!localToken) {
+        console.error('No token found');
+        navigate('/login');
+        return;
+    }
+
+    const decodedToken = jwtDecode(localToken);
+    const userEmail = decodedToken['sub'];
+    const userId = decodedToken['jti'];
+
+    const checkoutData = {
+        priceId: vipPriceId,
+        successUrl: 'http://localhost:3000/success',
+        cancelUrl: 'http://localhost:3000/cancel',
+        email: userEmail,
+        userId: userId,
+        serviceId: serviceId,
+    };
+
+    try {
+        const response = await axios.post(`http://localhost:8080/api/subscribe/vip`, checkoutData);
+        const sessionId = response.data.sessionId;
+        const stripe = await loadStripe(environment.stripe);
+
+        if (stripe) {
+            stripe.redirectToCheckout({ sessionId });
+        }
+    } catch (error) {
+        console.error('Error during VIP checkout:', error);
+    }
+};
+
+
   const handleServicesToggle = async () => {
     if (!isProvider(user)) {
       console.log('Only providers can see their services');
@@ -539,9 +579,8 @@ useEffect(() => {
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
-    const getCityNamesByIds = (cityIds) => {
+      const getCityNamesByIds = (cityIds) => {
       const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
-      console.log(cityNames);
       return cityNames.filter(Boolean).join(', ');
     };
 
@@ -581,11 +620,13 @@ useEffect(() => {
             </>
           ) : (
             <>
-              <h3>{service.title}</h3>
-              <p>Price: {service.price} BGN.</p>
-              <p>{service.description}</p>
-              <button onClick={() => editServiceBox(service.id)}><FaRegEdit /></button>
-            </>
+            <h3>{service.title}</h3>
+            <p>Price: {service.price} BGN</p>
+            <p>Description: {service.description}</p>
+            <p>Cities: {getCityNamesByIds(service.cityIds)}</p>
+            <button onClick={() => editServiceBox(service.id)}>Edit</button>
+            <button onClick={() => handleBecomeVIP(service.id)}>Become VIP</button>
+          </>
           )}
         </div>
       </div>

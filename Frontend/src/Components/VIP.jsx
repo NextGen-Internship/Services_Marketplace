@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
-import { environment } from '../environment';
+import { environment } from '../environment.js';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
 
 
-const ServiceVIP = ({ service }) => {
+const VIP = ({ service }) => {
     const navigate = useNavigate();
 
     const handleBecomeVIP = async () => {
@@ -34,7 +34,7 @@ const ServiceVIP = ({ service }) => {
 
         try {
             const response = await axios.post(`http://localhost:8080/api/subscribe/vip`, checkoutData);
-            const sessionId = response.data.sessionId;
+            const sessionId = response.data;
             const stripe = await loadStripe(environment.stripe);
 
             if (stripe) {
@@ -45,16 +45,13 @@ const ServiceVIP = ({ service }) => {
         }
     };
 
-//       return (
-//         <div className="service-item">
-//             {/* Display service information */}
-//             <p>{service.title}</p>
-//             {/* Show "Become VIP" button only if service is not VIP */}
-//             {!service.vip && (
-//                 <button onClick={handleBecomeVIP}>Become VIP</button>
-//             )}
-//         </div>
-//     );
-};
+    return (
+        <div className="service-item">
+            <p>{service.title}</p>
+            <p>{service.description}</p>
+            <button onClick={handleBecomeVIP}>Become VIP</button>
+        </div>
+    );
+}
 
-export default ServiceVIP;
+export default VIP;
