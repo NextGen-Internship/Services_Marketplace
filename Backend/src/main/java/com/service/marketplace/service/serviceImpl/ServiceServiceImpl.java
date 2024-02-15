@@ -54,11 +54,6 @@ public class ServiceServiceImpl implements ServiceService {
         com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElse(null);
 
         if (service != null) {
-            List<Integer> cityIds = new ArrayList<>();
-            for (City city : service.getCities()) {
-                cityIds.add(city.getId());
-            }
-
             return serviceMapper.serviceToServiceResponse(service);
         } else {
             return null;
@@ -96,6 +91,7 @@ public class ServiceServiceImpl implements ServiceService {
             existingService.setDescription(updatedService.getDescription());
             existingService.setServiceStatus(updatedService.getServiceStatus());
             existingService.setPrice(updatedService.getPrice());
+            existingService.setCategory(updatedService.getCategory());
             existingService.setCities(updatedService.getCities());
 
             return serviceMapper.serviceToServiceResponse(serviceRepository.save(existingService));
@@ -144,7 +140,7 @@ public class ServiceServiceImpl implements ServiceService {
 
             return serviceMapper.toServiceResponseList(userServices);
         } else {
-            return Collections.emptyList(); // Handle the case when the user is not found
+            return Collections.emptyList();
         }
     }
 
@@ -158,16 +154,5 @@ public class ServiceServiceImpl implements ServiceService {
         List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(currentUser);
         return serviceMapper.toServiceResponseList(userServices);
     }
-
-//    @Override
-//    public void uploadPicture(String url, Integer entityId) {
-//        if (url.isEmpty()) {
-//            throw new IllegalArgumentException("Url is empty");
-//        }
-//
-//        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Service not found"));
-//        service.setPicture(url);
-//        serviceRepository.save(service);
-//    }
 
 }

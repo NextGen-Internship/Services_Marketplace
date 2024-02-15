@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import moment from 'moment';
-import { getFilesByReviewId, getUserById } from '../service/ApiService';
+import { getFilesByReviewId, getUserById, updateCurrentReview } from '../service/ApiService';
 import '../styles/ReviewBox.css';
 import { FaEdit } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
-const ReviewBox = ({ review }) => {
+const ReviewBox = ({ review, updateReviews }) => {
     const [reviewImages, setReviewImages] = useState([]);
     const reviewDate = moment(review.updatedAt, 'YYYY-MM-DD HH:mm:ss').toLocaleString();
     const [customer, setCustomer] = useState('');
+    const [editMode, setEditMode] = useState(false);
+    const navigate = useNavigate();
+    const [newReview, setNewReview] = useState({
+        description: review.description,
+        rating: review.rating,
+        customerId: review.customerId,
+        serviceId: review.serviceId,
+        isActive: review.isActive,
+    });
+    const localToken = localStorage.getItem('Jwt_Token');
+    const decodedToken = jwtDecode(localToken);
+    const userId = decodedToken['jti'];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,14 +60,46 @@ const ReviewBox = ({ review }) => {
         dynamicHeight: false,
     };
 
-    const handleEditDetails = () => {
-        console.log('Edit details triggered');
+    const handleInputChange = (e) => {
+        setNewReview({ ...newReview, [e.target.name]: e.target.value });
+    };
+
+    const handleSaveReview = async (e) => {
+        if (!localToken) {
+            console.error('No token found');
+            navigate('/login');
+            return;
+        }
+
+        if (!userId) {
+            console.error('No user email found');
+            navigate('/login');
+            return;
+        }
+
+        const updatedReviewData = {
+            description: newReview.description,
+            rating: parseFloat(newReview.rating),
+            customerId: userId,
+            serviceId: review.serviceId,
+            isActive: true
+        };
+
+        try {
+            const updatedReview = await updateCurrentReview(updatedReviewData, review.id);
+            setNewReview(updatedReview);
+            setEditMode(false);
+        } catch (error) {
+            console.error('Error updating profile:', error);
+        }
+
+        updateReviews(newReview);
     };
 
     return (
         <div key={review.id} className="review-box-service">
             <div className="review-info">
-                {(
+                {(!editMode ? (
                     <>
                         <h3>Customer: {customer}</h3>
                         <p>Added on: {reviewDate}</p>
@@ -68,12 +114,27 @@ const ReviewBox = ({ review }) => {
                         </div>
                         <p>{review.description}</p>
                         <p>Rating: {review.rating}/5</p>
-                        <div className="button-container">
-                            <button className='edit-details-button' onClick={handleEditDetails}>
-                                <FaEdit />
-                            </button>
-                        </div>
+                        {userId == review.customerId && (
+                            <div className="button-container">
+                                <button className='edit-details-button' onClick={() => setEditMode(true)}>
+                                    <FaEdit />
+                                </button>
+                            </div>
+                        )}
                     </>
+                ) : (
+                    <>
+                        <div className="input-group">
+                            <label>Description:</label>
+                            <input type="text" name="description" value={newReview.description} onChange={handleInputChange} />
+                        </div>
+                        <div className="input-group">
+                            <label>Rating:</label>
+                            <input type="text" name="rating" value={newReview.rating} onChange={handleInputChange} />
+                        </div>
+                        <button className='save-button' onClick={handleSaveReview}>Save</button>
+                    </>
+                )
                 )}
             </div>
         </div>

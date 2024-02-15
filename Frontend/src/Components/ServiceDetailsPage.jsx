@@ -148,6 +148,17 @@ const ServiceDetailsPage = () => {
         }
     };
 
+    const updateReviews = (updatedReview) => {
+        const updatedReviews = reviews.map(review => {
+            if (review.id === updatedReview.id) {
+                return updatedReview;
+            } else {
+                return review;
+            }
+        });
+        setReviews(updatedReviews);
+    };
+
     return (
         <div className='service-details-container'>
             <h2>{service.title}</h2>
@@ -183,7 +194,7 @@ const ServiceDetailsPage = () => {
                 <div className='reviews-container'>
                     {reviews.length > 0 ? (
                         reviews.map((review, index) => (
-                            <ReviewBox key={index} review={review} />
+                            <ReviewBox key={index} review={review} updateReviews={updateReviews} />
                         ))
                     ) : (
                         'No reviews to show'

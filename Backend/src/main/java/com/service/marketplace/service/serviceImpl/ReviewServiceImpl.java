@@ -74,6 +74,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (existingReview != null) {
             existingReview.setDescription(updatedReview.getDescription());
             existingReview.setRating(updatedReview.getRating());
+            existingReview.setUpdatedAt(updatedReview.getUpdatedAt());
 
             return reviewMapper.reviewToReviewResponse(reviewRepository.save(existingReview));
         } else {

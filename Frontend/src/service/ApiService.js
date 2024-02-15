@@ -305,6 +305,27 @@ const updateCurrentUser = async (userToUpdate, file) => {
   }
 };
 
+const updateCurrentReview = async (reviewToUpdate, reviewId) => {
+  try {
+    // const formData = new FormData();
+    // Object.entries(userToUpdate).forEach(([key, value]) => {
+    //   formData.append(key, value); // Append user update request fields
+    // });
+    // formData.append('file', file); // Append the profile picture file
+
+    const response = await axios.put(`${config.baseUrl}${config.updateCurrentReview}/${reviewId}`, reviewToUpdate, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading user picture", error);
+    throw error;
+  }
+};
+
 const getServicesByCurrentUser = async () => {
   try {
     const response = await axios.get(`${config.baseUrl}${config.getServicesByCurrentUser}`, {
@@ -473,5 +494,6 @@ export {
   getReviewsByServiceId,
   createReview,
   getFilesByReviewId,
+  updateCurrentReview,
 }
 export default apiService;

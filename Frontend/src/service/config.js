@@ -27,6 +27,7 @@ const config = {
     getReviewsByServiceId: '/api/reviews/service',
     createReview: '/api/reviews/create',
     getReviewsByReviewId: '/api/files/review',
+    updateCurrentReview: '/api/reviews/update',
 }
 
 
