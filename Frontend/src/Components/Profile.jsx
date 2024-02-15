@@ -54,6 +54,7 @@ const Profile = () => {
     categoryId: '',
     cityIds: [],
     providerId: 0,
+    serviceStatus: '',
   });
   const [formData, setFormData] = useState({
     email: '',
@@ -490,6 +491,7 @@ const Profile = () => {
         price: serviceToEdit.price,
         categoryId: serviceToEdit.categoryId,
         cityIds: serviceToEdit.cityIds || [],
+        serviceStatus: 'ACTIVE',
       });
     }
   };
