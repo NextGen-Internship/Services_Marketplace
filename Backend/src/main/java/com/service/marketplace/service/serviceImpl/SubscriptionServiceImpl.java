@@ -35,25 +35,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return (subscription != null) ? subscriptionMapper.subscriptionToSubscriptionResponse(subscription) : null;
     }
 
-//    @Override
-//    public SubscriptionResponse updateSubscription(Integer subscriptionId, SubscriptionRequest subscriptionToUpdate) {
-//        Subscription existingSubscription = subscriptionRepository.findById(subscriptionId).orElse(null);
-//
-//        Subscription updatedSubscription = subscriptionMapper.subscriptionRequestToSubscription(subscriptionToUpdate);
-//
-//        if (existingSubscription != null) {
-//            existingSubscription.setStripeId(updatedSubscription.getStripeId());
-//            existingSubscription.setEndDate(updatedSubscription.getEndDate());
-//            existingSubscription.setStartDate(updatedSubscription.getStartDate());
-//            existingSubscription.setActive(updatedSubscription.get);
-//            existingSubscription.setStartDate(updatedSubscription.getStartDate());
-//
-//            return cityMapper.cityToCityResponse(cityRepository.save(existingCity));
-//        } else {
-//            return null;
-//        }
-//    }
-
     @Override
     public void deleteSubscriptionById(Integer subscriptionId) {
         subscriptionRepository.deleteById(subscriptionId);

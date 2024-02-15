@@ -1,5 +1,6 @@
 package com.service.marketplace.service;
 
+import com.service.marketplace.dto.response.SubscriptionResponse;
 import com.service.marketplace.dto.response.VipServiceResponse;
 import com.service.marketplace.persistence.entity.VipService;
 import com.service.marketplace.persistence.repository.VipServiceRepository;
@@ -11,6 +12,7 @@ public interface VipServiceService {
     List<VipServiceResponse> getAllVipServices();
     VipServiceResponse getVipServiceById(Integer vipServiceId);
     void deleteVipServiceById(Integer vipServiceId);
+
 
 
 }

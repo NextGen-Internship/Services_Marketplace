@@ -30,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -246,6 +243,36 @@ public class StripeServiceImpl implements StripeService {
 
                 break;
             }
+            case "payment_intent.created": {
+                System.out.println("Webhook for created VIP service");
+                try {
+                    Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
+                    String customerId = customer.getId();
+                    try {
+
+                        PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+                        Map<String, String> metadata = paymentIntent.getMetadata();
+                        if ("VIP".equals(metadata.get("serviceType"))) {
+                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
+                                    .setCustomer(customerId)
+                                    .build();
+                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
+
+                            // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
+                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
+                                    .max(Comparator.comparing(PaymentIntent::getCreated))
+                                    .orElse(null);
+                            System.out.println(latestPaymentIntent);
+                        }
+                    } catch (StripeException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+                    }
+
+                } catch (StripeException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
+                }
+                break;
+            }
             case "customer.subscription.created": {
                 System.out.println("Webhook for created subscription");
                 break;
@@ -358,6 +385,7 @@ public class StripeServiceImpl implements StripeService {
                         .setQuantity(1L)
                         .setPrice(checkout.getPriceId())
                         .build())
+                .putMetadata("serviceType", "VIP")
                 .build();
 
         try {

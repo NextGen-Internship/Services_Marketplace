@@ -17,4 +17,6 @@ public interface VipServiceMapper {
     VipServiceResponse toVipServiceResponse(VipService vipService);
     List<VipServiceResponse> toVipServiceResponseList(List<VipService> vipServices);
 
+    VipServiceResponse getVipServiceByUserId(Integer userId);
+
 }

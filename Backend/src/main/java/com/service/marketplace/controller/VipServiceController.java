@@ -34,12 +34,6 @@ public class VipServiceController {
         }
     }
 
-//    @GetMapping("/user/{userId}")
-//    public ResponseEntity<VipServiceResponse> getSubscriptionByUserId(@PathVariable("userId") Integer userId) {
-//        VipServiceResponse userSubscription = vipServiceService.getSubscriptionByUserId(userId);
-//        return ResponseEntity.ok(userSubscription);
-//    }
-
     @DeleteMapping("/delete/{vipServiceId}")
     public ResponseEntity<Void> deleteVipService(@PathVariable("vipServiceId") Integer vipServiceId) {
         vipServiceService.deleteVipServiceById(vipServiceId);
