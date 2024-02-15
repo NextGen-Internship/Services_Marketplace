@@ -41,6 +41,8 @@ public class StripeServiceImpl implements StripeService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
+
+    private String vipSessionId = "";
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
 
@@ -248,25 +250,24 @@ public class StripeServiceImpl implements StripeService {
                 try {
                     Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
                     String customerId = customer.getId();
-                    try {
-
-                        PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
-                        Map<String, String> metadata = paymentIntent.getMetadata();
-                        if ("VIP".equals(metadata.get("serviceType"))) {
-                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
-                                    .setCustomer(customerId)
-                                    .build();
-                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
-
-                            // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
-                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
-                                    .max(Comparator.comparing(PaymentIntent::getCreated))
-                                    .orElse(null);
-                            System.out.println(latestPaymentIntent);
-                        }
-                    } catch (StripeException e) {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-                    }
+                   // try {
+                        Map<String, String> metadata = getMetadataFromPaymentIntent(vipSessionId);
+                        System.out.println(metadata);
+//                        if ("VIP".equals(metadata.get("serviceType"))) {
+//                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
+//                                    .setCustomer(customerId)
+//                                    .build();
+//                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
+//
+//                            // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
+//                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
+//                                    .max(Comparator.comparing(PaymentIntent::getCreated))
+//                                    .orElse(null);
+//                            System.out.println(latestPaymentIntent);
+//                        }
+//                    } catch (StripeException e) {
+//                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+//                    }
 
                 } catch (StripeException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
@@ -386,10 +387,13 @@ public class StripeServiceImpl implements StripeService {
                         .setPrice(checkout.getPriceId())
                         .build())
                 .putMetadata("serviceType", "VIP")
+                .putMetadata("serviceId", checkout.getServiceId())
                 .build();
+
 
         try {
             Session session = Session.create(params);
+            vipSessionId = session.getId();
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("sessionId", session.getId());
             return gson.toJson(responseData);
@@ -401,5 +405,35 @@ public class StripeServiceImpl implements StripeService {
             return gson.toJson(responseData);
         }
     }
+
+    public Map<String, String> getMetadataFromPaymentIntent(String sessionId) {
+        Stripe.apiKey = stripeApiKey;
+
+        try {
+            // Retrieve the session
+            Session session = Session.retrieve(sessionId);
+
+            // Get the PaymentIntent ID from the session
+            String paymentIntentId = session.getPaymentIntent();
+
+            if (paymentIntentId == null) {
+                // Handle the case where there is no PaymentIntent associated with the session
+                log.error("No PaymentIntent associated with the session: {}", sessionId);
+                return Collections.emptyMap();
+            }
+
+            // Retrieve the PaymentIntent
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+
+            // Access the metadata
+            Map<String, String> metadata = paymentIntent.getMetadata();
+
+            return metadata;
+        } catch (StripeException e) {
+            log.error("Failed to retrieve PaymentIntent or Session: {}", e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+
 
 }
