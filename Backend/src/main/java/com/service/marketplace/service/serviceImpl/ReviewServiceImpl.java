@@ -56,9 +56,11 @@ public class ReviewServiceImpl implements ReviewService {
         Review newReview = reviewMapper.reviewRequestToReview(reviewToCreate, customer, service);
         ReviewResponse reviewResponse = reviewMapper.reviewToReviewResponse(reviewRepository.save(newReview));
 
-        for (MultipartFile multipartFile : files) {
-            FilesRequest filesRequest = new FilesRequest(multipartFile, null, reviewResponse.getId());
-            filesService.createFile(filesRequest);
+        if (files != null) {
+            for (MultipartFile multipartFile : files) {
+                FilesRequest filesRequest = new FilesRequest(multipartFile, null, reviewResponse.getId());
+                filesService.createFile(filesRequest);
+            }
         }
 
         return reviewResponse;

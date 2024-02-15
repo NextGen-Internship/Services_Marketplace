@@ -62,9 +62,6 @@ const ReviewAddForm = ({ onAdd, serviceId }) => {
             isActive: true
         };
 
-        console.log(selectedFiles);
-        console.log(reviewRequest);
-
         onAdd(reviewRequest, selectedFiles);
 
         setReviewDescription('');

@@ -288,9 +288,9 @@ const updateCurrentUser = async (userToUpdate, file) => {
   try {
     const formData = new FormData();
     Object.entries(userToUpdate).forEach(([key, value]) => {
-      formData.append(key, value); // Append user update request fields
+      formData.append(key, value);
     });
-    formData.append('file', file); // Append the profile picture file
+    formData.append('file', file);
 
     const response = await axios.put(config.baseUrl + config.updateCurrentUser, formData, {
       headers: {
@@ -307,12 +307,6 @@ const updateCurrentUser = async (userToUpdate, file) => {
 
 const updateCurrentReview = async (reviewToUpdate, reviewId) => {
   try {
-    // const formData = new FormData();
-    // Object.entries(userToUpdate).forEach(([key, value]) => {
-    //   formData.append(key, value); // Append user update request fields
-    // });
-    // formData.append('file', file); // Append the profile picture file
-
     const response = await axios.put(`${config.baseUrl}${config.updateCurrentReview}/${reviewId}`, reviewToUpdate, {
       headers: {
         "Content-Type": "application/json",
@@ -439,32 +433,30 @@ const getFilesByReviewId = async (reviewId) => {
 
 const createReview = async (review, files) => {
   try {
-    console.log(review);
-    console.log(files);
-
-    let filesArray = [];
-    for (let i = 0; i < files.length; i++) {
-      filesArray[i] = files[i];
-    }
-
-    const formData = new FormData();
-    Object.entries(review).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    filesArray.forEach((file) => {
-      formData.append('files', file);
-    });
-
-    const response = await axios.post(`${config.baseUrl}${config.createReview}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      let filesArray = [];
+      for (let i = 0; i < files.length; i++) {
+        filesArray[i] = files[i];
       }
-    });
+
+      const formData = new FormData();
+      Object.entries(review).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      filesArray.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      const response = await axios.post(`${config.baseUrl}${config.createReview}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
+      });
+
     return response.data;
   } catch (error) {
-    console.error("Error updating user data", error);
+    console.error("Error creating review", error);
     throw error;
   }
 };
