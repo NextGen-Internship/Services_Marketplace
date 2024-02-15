@@ -28,7 +28,6 @@ const Home = () => {
   };
 
   const handleCategoryClick = (categoryId) => {
-    // Redirect to services page with selected category as filter
     sessionStorage.setItem('CategoryFilter', categoryId);
     window.location.href = '/services';
   };
