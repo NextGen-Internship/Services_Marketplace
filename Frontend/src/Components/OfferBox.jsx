@@ -60,6 +60,7 @@ export const OfferBox = ({ offer }) => {
                 <p>Provider: {provider}</p>
                 <p>Service: {service}</p>
                 <p>Description: {offer.description}</p>
+                <p>Price: {offer.price}</p>
 
                 <button>Pay</button>
                 <br></br>
