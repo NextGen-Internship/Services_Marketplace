@@ -10,6 +10,7 @@ import '../styles/ServicesPage.css';
 const ServicesPage = () => {
     const isNavigationEvent = !sessionStorage.getItem('PageNumber');
     const storedPage = isNavigationEvent ? 0 : sessionStorage.getItem('PageNumber');
+    const storedCategoryFilter = sessionStorage.getItem('CategoryFilter');
 
     const [services, setServices] = useState([]);
     const [page, setPage] = useState(Number(storedPage));
@@ -64,13 +65,36 @@ const ServicesPage = () => {
 
     const getServices = async (page, sortingField, sortingDirection) => {
         try {
-            const response = await getPaginationServices(page, pageSize, sortingField, sortingDirection);
+            let response;
+            if (storedCategoryFilter) {
+                const categoryId = parseInt(storedCategoryFilter);
+                if (!isNaN(categoryId)) {
+                    const filters = {
+                        minPrice: 0,
+                        maxPrice: 1000,
+                        categoryIds: [categoryId],
+                        cityIds: [],
+                        page: page,
+                        pageSize: pageSize,
+                        sortingField: sortingField,
+                        sortingDirection: sortingDirection,
+                    };
+                    response = await getPaginationFilteredServices(filters);
+                } else {
+                    console.error('Invalid category filter value:', storedCategoryFilter);
+                    return;
+                }
+            } else {
+                response = await getPaginationServices(page, pageSize, sortingField, sortingDirection);
+            }
+
             setServices(response.content);
             setTotalPages(response.totalPages);
             setTotalElements(response.totalElements);
             setPage(response.number);
 
             sessionStorage.setItem('PageNumber', response.number);
+            sessionStorage.removeItem('CategoryFilter');
         } catch (error) {
             console.error('Error fetching users:', error);
         }
