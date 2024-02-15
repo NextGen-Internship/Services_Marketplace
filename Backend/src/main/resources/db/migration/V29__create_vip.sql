@@ -4,6 +4,6 @@ CREATE TABLE vip_services (
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
     stripe_id VARCHAR(255) NOT NULL,
-    isActive BOOLEAN NOT NULL DEFAULT TRUE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     FOREIGN KEY (service_id) REFERENCES service (id)
 );
