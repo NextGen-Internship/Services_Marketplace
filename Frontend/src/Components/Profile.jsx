@@ -5,7 +5,7 @@ import '../styles/Profile.css';
 import SubscriptionComponent from './SubscriptionComponent.jsx';
 import axios from 'axios';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
@@ -13,6 +13,7 @@ import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
 import Multiselect from 'multiselect-react-dropdown';
 import RequestsBox from './RequestsBox.jsx';
+import { OfferBox } from './OfferBox.jsx';
 
 const Profile = () => {
   const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
@@ -20,10 +21,12 @@ const Profile = () => {
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
   const [showRequest, setShowRequest] = useState(false);
+  const [showOffers, setShowOffers] = useState(false);
   const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
   const [userServices, setUserServices] = useState([]);
   const [userRequest, setUserRequest] = useState([]);
+  const [userOffer, setUserOffer] = useState(true);
   const [showReviews, setShowReviews] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -331,7 +334,7 @@ const Profile = () => {
     setPreviewVisible(false);
     setShowPersonalInfo(false);
   };
-
+  
   useEffect(() => {
     const getPictureMethod = async () => {
       const currentUser = await getCurrentUser();
@@ -429,6 +432,13 @@ const Profile = () => {
     setShowPersonalInfo(false);
     setPreviewVisible(false);
   };
+
+  const handleOffersToggle = async () => {
+    const offer = await getOffersByUser();
+    setUserOffer(offer);
+    setShowOffers(!showOffers);
+  }
+
 
   const handleRequest = async () => {
     if (!isProvider(user)) {
@@ -653,6 +663,7 @@ const Profile = () => {
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
         {isProvider(user) && showRequestsButton}
+        <button onClick={handleOffersToggle}>Offers</button>
 
 
 
@@ -784,7 +795,7 @@ const Profile = () => {
           </div>
         </div>
       )}
-      {showRequest && (
+      {(showRequest && isProvider) && (
         <div className="user-requests-profile">
           {userRequest.length > 0 ? (
             userRequest.map((request, index) => (
@@ -792,6 +803,17 @@ const Profile = () => {
             ))
           ) : (
             'No reviews to show'
+          )}
+        </div>
+      )}
+        {showOffers && (
+        <div className="user-offers-profile">
+          {userOffer.length > 0 ? (
+            userOffer.map((offer, index) => (
+              <OfferBox key={index} offer={offer} />
+            ))
+          ) : (
+            'No offers to show'
           )}
         </div>
       )}

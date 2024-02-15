@@ -26,6 +26,8 @@ const config = {
     createRequest: '/v1/request/create',
     getRequestByProvider: '/v1/request/currentUser',
     createOffer: '/v1/offer/create',
+    getOffersByUser: "/v1/offer/currentUser",
+    getRequestById: "/v1/request"
 }
 
 

@@ -28,6 +28,7 @@ public class Request extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    //TODO: make this enum
     @Column(name = "is_active")
     private boolean isActive = true;
 

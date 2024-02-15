@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 
-export const OfferAddForm = ({ onAdd, requestId }) => {
+export const OfferAddForm = ({onAdd,requestId }) => {
 
     const [offerDescription, setOfferDescription] = useState('');
     const [offerPrice, setOfferPrice] = useState('');
     const navigate = useNavigate();
+    console.log(requestId)
     const localToken = localStorage.getItem('Jwt_Token');
     if (!localToken) {
         console.error('No JWT token found');
@@ -37,7 +38,7 @@ export const OfferAddForm = ({ onAdd, requestId }) => {
         }
 
 
-
+        
         const offerRequest = {
             request_id: requestId,
             provider_id: userId,

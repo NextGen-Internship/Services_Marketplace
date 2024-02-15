@@ -305,6 +305,23 @@ const getServicesByCurrentUser = async() => {
       }
 }
 
+const getOffersByUser = async () => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getOffersByUser}`,{ 
+      headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+    }
+  });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my offers", error);
+    throw error;
+  }
+}
+
+
+
 const updateService = async (serviceId, newServiceData) => {
   try {
     const response = await axios.put(`${config.baseUrl}${config.updateService}/${serviceId}`, newServiceData, {
@@ -355,6 +372,21 @@ const getServiceById = async (serviceId) => {
     throw error;
   }
 };
+
+
+const getRequestById = async(requestId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getRequestById}/${requestId}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching request by ID", error);
+    throw error;
+  }
+}
 
 const createRequest = async (requestData) => {
   try {
@@ -431,6 +463,10 @@ export {
   createRequest,
   getRequestByProvider,
   createOffer,
+  getOffersByUser,
+  getRequestById,
+
+
 
 }
 export default apiService;
