@@ -496,10 +496,10 @@ const Profile = () => {
 
   const handleServiceChange = (e, fieldName) => {
     if (fieldName === 'cityIds') {
-      const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-      setEditableService((prev) => ({
-        ...prev,
-        cityIds: selectedOptions.map(Number),
+      const selectedCityIds = e.map(option => option.id);
+      setEditableService(prevState => ({
+        ...prevState,
+        cityIds: selectedCityIds
       }));
     } else {
       setEditableService((prevState) => ({
@@ -514,11 +514,6 @@ const Profile = () => {
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
-    const getCityNamesByIds = (cityIds) => {
-      const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
-      console.log(cityNames);
-      return cityNames.filter(Boolean).join(', ');
-    };
 
     return (
       <div key={service.id} className="service-box-profile">
@@ -535,8 +530,8 @@ const Profile = () => {
               <Multiselect
                 options={cities}
                 selectedValues={chosen}
-                onSelect={(selectedList) => setChosen(selectedList)}
-                onRemove={(selectedList) => setChosen(selectedList)}
+                onSelect={(selectedList) => { handleServiceChange(selectedList, 'cityIds'); setChosen(selectedList) }}
+                onRemove={(selectedList) => { handleServiceChange(selectedList, 'cityIds'); setChosen(selectedList) }}
                 displayValue='name'
               />
               <label htmlFor="categoryId">Category:</label>
