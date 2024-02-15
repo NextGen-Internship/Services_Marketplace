@@ -77,6 +77,31 @@ const ReviewBox = ({ review, updateReviews }) => {
             return;
         }
 
+        if (!newReview.description) {
+            alert('Please add description');
+            return;
+        }
+
+        if (newReview.description.length < 2) {
+            alert('The description has to be more than 2 symbols');
+            return;
+        }
+
+        if (!newReview.rating) {
+            alert('Please add rating');
+            return;
+        }
+
+        if (isNaN(parseFloat(newReview.rating)) || !isFinite(parseFloat(newReview.rating))) {
+            alert('Rating has to be a valid number');
+            return;
+        }
+
+        if (parseFloat(newReview.rating) < 0 || parseFloat(newReview.rating) > 5) {
+            alert('Rating has to be between 0 and 5 inclusive');
+            return;
+        }
+
         const updatedReviewData = {
             description: newReview.description,
             rating: parseFloat(newReview.rating),
