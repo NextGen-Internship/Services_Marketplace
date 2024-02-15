@@ -14,6 +14,7 @@ const AddService = ({ onAdd }) => {
   const [providerId, setProviderId] = useState();
   const [cities, setCities] = useState([]);
   const [chosen, setChosen] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -86,6 +87,11 @@ const AddService = ({ onAdd }) => {
     setServiceCategory(event.target.value);
   };
 
+  const handleImageChange = (event) => {
+    const files = event.target.files;
+    setSelectedFiles(files);
+}
+
   const onSubmit = (e) => {
     e.preventDefault();
 
@@ -124,7 +130,7 @@ const AddService = ({ onAdd }) => {
       return;
     }
 
-    onAdd({
+    const serviceRequest = {
       title: serviceTitle,
       description: serviceDescription,
       serviceStatus: 'ACTIVE',
@@ -132,13 +138,16 @@ const AddService = ({ onAdd }) => {
       providerId: providerId,
       categoryId: parseInt(serviceCategory),
       cityIds: chosen.map((city) => city.id)
-    });
+    };
+
+    onAdd(serviceRequest, selectedFiles);
 
     setServiceTitle('');
     setServiceDescription('');
     setServicePrice('');
     setServiceCategory('');
     setChosen([]);
+    setSelectedFiles([]);
   };
 
   return (
@@ -195,6 +204,10 @@ const AddService = ({ onAdd }) => {
             onRemove={(selectedList) => setChosen(selectedList)}
             displayValue='name'
           />
+        </div>
+        <div className="form-control">
+          <label>Pictures</label>
+          <input type="file" onChange={handleImageChange} accept="image/*" multiple/>
         </div>
         <input type='submit' value='Add Service' className='btn btn-block' />
       </form>

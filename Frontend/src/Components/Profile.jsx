@@ -7,7 +7,6 @@ import axios from 'axios';
 import '../styles/ServicesPage.css';
 import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
-import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
@@ -16,7 +15,7 @@ import RequestsBox from './RequestsBox.jsx';
 import { OfferBox } from './OfferBox.jsx';
 
 const Profile = () => {
-  const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
+  const defaultImageUrl = 'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg';
   const [chosen, setChosen] = useState([]);
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
@@ -41,7 +40,7 @@ const Profile = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [cities, setCities] = useState([]);
   const [beecomeProviderBtn, setBecomeProviderBtn] = useState(true);
-  const [servicesPerPage] = useState(5); // or any number you prefer
+  const [servicesPerPage] = useState(5);
   const [paginatedServices, setPaginatedServices] = useState([]);
   const [paginatedRequest, setPaginatedRequest] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -65,6 +64,7 @@ const Profile = () => {
     categoryId: '',
     cityIds: [],
     providerId: 0,
+    serviceStatus: '',
   });
   const [formData, setFormData] = useState({
     email: '',
@@ -77,12 +77,7 @@ const Profile = () => {
     postalCode: '',
     iban: '',
   });
-
-  const [modalOpen, setModalOpen] = useState(false);
-
-
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
-
   const [isEditingPicture, setIsEditingPicture] = useState(false);
 
   useEffect(() => {
@@ -105,24 +100,7 @@ const Profile = () => {
     fetchCurrentUser();
   }, []);
 
-  const handleCityClick = (cityId) => {
-    const isAlreadySelected = selectedCities.includes(cityId);
-    if (isAlreadySelected) {
-      setSelectedCities(selectedCities.filter(id => id !== cityId));
-    } else {
-      setSelectedCities([...selectedCities, cityId]);
-    }
-  };
-
-  const handleImageUrlChange = (e) => {
-    setUser({ ...user, imageUrl: e.target.value });
-  };
-
   const handleInputChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
@@ -392,8 +370,6 @@ const Profile = () => {
     fetchCategories();
   }, []);
 
-  console.log("@@@@@@@@@@@@@@@@@@");
-  console.log(user.roles);
   const becomeProviderButton = !isProvider(user) && (
     <button onClick={() => handleBecomeProviderToggle()}>Become a Provider</button>
   );
@@ -551,16 +527,17 @@ const Profile = () => {
         price: serviceToEdit.price,
         categoryId: serviceToEdit.categoryId,
         cityIds: serviceToEdit.cityIds || [],
+        serviceStatus: 'ACTIVE',
       });
     }
   };
 
   const handleServiceChange = (e, fieldName) => {
     if (fieldName === 'cityIds') {
-      const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-      setEditableService((prev) => ({
-        ...prev,
-        cityIds: selectedOptions.map(Number),
+      const selectedCityIds = e.map(option => option.id);
+      setEditableService(prevState => ({
+        ...prevState,
+        cityIds: selectedCityIds
       }));
     } else {
       setEditableService((prevState) => ({
@@ -583,11 +560,6 @@ const Profile = () => {
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
-    const getCityNamesByIds = (cityIds) => {
-      const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
-      console.log(cityNames);
-      return cityNames.filter(Boolean).join(', ');
-    };
 
     return (
       <div key={service.id} className="service-box-profile">
@@ -604,8 +576,8 @@ const Profile = () => {
               <Multiselect
                 options={cities}
                 selectedValues={chosen}
-                onSelect={(selectedList) => setChosen(selectedList)}
-                onRemove={(selectedList) => setChosen(selectedList)}
+                onSelect={(selectedList) => { handleServiceChange(selectedList, 'cityIds'); setChosen(selectedList) }}
+                onRemove={(selectedList) => { handleServiceChange(selectedList, 'cityIds'); setChosen(selectedList) }}
                 displayValue='name'
               />
               <label htmlFor="categoryId">Category:</label>
@@ -618,8 +590,6 @@ const Profile = () => {
                   <option key={category.id} value={category.id}>{category.name}</option>
                 ))}
               </select>
-
-
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
             </>
@@ -635,9 +605,6 @@ const Profile = () => {
       </div>
     );
   };
-
-
-
 
   return (
     <div className="profile-container">
@@ -664,13 +631,7 @@ const Profile = () => {
         )}        {becomeProviderButton}
         {isProvider(user) && showRequestsButton}
         <button onClick={handleOffersToggle}>Offers</button>
-
-
-
-
         <div></div>
-
-
       </div>
       {isProvider(user) &&
         (<div className="provider-info">
@@ -704,17 +665,6 @@ const Profile = () => {
                 <label>Phone:</label>
                 <input type="phone" name="phoneNumber" value={user.phoneNumber} onChange={handleInputChange} />
               </div>
-              {/* <div className="input-group">
-                <label>Phone:</label>
-                <PhoneInput
-                  international
-                  countryCallingCodeEditable={false}
-                  defaultCountry="BG"
-                  value={phoneNumber}
-                  onChange={handlePhoneChange}
-                  name="phoneNumber"
-                />
-              </div> */}
               <div className="input-group">
                 <label>Profile Picture:</label>
                 <input type="file" onChange={handleImageChange} accept="image/*" />

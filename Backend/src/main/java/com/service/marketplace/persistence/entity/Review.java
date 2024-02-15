@@ -3,6 +3,7 @@ package com.service.marketplace.persistence.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Data
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "review")
 public class Review extends BaseEntity {
 
@@ -36,8 +38,8 @@ public class Review extends BaseEntity {
     @ManyToOne
     private Service service;
 
-    @Column(name = "fiels")
-    @OneToMany
-    private List<Files> filesList;
+//    @Column(name = "fiels")
+//    @OneToMany
+//    private List<Files> filesList;
 
 }

@@ -27,7 +27,12 @@ const config = {
     getRequestByProvider: '/v1/request/currentUser',
     createOffer: '/v1/offer/create',
     getOffersByUser: "/v1/offer/currentUser",
-    getRequestById: "/v1/request"
+    getRequestById: "/v1/request",
+    getFilesByServiceId: '/api/files/service',
+    getReviewsByServiceId: '/api/reviews/service',
+    createReview: '/api/reviews/create',
+    getReviewsByReviewId: '/api/files/review',
+    updateCurrentReview: '/api/reviews/update',
 }
 
 
