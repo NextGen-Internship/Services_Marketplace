@@ -47,6 +47,11 @@ public class ServiceController {
         return ResponseEntity.ok(userServices);
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ServiceResponse>> getServicesByCategory(@PathVariable("categoryId") Integer categoryId) {
+        List<ServiceResponse> categoryServices = serviceService.getServicesByCategory(categoryId);
+        return ResponseEntity.ok(categoryServices);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<ServiceResponse> createService(@ModelAttribute ServiceRequest serviceToCreate, @RequestParam(value = "files", required = false) MultipartFile[] files) {

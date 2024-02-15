@@ -4,8 +4,26 @@ import '../styles/Category.css';
 import { FaSearch } from 'react-icons/fa';
 import { getAllCategories } from '../service/ApiService';
 
-const Category = () => {
+const Category = ({ handleCategoryClick }) => {
   const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/v1/categories');
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -27,11 +45,6 @@ const Category = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-  };
-
-  const handleCategoryClick = (categoryId) => {
-    // Add logic to handle the click event, e.g., navigate to a specific category page
-    console.log(`Category ${categoryId} clicked!`);
   };
 
   return (
