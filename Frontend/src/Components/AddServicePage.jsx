@@ -20,9 +20,9 @@ function AddServicePage() {
         fetchData();
     }, []);
 
-    const addService = async (service) => {
+    const addService = async (service, files) => {
         try {
-            const newService = await createService(service);
+            const newService = await createService(service, files);
 
             console.log(newService);
             setServices([...services, newService]);
@@ -38,4 +38,4 @@ function AddServicePage() {
     )
 }
 
-export default AddServicePage
+export default AddServicePage;

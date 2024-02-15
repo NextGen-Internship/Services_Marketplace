@@ -7,14 +7,13 @@ import axios from 'axios';
 import '../styles/ServicesPage.css';
 import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
-import PhoneInput from 'react-phone-number-input';
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
 import Multiselect from 'multiselect-react-dropdown';
 
 const Profile = () => {
-  const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
+  const defaultImageUrl = 'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg';
   const [chosen, setChosen] = useState([]);
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
@@ -33,7 +32,7 @@ const Profile = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [cities, setCities] = useState([]);
   const [beecomeProviderBtn, setBecomeProviderBtn] = useState(true);
-  const [servicesPerPage] = useState(5); // or any number you prefer
+  const [servicesPerPage] = useState(5);
   const [paginatedServices, setPaginatedServices] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [selectedCities, setSelectedCities] = useState([]);
@@ -55,6 +54,7 @@ const Profile = () => {
     categoryId: '',
     cityIds: [],
     providerId: 0,
+    serviceStatus: '',
   });
   const [formData, setFormData] = useState({
     email: '',
@@ -67,12 +67,7 @@ const Profile = () => {
     postalCode: '',
     iban: '',
   });
-
-  const [modalOpen, setModalOpen] = useState(false);
-
-
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
-
   const [isEditingPicture, setIsEditingPicture] = useState(false);
 
   useEffect(() => {
@@ -95,24 +90,7 @@ const Profile = () => {
     fetchCurrentUser();
   }, []);
 
-  const handleCityClick = (cityId) => {
-    const isAlreadySelected = selectedCities.includes(cityId);
-    if (isAlreadySelected) {
-      setSelectedCities(selectedCities.filter(id => id !== cityId));
-    } else {
-      setSelectedCities([...selectedCities, cityId]);
-    }
-  };
-
-  const handleImageUrlChange = (e) => {
-    setUser({ ...user, imageUrl: e.target.value });
-  };
-
   const handleInputChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
@@ -317,7 +295,7 @@ const Profile = () => {
 
     fetchUserData();
   }, [navigate]);
-  
+
   const handleBecomeProviderToggle = () => {
     setShowBecomeProviderForm(!showBecomeProviderForm);
     setShowServices(false);
@@ -325,49 +303,49 @@ const Profile = () => {
     setShowPersonalInfo(false);
   };
 
-useEffect(() => {
-  const getPictureMethod = async () => {
-    const currentUser = await getCurrentUser();
-    const picUrl = currentUser.picture;
-    console.log('polled url', picUrl);
-    setProfilePicture(picUrl);
-    setUser(prevUser => ({ ...prevUser, picture: picUrl }));
-  };
+  useEffect(() => {
+    const getPictureMethod = async () => {
+      const currentUser = await getCurrentUser();
+      const picUrl = currentUser.picture;
+      console.log('polled url', picUrl);
+      setProfilePicture(picUrl);
+      setUser(prevUser => ({ ...prevUser, picture: picUrl }));
+    };
 
-  const fetchUserData = async () => {
-    const localToken = localStorage['Jwt_Token'];
+    const fetchUserData = async () => {
+      const localToken = localStorage['Jwt_Token'];
 
-    if (!localToken) {
-      console.error('No user found');
-      navigate('/login');
-      return;
-    }
-
-    try {
-      const userData = await getCurrentUser();
-      setUser(userData);
-      setPhoneNumber(userData.phoneNumber);
-      console.log('User data:');
-      console.log(userData);
-
-      if (user.picture !== defaultImageUrl) {
-        console.log("custom avatar!")
-        await getPictureMethod();
-        console.log('User Avatar img: ', user.picture)
-        console.log(profilePicture);
-      }
-      else {
-        console.log("default");
+      if (!localToken) {
+        console.error('No user found');
+        navigate('/login');
+        return;
       }
 
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-  console.log('Fetched user role:', user.roles);
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+        setPhoneNumber(userData.phoneNumber);
+        console.log('User data:');
+        console.log(userData);
 
-  fetchUserData();
-}, [profilePicture]);
+        if (user.picture !== defaultImageUrl) {
+          console.log("custom avatar!")
+          await getPictureMethod();
+          console.log('User Avatar img: ', user.picture)
+          console.log(profilePicture);
+        }
+        else {
+          console.log("default");
+        }
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    console.log('Fetched user role:', user.roles);
+
+    fetchUserData();
+  }, [profilePicture]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -382,18 +360,16 @@ useEffect(() => {
     fetchCategories();
   }, []);
 
-  console.log("@@@@@@@@@@@@@@@@@@");
-  console.log(user.roles);
   const becomeProviderButton = !isProvider(user) && (
     <button onClick={() => handleBecomeProviderToggle()}>Become a Provider</button>
   );
-  
+
 
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
     setEditMode(false);
     setPreviewVisible(false);
-  };  
+  };
 
   const handlePersonalInfoToggle = () => {
     setShowPersonalInfo(!showPersonalInfo);
@@ -472,23 +448,23 @@ useEffect(() => {
   };
 
   useEffect(() => {
-  const localToken = localStorage.getItem('Jwt_Token');
-  if (!localToken) {
-    console.error('No token found');
-    navigate('/login');
-    return null;
-  }
+    const localToken = localStorage.getItem('Jwt_Token');
+    if (!localToken) {
+      console.error('No token found');
+      navigate('/login');
+      return null;
+    }
 
-  const decodedToken = jwtDecode(localToken);
-  const userId = decodedToken['jti'];
-  if (!userId) {
-    console.error('No user ID found');
-    navigate('/login');
-    return null;
-  }
+    const decodedToken = jwtDecode(localToken);
+    const userId = decodedToken['jti'];
+    if (!userId) {
+      console.error('No user ID found');
+      navigate('/login');
+      return null;
+    }
 
-  fetchSubscription(userId);
- }, []);
+    fetchSubscription(userId);
+  }, []);
 
   const saveServiceBox = async () => {
     try {
@@ -515,16 +491,17 @@ useEffect(() => {
         price: serviceToEdit.price,
         categoryId: serviceToEdit.categoryId,
         cityIds: serviceToEdit.cityIds || [],
+        serviceStatus: 'ACTIVE',
       });
     }
   };
 
   const handleServiceChange = (e, fieldName) => {
     if (fieldName === 'cityIds') {
-      const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-      setEditableService((prev) => ({
-        ...prev,
-        cityIds: selectedOptions.map(Number),
+      const selectedCityIds = e.map(option => option.id);
+      setEditableService(prevState => ({
+        ...prevState,
+        cityIds: selectedCityIds
       }));
     } else {
       setEditableService((prevState) => ({
@@ -539,11 +516,6 @@ useEffect(() => {
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
-    const getCityNamesByIds = (cityIds) => {
-      const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
-      console.log(cityNames);
-      return cityNames.filter(Boolean).join(', ');
-    };
 
     return (
       <div key={service.id} className="service-box-profile">
@@ -558,13 +530,13 @@ useEffect(() => {
               <textarea value={editableService.description} onChange={(e) => handleServiceChange(e, 'description')} />
               <label htmlFor="cityIds">Cities:</label>
               <Multiselect
-            options={cities}
-            selectedValues={chosen}
-            onSelect={(selectedList) => setChosen(selectedList)}
-            onRemove={(selectedList) => setChosen(selectedList)}
-            displayValue='name'
-          />
-                <label htmlFor="categoryId">Category:</label>
+                options={cities}
+                selectedValues={chosen}
+                onSelect={(selectedList) => { handleServiceChange(selectedList, 'cityIds'); setChosen(selectedList) }}
+                onRemove={(selectedList) => { handleServiceChange(selectedList, 'cityIds'); setChosen(selectedList) }}
+                displayValue='name'
+              />
+              <label htmlFor="categoryId">Category:</label>
               <select
                 value={editableService.categoryId}
                 onChange={(e) => setEditableService(prev => ({ ...prev, categoryId: e.target.value }))}
@@ -574,7 +546,6 @@ useEffect(() => {
                   <option key={category.id} value={category.id}>{category.name}</option>
                 ))}
               </select>
-             
 
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
@@ -592,44 +563,41 @@ useEffect(() => {
     );
   };
 
-
-
-
   return (
     <div className="profile-container">
 
       <h2 className="profile-title">About me</h2>
       {previewVisible ? (
         <img
-        src={localFile ? URL.createObjectURL(localFile) : defaultImageUrl}
-        alt="User"
-        className="profile-image"
-      />
+          src={localFile ? URL.createObjectURL(localFile) : defaultImageUrl}
+          alt="User"
+          className="profile-image"
+        />
       ) : (
-      <img
-        src={user.picture || profilePicture || defaultImageUrl}
-        alt="User"
-        className="profile-image"
-      />
+        <img
+          src={user.picture || profilePicture || defaultImageUrl}
+          alt="User"
+          className="profile-image"
+        />
       )
-    }
+      }
       <div className="profile-buttons">
         <button onClick={handlePersonalInfoToggle}>Personal Information</button>
         {isProvider(user) && (
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
       </div>
-      {isProvider(user) && 
-      (<div className="provider-info">
+      {isProvider(user) &&
+        (<div className="provider-info">
           <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
-      </div>)
-}
+        </div>)
+      }
       {isEditingPicture && (
-      <MyServicesModal
-        isOpen={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        services={userServices}
-      />
+        <MyServicesModal
+          isOpen={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          services={userServices}
+        />
       )}
       {showPersonalInfo && (
         <div className="personal-info">
@@ -651,17 +619,6 @@ useEffect(() => {
                 <label>Phone:</label>
                 <input type="phone" name="phoneNumber" value={user.phoneNumber} onChange={handleInputChange} />
               </div>
-              {/* <div className="input-group">
-                <label>Phone:</label>
-                <PhoneInput
-                  international
-                  countryCallingCodeEditable={false}
-                  defaultCountry="BG"
-                  value={phoneNumber}
-                  onChange={handlePhoneChange}
-                  name="phoneNumber"
-                />
-              </div> */}
               <div className="input-group">
                 <label>Profile Picture:</label>
                 <input type="file" onChange={handleImageChange} accept="image/*" />
@@ -744,5 +701,5 @@ useEffect(() => {
       )}
     </div>
   );
-      };
+};
 export default Profile;

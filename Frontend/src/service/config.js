@@ -23,6 +23,11 @@ const config = {
     getCategoryById: '/v1/categories',
     getCityById: '/v1/cities',
     getServiceById: '/v1/services',
+    getFilesByServiceId: '/api/files/service',
+    getReviewsByServiceId: '/api/reviews/service',
+    createReview: '/api/reviews/create',
+    getReviewsByReviewId: '/api/files/review',
+    updateCurrentReview: '/api/reviews/update',
 }
 
 

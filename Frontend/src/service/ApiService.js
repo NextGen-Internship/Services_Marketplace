@@ -86,14 +86,29 @@ const getAllCities = async () => {
   }
 };
 
-const createService = async (serviceData) => {
+const createService = async (serviceData, files) => {
   try {
+    let filesArray = [];
+    for (let i = 0; i < files.length; i++) {
+      filesArray[i] = files[i];
+    }
+
+    const formData = new FormData();
+    Object.entries(serviceData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    filesArray.forEach((file) => {
+      formData.append('files', file);
+    });
+
     const response = await axios.post(
       config.baseUrl + config.createService,
-      serviceData,
+      formData,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
         },
       }
     );
@@ -170,14 +185,14 @@ const postRegister = async (formData) => {
 };
 
 const getSubscriptionByUserId = async (userId) => {
-    try {
-      const response = await axios.get(`${config.baseUrl}${config.getSubscriptionByUserId}/${userId}`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching user data", error);
-      throw error;
-    }
-  };
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getSubscriptionByUserId}/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user data", error);
+    throw error;
+  }
+};
 
 const getUserById = async (userId) => {
   try {
@@ -192,11 +207,12 @@ const getUserById = async (userId) => {
 
 const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${config.baseUrl}${config.getCurrentUser}`,{ headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-    }
-  });
+    const response = await axios.get(`${config.baseUrl}${config.getCurrentUser}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching user data", error);
@@ -269,39 +285,54 @@ const updateUserRole = async (userId, newRole) => {
 //   };
 
 const updateCurrentUser = async (userToUpdate, file) => {
-    try {
-      const formData = new FormData();
-      Object.entries(userToUpdate).forEach(([key, value]) => {
-        formData.append(key, value); // Append user update request fields
-      });
-      formData.append('file', file); // Append the profile picture file
-  
-      const response = await axios.put(config.baseUrl + config.updateCurrentUser, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error uploading user picture", error);
-      throw error;
-    }
-  };
+  try {
+    const formData = new FormData();
+    Object.entries(userToUpdate).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+    formData.append('file', file);
 
-const getServicesByCurrentUser = async() => {
-    try {
-        const response = await axios.get(`${config.baseUrl}${config.getServicesByCurrentUser}`,{ 
-          headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-        }
-      });
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching my services", error);
-        throw error;
+    const response = await axios.put(config.baseUrl + config.updateCurrentUser, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
       }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading user picture", error);
+    throw error;
+  }
+};
+
+const updateCurrentReview = async (reviewToUpdate, reviewId) => {
+  try {
+    const response = await axios.put(`${config.baseUrl}${config.updateCurrentReview}/${reviewId}`, reviewToUpdate, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading user picture", error);
+    throw error;
+  }
+};
+
+const getServicesByCurrentUser = async () => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getServicesByCurrentUser}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my services", error);
+    throw error;
+  }
 }
 
 const updateService = async (serviceId, newServiceData) => {
@@ -355,8 +386,80 @@ const getServiceById = async (serviceId) => {
   }
 };
 
+const getFilesByServiceId = async (serviceId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getFilesByServiceId}/${serviceId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my services", error);
+    throw error;
+  }
+}
 
+const getReviewsByServiceId = async (serviceId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getReviewsByServiceId}/${serviceId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my services", error);
+    throw error;
+  }
+}
 
+const getFilesByReviewId = async (reviewId) => {
+  try {
+    const response = await axios.get(`${config.baseUrl}${config.getReviewsByReviewId}/${reviewId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my services", error);
+    throw error;
+  }
+}
+
+const createReview = async (review, files) => {
+  try {
+      let filesArray = [];
+      for (let i = 0; i < files.length; i++) {
+        filesArray[i] = files[i];
+      }
+
+      const formData = new FormData();
+      Object.entries(review).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      filesArray.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      const response = await axios.post(`${config.baseUrl}${config.createReview}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
+        }
+      });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating review", error);
+    throw error;
+  }
+};
 
 export {
   getAllServices,
@@ -379,5 +482,10 @@ export {
   getCategoryById,
   getCityById,
   getServiceById,
+  getFilesByServiceId,
+  getReviewsByServiceId,
+  createReview,
+  getFilesByReviewId,
+  updateCurrentReview,
 }
 export default apiService;
