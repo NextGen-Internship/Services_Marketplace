@@ -13,7 +13,7 @@ import { FaRegEdit } from "react-icons/fa";
 import Multiselect from 'multiselect-react-dropdown';
 
 const Profile = () => {
-  const defaultImageUrl = 'https://res.cloudinary.com/dpfknwlmw/image/upload/v1706630182/dpfknwlmw/nfkmrndg1biotismofqi.webp';
+  const defaultImageUrl = 'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg';
   const [chosen, setChosen] = useState([]);
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
