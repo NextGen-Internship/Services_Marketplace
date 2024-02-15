@@ -1,12 +1,9 @@
 package com.service.marketplace.controller;
 
-import com.service.marketplace.dto.request.ServiceCreateRequest;
 import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
 import com.service.marketplace.service.ServiceService;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

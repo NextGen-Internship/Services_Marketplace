@@ -1,6 +1,5 @@
 package com.service.marketplace.service;
 
-import com.service.marketplace.dto.request.ServiceCreateRequest;
 import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
@@ -27,6 +26,4 @@ public interface ServiceService {
     Page<ServiceResponse> filterServices(ServiceFilterRequest serviceFilterRequest);
 
     List<ServiceResponse> getServicesByCurrentUser();
-
-//    void uploadPicture(String url, Integer entityId);
 }

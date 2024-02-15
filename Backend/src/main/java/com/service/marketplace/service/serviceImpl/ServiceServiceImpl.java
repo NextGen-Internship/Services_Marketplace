@@ -1,7 +1,6 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.FilesRequest;
-import com.service.marketplace.dto.request.ServiceCreateRequest;
 import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
@@ -13,11 +12,9 @@ import com.service.marketplace.persistence.repository.CategoryRepository;
 import com.service.marketplace.persistence.repository.CityRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
-import com.service.marketplace.service.CloudinaryService;
 import com.service.marketplace.service.FilesService;
 import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +35,6 @@ public class ServiceServiceImpl implements ServiceService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
-    private final CloudinaryService cloudinaryService;
     private final FilesService filesService;
 
     @Override
@@ -93,6 +88,7 @@ public class ServiceServiceImpl implements ServiceService {
             existingService.setPrice(updatedService.getPrice());
             existingService.setCategory(updatedService.getCategory());
             existingService.setCities(updatedService.getCities());
+            existingService.setUpdatedAt(updatedService.getUpdatedAt());
 
             return serviceMapper.serviceToServiceResponse(serviceRepository.save(existingService));
         } else {
