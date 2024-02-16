@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 import { useState } from 'react';
 import '../styles/ReviewAddForm.css';
+import Rating from 'react-rating-stars-component';
 
 const ReviewAddForm = ({ onAdd, serviceId }) => {
     const [reviewDescription, setReviewDescription] = useState('');
@@ -84,12 +85,14 @@ const ReviewAddForm = ({ onAdd, serviceId }) => {
                 </div>
                 <div className="form-control">
                     <label>Rating:</label>
-                    <input
-                        type="text"
-                        className="review-rating-input"
+                    <Rating
+                        count={5}
                         value={reviewRating}
-                        onChange={(e) => setReviewRating(e.target.value)}
+                        size={24}
+                        onChange={(newValue) => setReviewRating(newValue)}
+                        activeColor="#ffd700" 
                     />
+
                 </div>
                 <div className='form-control'>
                     <label>Pictures</label>

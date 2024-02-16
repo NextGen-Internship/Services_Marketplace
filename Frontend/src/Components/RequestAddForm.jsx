@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
+import '../styles/RequestAddForm.css';
 
 const RequestAddForm = ({ onAdd, serviceId }) => {
     const [requestDescription, setRequestDescription] = useState('');
@@ -56,4 +57,5 @@ const RequestAddForm = ({ onAdd, serviceId }) => {
         </div>
   )
 }
+
 export default RequestAddForm;
