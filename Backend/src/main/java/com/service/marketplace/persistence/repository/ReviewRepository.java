@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findByService(Service service);
+
     List<Review> findByCustomer(User user);
 }

@@ -13,7 +13,6 @@ public interface OfferService {
 
     OfferResponse createOffer(OfferRequest offerToCreate);
 
-
     void deleteOfferById(Integer offerId);
 
     List<OfferResponse> getOfferByCustomer();

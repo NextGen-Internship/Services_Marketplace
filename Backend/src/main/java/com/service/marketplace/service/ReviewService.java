@@ -1,9 +1,7 @@
 package com.service.marketplace.service;
 
 import com.service.marketplace.dto.request.ReviewRequest;
-import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ReviewResponse;
-import com.service.marketplace.dto.response.ServiceResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -20,5 +18,6 @@ public interface ReviewService {
     void deleteReviewById(Integer reviewId);
 
     List<ReviewResponse> getReviewByUserId(Integer userId);
+
     List<ReviewResponse> getReviewByServiceId(Integer serviceId);
 }

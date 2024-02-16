@@ -24,5 +24,4 @@ public class OfferRequest {
     private BigDecimal price;
 
     private OfferStatus offerStatus;
-
 }

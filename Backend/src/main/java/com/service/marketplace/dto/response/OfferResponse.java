@@ -13,5 +13,4 @@ public class OfferResponse {
     private String description;
     private BigDecimal price;
     private OfferStatus offerStatus;
-
 }

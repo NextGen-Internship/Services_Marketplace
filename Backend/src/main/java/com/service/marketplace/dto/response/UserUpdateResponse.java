@@ -7,7 +7,6 @@ import java.util.Set;
 
 @Data
 public class UserUpdateResponse {
-
     private String email;
     private String firstName;
     private String lastName;

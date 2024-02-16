@@ -1,9 +1,7 @@
 package com.service.marketplace.service.serviceImpl;
 
-import com.service.marketplace.dto.request.SubscriptionRequest;
 import com.service.marketplace.dto.response.SubscriptionResponse;
 import com.service.marketplace.mapper.SubscriptionMapper;
-import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.entity.Subscription;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
@@ -12,7 +10,9 @@ import com.service.marketplace.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,26 +34,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         return (subscription != null) ? subscriptionMapper.subscriptionToSubscriptionResponse(subscription) : null;
     }
-
-//    @Override
-//    public SubscriptionResponse updateSubscription(Integer subscriptionId, SubscriptionRequest subscriptionToUpdate) {
-//        Subscription existingSubscription = subscriptionRepository.findById(subscriptionId).orElse(null);
-//
-//        Subscription updatedSubscription = subscriptionMapper.subscriptionRequestToSubscription(subscriptionToUpdate);
-//
-//        if (existingSubscription != null) {
-//            existingSubscription.setStripeId(updatedSubscription.getStripeId());
-//            existingSubscription.setEndDate(updatedSubscription.getEndDate());
-//            existingSubscription.setStartDate(updatedSubscription.getStartDate());
-//            existingSubscription.setActive(updatedSubscription.get);
-//            existingSubscription.setStartDate(updatedSubscription.getStartDate());
-//
-//            return cityMapper.cityToCityResponse(cityRepository.save(existingCity));
-//        } else {
-//            return null;
-//        }
-//    }
-
     @Override
     public void deleteSubscriptionById(Integer subscriptionId) {
         subscriptionRepository.deleteById(subscriptionId);

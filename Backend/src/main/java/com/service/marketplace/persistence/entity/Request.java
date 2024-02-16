@@ -21,7 +21,6 @@ public class Request extends BaseEntity {
     @ManyToOne
     private User customer;
 
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -35,5 +34,4 @@ public class Request extends BaseEntity {
     @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne
     private Service service;
-
 }

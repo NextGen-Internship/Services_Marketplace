@@ -53,7 +53,6 @@ public class RequestServiceImpl implements RequestService {
         return requestMapper.requestToRequestResponse(savedRequest);
     }
 
-
     @Override
     public RequestResponse updateRequest(Integer requestId, RequestToCreateDto requestToUpdate) {
         Request existingRequest = requestRepository.findById(requestId).orElse(null);
@@ -65,7 +64,6 @@ public class RequestServiceImpl implements RequestService {
             return null;
         }
     }
-
 
     @Override
     public void deleteRequestById(Integer requestId) {

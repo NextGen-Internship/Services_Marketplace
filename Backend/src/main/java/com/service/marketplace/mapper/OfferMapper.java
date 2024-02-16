@@ -7,7 +7,6 @@ import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -22,14 +21,12 @@ public interface OfferMapper {
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     Offer OfferRequestToOffer(OfferRequest requestOffer, User provider, Request requests);
 
-
     @Mapping(target = "providerId", source = "offers.provider.id")
     @Mapping(target = "requestId", source = "offers.request.id")
     @Mapping(target = "price", source = "offers.offerPrice")
     OfferResponse offerToOfferResponse(Offer offers);
 
     List<OfferResponse> toOfferResponseList(List<Offer> offers);
-
 
 
 }

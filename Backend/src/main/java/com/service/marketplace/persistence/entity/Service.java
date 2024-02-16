@@ -51,5 +51,4 @@ public class Service extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "city_id")
     )
     private List<City> cities;
-
 }

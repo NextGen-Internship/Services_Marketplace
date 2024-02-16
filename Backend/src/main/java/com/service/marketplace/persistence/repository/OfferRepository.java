@@ -2,7 +2,6 @@ package com.service.marketplace.persistence.repository;
 
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
-import com.service.marketplace.persistence.entity.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

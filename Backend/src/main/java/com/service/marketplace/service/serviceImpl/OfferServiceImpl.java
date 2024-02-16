@@ -44,7 +44,6 @@ public class OfferServiceImpl implements OfferService {
         return null;
     }
 
-
     @Override
     public OfferResponse createOffer(OfferRequest offerToCreate) {
         User provider = userRepository.findById(offerToCreate.getProvider_id()).orElse(null);
@@ -53,10 +52,6 @@ public class OfferServiceImpl implements OfferService {
         Offer savedOffer = offerRepository.save(newOffer);
         return offerMapper.offerToOfferResponse(savedOffer);
     }
-
-
-
-
 
     @Override
     public void deleteOfferById(Integer offerId) {
