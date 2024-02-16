@@ -4,6 +4,7 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.AuthenticationRequest;
 import com.service.marketplace.dto.request.RegisterRequest;
 import com.service.marketplace.dto.response.AuthenticationResponse;
+import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RoleRepository;
@@ -50,5 +51,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public String refreshAuthToken(UserResponse updatedUserData) {
+        User user = userRepository.findByEmail(updatedUserData.getEmail()).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Generate a new JWT token with updated user information
+        return jwtService.generateToken(user);
     }
 }

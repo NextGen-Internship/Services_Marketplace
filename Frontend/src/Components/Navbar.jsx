@@ -5,6 +5,8 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { ImCross } from 'react-icons/im';
 import { jwtDecode } from "jwt-decode";
 import { CgProfile } from "react-icons/cg";
+import { getUserById, refreshToken } from '../service/ApiService';
+import axios from 'axios';
 
 function Navbar({ clicked, isClicked }) {
     const navigate = useNavigate();
@@ -16,6 +18,34 @@ function Navbar({ clicked, isClicked }) {
         if (token) {
             navigate('/home-page');
         }
+    }, []);
+
+    useEffect(() => {
+        const handleCheckoutSuccess = async () => {
+            try {
+                const localToken = localStorage.getItem('Jwt_Token');
+                if (!localToken) {
+                    console.error('No token found');
+                    navigate('/login');
+                    return;
+                }
+    
+                const decodedToken = jwtDecode(localToken);
+                const userId = decodedToken['jti'];
+    
+                const response = await getUserById(userId);
+                const updatedUserData = response;
+    
+                const newTokenResponse = await refreshToken(updatedUserData);
+                const newToken = newTokenResponse;
+    
+                localStorage.setItem('Jwt_Token', newToken);
+            } catch (error) {
+                console.error('Error updating token:', error);
+            }
+        };
+
+        handleCheckoutSuccess();
     }, []);
 
     const handleClicked = () => {

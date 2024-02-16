@@ -461,6 +461,16 @@ const createReview = async (review, files) => {
   }
 };
 
+const refreshToken = async (formData) => {
+  try {
+    const response = await axios.post(config.baseUrl + config.refreshToken, formData);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating registration", error);
+    throw error;
+  }
+};
+
 export {
   getAllServices,
   getAllCategories,
@@ -487,5 +497,6 @@ export {
   createReview,
   getFilesByReviewId,
   updateCurrentReview,
+  refreshToken,
 }
 export default apiService;

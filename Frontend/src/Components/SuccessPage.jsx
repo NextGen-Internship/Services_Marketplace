@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SuccessPage.css';
 
-
 const SuccessPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -16,7 +15,7 @@ const SuccessPage = () => {
     }, [location.search]);
 
     const onButtonClick = () => {
-        navigate("/home-page")
+        navigate("/home-page");
     }
 
     return (
