@@ -1,6 +1,5 @@
 package com.service.marketplace.persistence.repository;
 
-import com.service.marketplace.persistence.entity.Service;
 import com.service.marketplace.persistence.entity.Subscription;
 import com.service.marketplace.persistence.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

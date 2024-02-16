@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class ReviewRequest {
+
     @NotEmpty
     @Size(min = 2, max = 200)
     private String description;

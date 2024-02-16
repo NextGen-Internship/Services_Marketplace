@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, getFilesByServiceId, getReviewsByServiceId, createReview } from '../service/ApiService';
+import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, createRequest,getFilesByServiceId, getReviewsByServiceId, createReview  } from '../service/ApiService';
+import RequestAddForm from './RequestAddForm';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
 import { Carousel } from 'react-responsive-carousel';
@@ -8,6 +9,7 @@ import ReviewAddForm from './ReviewAddForm';
 import ReviewBox from './ReviewBox';
 
 const ServiceDetailsPage = () => {
+    const [showAddRequestForm, setShowAddRequestForm] = useState(false);
     const [images, setImages] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [showReviews, setShowReviews] = useState(false);
@@ -128,7 +130,18 @@ const ServiceDetailsPage = () => {
         stopOnHover: false,
         dynamicHeight: false,
     };
+    const handleRequestFormToggle = () => {
+        setShowAddRequestForm(!showAddRequestForm);
+    }
 
+    const addRequest = async (request) => {
+        try {
+            const newRequest = await createRequest(request);
+            console.log(newRequest);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const handleReviewToggle = () => {
         setShowReviews(!showReviews);
     }
@@ -147,6 +160,7 @@ const ServiceDetailsPage = () => {
             console.error(error);
         }
     };
+
 
     const updateReviews = (updatedReview) => {
         const updatedReviews = reviews.map(review => {
@@ -183,10 +197,15 @@ const ServiceDetailsPage = () => {
             <hr />
             <p>Added on: {formattedDate}</p>
 
-            <button className='pay-button'>Make a request</button>
+            <button className='pay-button' onClick={handleRequestFormToggle}>Make a request</button>
+            {
+                showAddRequestForm && (
+                    <RequestAddForm onAdd={addRequest} serviceId={serviceId} />
+                )
+            }
             <button className='add-review-btn' onClick={handleReviewFormToggle} >Add review</button>
 
-            <button onClick={handleReviewToggle}>Reviews</button>
+            <button className='reviews-btn' onClick={handleReviewToggle}>Reviews</button>
             {showAddReviewForm && (
                 <ReviewAddForm onAdd={addReview} serviceId={serviceId} />
             )}
@@ -201,7 +220,8 @@ const ServiceDetailsPage = () => {
                     )}
                 </div>
             )}
-        </div>
+
+        </div >
     );
 };
 export default ServiceDetailsPage;

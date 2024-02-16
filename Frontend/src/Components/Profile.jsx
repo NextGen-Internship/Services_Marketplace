@@ -5,21 +5,28 @@ import '../styles/Profile.css';
 import SubscriptionComponent from './SubscriptionComponent.jsx';
 import axios from 'axios';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
 import Multiselect from 'multiselect-react-dropdown';
+import RequestsBox from './RequestsBox.jsx';
+import { OfferBox } from './OfferBox.jsx';
 
 const Profile = () => {
   const defaultImageUrl = 'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg';
   const [chosen, setChosen] = useState([]);
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showServices, setShowServices] = useState(false);
+  const [showRequest, setShowRequest] = useState(false);
+  const [showOffers, setShowOffers] = useState(false);
   const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
   const [userServices, setUserServices] = useState([]);
+  const [userRequest, setUserRequest] = useState([]);
+  const [userOffer, setUserOffer] = useState(true);
+  const [showReviews, setShowReviews] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -29,15 +36,18 @@ const Profile = () => {
   const [categories, setCategories] = useState([]);
   const [validPHoneNumber, setValidPhoneNUmbe] = useState(true);
   const [areMyServicesVisible, setAreMyServicesVisible] = useState(false);
+  const [areMyRequestVisible, setAreMyRequestVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [cities, setCities] = useState([]);
   const [beecomeProviderBtn, setBecomeProviderBtn] = useState(true);
   const [servicesPerPage] = useState(5);
   const [paginatedServices, setPaginatedServices] = useState([]);
+  const [paginatedRequest, setPaginatedRequest] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [selectedCities, setSelectedCities] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState('');
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
@@ -302,7 +312,7 @@ const Profile = () => {
     setPreviewVisible(false);
     setShowPersonalInfo(false);
   };
-
+  
   useEffect(() => {
     const getPictureMethod = async () => {
       const currentUser = await getCurrentUser();
@@ -399,6 +409,30 @@ const Profile = () => {
     setPreviewVisible(false);
   };
 
+  const handleOffersToggle = async () => {
+    const offer = await getOffersByUser();
+    setUserOffer(offer);
+    setShowOffers(!showOffers);
+  }
+
+
+  const handleRequest = async () => {
+    if (!isProvider(user)) {
+      console.log('Only providers can see their requests');
+      return;
+    }
+    try {
+      const requests = await getRequestByProvider();
+
+      setUserRequest(requests);
+      setAreMyRequestVisible(true);
+    } catch (error) {
+      console.error('Error fetching requests:', error);
+    }
+    setShowRequest(!showRequest);
+  };
+
+
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage);
     const indexOfLastService = (selectedPage + 1) * servicesPerPage;
@@ -480,6 +514,8 @@ const Profile = () => {
     }
   };
 
+
+
   const editServiceBox = (serviceId) => {
     const serviceToEdit = userServices.find(service => service.id === serviceId);
     if (serviceToEdit) {
@@ -510,6 +546,14 @@ const Profile = () => {
       }));
     }
   };
+
+  const showRequestsButton = (
+    <button onClick={handleRequest}>Requests</button>
+  );
+  // const handleRequestDetails = (request) => {
+  //   setSelectedRequest(request);
+  //   // You can perform additional actions here if needed
+  // };
 
   console.log(editableService);
 
@@ -546,7 +590,6 @@ const Profile = () => {
                   <option key={category.id} value={category.id}>{category.name}</option>
                 ))}
               </select>
-
               <button onClick={saveServiceBox}>Save</button>
               <button onClick={() => setServiceBoxIdToEdit(-1)}>Cancel</button>
             </>
@@ -586,6 +629,9 @@ const Profile = () => {
         {isProvider(user) && (
           <button onClick={handleServicesToggle}>My Services</button>
         )}        {becomeProviderButton}
+        {isProvider(user) && showRequestsButton}
+        <button onClick={handleOffersToggle}>Offers</button>
+        <div></div>
       </div>
       {isProvider(user) &&
         (<div className="provider-info">
@@ -697,6 +743,28 @@ const Profile = () => {
               initialPage={currentPage}
             />
           </div>
+        </div>
+      )}
+      {(showRequest && isProvider) && (
+        <div className="user-requests-profile">
+          {userRequest.length > 0 ? (
+            userRequest.map((request, index) => (
+              <RequestsBox key={index} request={request} />
+            ))
+          ) : (
+            'No reviews to show'
+          )}
+        </div>
+      )}
+        {showOffers && (
+        <div className="user-offers-profile">
+          {userOffer.length > 0 ? (
+            userOffer.map((offer, index) => (
+              <OfferBox key={index} offer={offer} />
+            ))
+          ) : (
+            'No offers to show'
+          )}
         </div>
       )}
     </div>

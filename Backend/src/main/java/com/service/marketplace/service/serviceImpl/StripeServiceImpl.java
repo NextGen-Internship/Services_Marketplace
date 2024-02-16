@@ -17,7 +17,10 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
-import com.stripe.param.*;
+import com.stripe.param.AccountCreateParams;
+import com.stripe.param.CustomerListParams;
+import com.stripe.param.SubscriptionListParams;
+import com.stripe.param.SubscriptionUpdateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -65,10 +68,10 @@ public class StripeServiceImpl implements StripeService {
             externalAccountParams.put("account_number", stripeAccountRequest.getIban());
             externalAccountParams.put("default_for_currency", true);
 
-                Map<String, Object> tokenParams = new HashMap<>();
-                tokenParams.put("bank_account", externalAccountParams);
-                Token token = Token.create(tokenParams);
-                String bankAccountToken = token.getId();
+            Map<String, Object> tokenParams = new HashMap<>();
+            tokenParams.put("bank_account", externalAccountParams);
+            Token token = Token.create(tokenParams);
+            String bankAccountToken = token.getId();
 
             AccountCreateParams accountCreateParams = AccountCreateParams.builder()
                     .setType(AccountCreateParams.Type.CUSTOM)
@@ -193,8 +196,6 @@ public class StripeServiceImpl implements StripeService {
         if (dataObjectDeserializer.getObject().isPresent()) {
             stripeObject = dataObjectDeserializer.getObject().get();
         } else {
-            // Deserialization failed, probably due to an API version mismatch.
-            // You may want to handle this case appropriately.
         }
 
         String userEmail = extractUserEmailFromPayload(payload);
@@ -205,7 +206,6 @@ public class StripeServiceImpl implements StripeService {
                     Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
                     String customerId = customer.getId();
 
-                    // Retrieve all subscriptions associated with the customer's email address from Stripe
                     List<Subscription> subscriptions;
                     try {
                         subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
@@ -213,10 +213,8 @@ public class StripeServiceImpl implements StripeService {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
                     }
 
-                    // Check if any subscription is active
                     boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
                     User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
-                    // If there's an active subscription, change the user's role to 'Provider'
                     if (hasActiveSubscription) {
                         if (userToBeUpdated != null) {
                             userService.updateUserRoleToProvider(userToBeUpdated.getId());
@@ -251,14 +249,12 @@ public class StripeServiceImpl implements StripeService {
                 break;
             }
             case "customer.subscription.deleted": {
-                // Handle customer.subscription.deleted event
                 break;
             }
             case "customer.subscription.updated": {
                 System.out.println("Webhook for updated subscription");
                 break;
             }
-            // Add cases to handle other event types
             default:
                 System.out.println("Unhandled event type: " + event.getType());
         }
@@ -296,7 +292,6 @@ public class StripeServiceImpl implements StripeService {
             JsonObject jsonObject = JsonParser.parseString(payload).getAsJsonObject();
 
             if (jsonObject.has("data") && !jsonObject.get("data").isJsonNull()) {
-                // Extract the email field from the JSON object
                 JsonObject data = jsonObject.getAsJsonObject("data").getAsJsonObject("object").getAsJsonObject("customer_details");
                 if (data.has("email")) {
                     String email = data.get("email").getAsString();
@@ -344,5 +339,4 @@ public class StripeServiceImpl implements StripeService {
             }
         }
     }
-
 }

@@ -12,6 +12,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class RegisterRequest {
+
     @NotEmpty
     @Size(min = 2, max = 20)
     private String firstName;
@@ -28,6 +29,5 @@ public class RegisterRequest {
     @Size(min = 5)
     private String password;
     private String confirmPassword;
-
 }
 

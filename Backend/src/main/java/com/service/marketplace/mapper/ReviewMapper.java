@@ -1,10 +1,10 @@
 package com.service.marketplace.mapper;
 
 import com.service.marketplace.dto.request.ReviewRequest;
-import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ReviewResponse;
-import com.service.marketplace.dto.response.ServiceResponse;
-import com.service.marketplace.persistence.entity.*;
+import com.service.marketplace.persistence.entity.Review;
+import com.service.marketplace.persistence.entity.Service;
+import com.service.marketplace.persistence.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,6 +1,5 @@
 package com.service.marketplace.dto.response;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.util.Date;

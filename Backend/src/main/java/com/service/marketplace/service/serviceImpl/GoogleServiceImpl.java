@@ -19,7 +19,6 @@ import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Service
 @AllArgsConstructor
 public class GoogleServiceImpl implements GoogleService {
@@ -31,12 +30,9 @@ public class GoogleServiceImpl implements GoogleService {
     public AuthenticationResponse verifyGoogleToken(String googleToken) throws IOException, GeneralSecurityException {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
                 .build();
-
         GoogleIdToken idToken = verifier.verify(googleToken);
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();
-
-
             String email = payload.getEmail();
             boolean emailVerified = payload.getEmailVerified();
             try {
@@ -63,7 +59,6 @@ public class GoogleServiceImpl implements GoogleService {
             }
         }
         return null;
-
     }
 }
 
