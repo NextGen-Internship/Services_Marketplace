@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -12,6 +11,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Table(name = "subscription")
 public class Subscription extends BaseEntity {
+
     @JoinColumn(name = "user_id")
     @OneToOne
     private User user;

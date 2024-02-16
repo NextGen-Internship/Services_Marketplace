@@ -54,17 +54,13 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
         try {
             Map response = cloudinary.api().resources(ObjectUtils.asMap("type", "upload", "max_results", 500));
-
-            // Extract URLs from the response
             List<Map<String, Object>> resources = (List<Map<String, Object>>) response.get("resources");
             for (Map<String, Object> resource : resources) {
                 String url = (String) resource.get("secure_url");
                 pictureUrls.add(url);
             }
         } catch (Exception e) {
-            // Handle exceptions, such as Cloudinary API errors
             e.printStackTrace();
-            // You might want to log or handle the exception in a different way
         }
 
         return pictureUrls;
@@ -75,7 +71,6 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     private String extractPublicIdFromUrl(String url) {
-        // Assuming the public ID is the part between the last '/' and the '.' in the URL
         int lastSlashIndex = url.lastIndexOf('/');
         int dotIndex = url.lastIndexOf('.');
         if (lastSlashIndex != -1 && dotIndex != -1 && dotIndex > lastSlashIndex) {
@@ -84,5 +79,4 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             throw new IllegalArgumentException("Invalid URL format: " + url);
         }
     }
-
 }

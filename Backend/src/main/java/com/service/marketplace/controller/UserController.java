@@ -4,31 +4,26 @@ import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
 import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.service.StorageService;
 import com.service.marketplace.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
-
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
-
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable("userId") Integer userId) {
         UserResponse userResponse = userService.getUserById(userId);
@@ -39,7 +34,6 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @GetMapping("/current")
     public ResponseEntity<UserResponse> getCurrentUser() {
         User user = userService.getCurrentUser();
@@ -50,7 +44,6 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @Valid
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId,
@@ -58,7 +51,6 @@ public class UserController {
                                                    @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         try {
             UserResponse updatedUser = userService.updateUser(userId, userToUpdate, multipartFile);
-
             if (updatedUser == null) {
                 return ResponseEntity.notFound().build();
             } else {
@@ -69,7 +61,6 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
     @Valid
     @PutMapping("/update/current")
     public ResponseEntity<UserResponse> updateCurrentUser(@RequestParam(value = "userId", required = false) Integer userId,
@@ -77,7 +68,6 @@ public class UserController {
                                                           @RequestParam(value = "file", required = false) MultipartFile file) {
         return new ResponseEntity<>(userService.updateUser(userId, userToUpdate, file), HttpStatus.OK);
     }
-
     @Valid
     @PutMapping("/role/{userId}")
     public ResponseEntity<UserResponse> updateUserRole(@PathVariable("userId") Integer userId,
@@ -94,7 +84,6 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
         boolean deleted = userService.deleteUserById(userId);

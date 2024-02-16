@@ -1,6 +1,5 @@
 package com.service.marketplace.persistence.entity;
 
-import com.service.marketplace.persistence.enums.SourceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

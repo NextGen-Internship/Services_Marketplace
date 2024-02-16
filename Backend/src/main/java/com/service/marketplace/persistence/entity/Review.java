@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
@@ -37,9 +36,4 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne
     private Service service;
-
-//    @Column(name = "fiels")
-//    @OneToMany
-//    private List<Files> filesList;
-
 }

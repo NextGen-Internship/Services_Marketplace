@@ -7,6 +7,4 @@ import java.security.GeneralSecurityException;
 
 public interface GoogleService {
     AuthenticationResponse verifyGoogleToken(String googleToken) throws IOException, GeneralSecurityException;
-
-
 }

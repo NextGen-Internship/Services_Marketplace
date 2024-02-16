@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface FilesRepository extends JpaRepository<Files, Integer> {
     List<Files> findByService(Service service);
+
     List<Files> findByReview(Review review);
 }

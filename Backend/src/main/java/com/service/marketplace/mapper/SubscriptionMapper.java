@@ -1,10 +1,7 @@
 package com.service.marketplace.mapper;
 
-import com.service.marketplace.dto.request.CityRequest;
 import com.service.marketplace.dto.request.SubscriptionRequest;
-import com.service.marketplace.dto.response.CityResponse;
 import com.service.marketplace.dto.response.SubscriptionResponse;
-import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.entity.Subscription;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

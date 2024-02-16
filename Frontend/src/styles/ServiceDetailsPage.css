@@ -83,3 +83,30 @@
     max-width: 520px;
     margin-bottom: 30px;
   }
+
+  .add-review-btn{
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .add-review-btn:hover{
+    background-color: #5db6ee;
+  }
+
+  .reviews-btn{
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .reviews-btn:hover{
+    background-color: #5db6ee;
+  }
