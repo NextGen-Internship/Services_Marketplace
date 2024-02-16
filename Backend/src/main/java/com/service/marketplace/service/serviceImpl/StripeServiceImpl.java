@@ -246,34 +246,36 @@ public class StripeServiceImpl implements StripeService {
                 break;
             }
             case "payment_intent.created": {
-                System.out.println("Webhook for created VIP service");
+
+                System.out.println("@@@@@@@@@@@@@@@@@@@@@@Webhook for created VIP service");
+                String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
+                //List<PaymentIntent> paymentIntents;
+
                 try {
                     Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
                     String customerId = customer.getId();
-                   // try {
-                        Map<String, String> metadata = getMetadataFromPaymentIntent(vipSessionId);
-                        System.out.println(metadata);
-//                        if ("VIP".equals(metadata.get("serviceType"))) {
-//                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
-//                                    .setCustomer(customerId)
-//                                    .build();
-//                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
-//
-//                            // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
-//                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
-//                                    .max(Comparator.comparing(PaymentIntent::getCreated))
-//                                    .orElse(null);
-//                            System.out.println(latestPaymentIntent);
-//                        }
-//                    } catch (StripeException e) {
-//                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-//                    }
+                    // try {
+                    Map<String, String> metadata = getMetadataFromPaymentIntent(vipSessionId);
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println(metadata);
+                        if ("VIP".equals(metadata.get("serviceType"))) {
+                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
+                                    .setCustomer(customerId)
+                                    .build();
+                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
 
-                } catch (StripeException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
+                            // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
+                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
+                                    .max(Comparator.comparing(PaymentIntent::getCreated))
+                                    .orElse(null);
+                            System.out.println(latestPaymentIntent);
+                        }
+                    } catch (StripeException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+                    }
+
                 }
-                break;
-            }
+            break;
             case "customer.subscription.created": {
                 System.out.println("Webhook for created subscription");
                 break;
@@ -408,10 +410,14 @@ public class StripeServiceImpl implements StripeService {
 
     public Map<String, String> getMetadataFromPaymentIntent(String sessionId) {
         Stripe.apiKey = stripeApiKey;
+        String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
 
         try {
             // Retrieve the session
             Session session = Session.retrieve(sessionId);
+            Price price = Price.retrieve(priceId);
+            String productId = price.getProduct();
+            Product product = Product.retrieve(productId);
 
             // Get the PaymentIntent ID from the session
             String paymentIntentId = session.getPaymentIntent();

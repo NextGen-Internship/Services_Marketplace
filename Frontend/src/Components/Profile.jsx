@@ -410,7 +410,7 @@ useEffect(() => {
 
     const localToken = localStorage.getItem('Jwt_Token');
     if (!localToken) {
-        console.error('No token found');
+        console.error('No token found'); 
         navigate('/login');
         return;
     }
@@ -432,7 +432,7 @@ useEffect(() => {
         const response = await axios.post(`http://localhost:8080/api/subscribe/vip`, checkoutData);
         const sessionId = response.data.sessionId;
         const stripe = await loadStripe(environment.stripe);
-
+        localStorage.setItem("sessionId", sessionId);  //проверяваме дали има sessionId в success page, ako ima -> endpoint v backend i tap suzdavame takuv vipservice object i go zapisvame
         if (stripe) {
             stripe.redirectToCheckout({ sessionId });
         }
