@@ -9,11 +9,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CityMapper {
-
     City cityRequestToCity(CityRequest request);
 
     CityResponse cityToCityResponse(City city);
 
     List<CityResponse> toCityResponseList(List<City> cities);
-
 }

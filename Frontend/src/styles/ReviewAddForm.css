@@ -1,0 +1,112 @@
+.review-add-form-container {
+    align-items: center;
+    justify-content: left;
+    height: 50vh;
+    color: white;
+}
+
+.review-add-form-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: left;
+    color: black;
+}
+
+.review-add-form-container form {
+    width: 400px;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+}
+
+.review-add-form-container .form-control {
+    margin-bottom: 15px;
+}
+
+.review-add-form-container .form-control label {
+    font-weight: bold;
+    color: black;
+}
+
+.review-add-form-container .form-control input,
+.review-add-form-container .form-control select,
+.review-add-form-container .form-control textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.review-add-form-container .form-control textarea {
+    resize: vertical;
+}
+
+.review-add-form-container .btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.review-add-form-container .btn:hover {
+    background-color: #45a049;
+}
+
+.review-add-form-container .bottom {
+    margin-top: 10px;
+}
+
+.request-add-form-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.request-add-form-title {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.request-add-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    
+}
+
+.request-description-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.submit-button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+
+

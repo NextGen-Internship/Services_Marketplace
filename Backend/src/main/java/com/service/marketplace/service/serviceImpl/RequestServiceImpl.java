@@ -9,10 +9,12 @@ import com.service.marketplace.persistence.repository.RequestRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.RequestService;
+import com.service.marketplace.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,17 +25,18 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
     private final RequestMapper requestMapper;
     private final ServiceRepository serviceRepository;
+    private final UserService userService;
 
 
     @Override
     public List<RequestResponse> getAllRequests() {
-        List<com.service.marketplace.persistence.entity.Request> requests = requestRepository.findAll();
+        List<Request> requests = requestRepository.findAll();
         return requestMapper.toRequestResponseList(requests);
     }
 
     @Override
     public RequestResponse getRequestById(Integer requestId) {
-        com.service.marketplace.persistence.entity.Request requestEntity = requestRepository.findById(requestId).orElse(null);
+        Request requestEntity = requestRepository.findById(requestId).orElse(null);
         if (requestEntity != null) {
             return requestMapper.requestToRequestResponse(requestEntity);
         }
@@ -44,12 +47,11 @@ public class RequestServiceImpl implements RequestService {
     public RequestResponse createRequest(RequestToCreateDto requestToCreate) {
         User customer = userRepository.findById(requestToCreate.getCustomerId()).orElse(null);
         com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(requestToCreate.getServiceId()).orElse(null);
-        com.service.marketplace.persistence.entity.Request newRequest = requestMapper.requestRequestToRequest(requestToCreate,
+        Request newRequest = requestMapper.requestRequestToRequest(requestToCreate,
                 customer, existingService);
         Request savedRequest = requestRepository.save(newRequest);
         return requestMapper.requestToRequestResponse(savedRequest);
     }
-
 
     @Override
     public RequestResponse updateRequest(Integer requestId, RequestToCreateDto requestToUpdate) {
@@ -63,9 +65,21 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-
     @Override
     public void deleteRequestById(Integer requestId) {
         requestRepository.deleteById(requestId);
+    }
+
+    @Override
+    public List<RequestResponse> getRequestsByProvider() {
+        User providerUser = userService.getCurrentUser();
+        List<com.service.marketplace.persistence.entity.Service> servicesList = serviceRepository.findByProvider(providerUser);
+        List<Request> requests = new ArrayList<>();
+        for (com.service.marketplace.persistence.entity.Service service : servicesList) {
+            List<Request> serviceRequest = requestRepository.findByService(service);
+            requests.addAll(serviceRequest);
+
+        }
+        return requestMapper.toRequestResponseList(requests);
     }
 }

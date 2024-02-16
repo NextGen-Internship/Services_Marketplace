@@ -1,9 +1,7 @@
 package com.service.marketplace.service.serviceImpl;
 
-import com.service.marketplace.dto.request.SubscriptionRequest;
 import com.service.marketplace.dto.response.SubscriptionResponse;
 import com.service.marketplace.mapper.SubscriptionMapper;
-import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.entity.Subscription;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
@@ -12,7 +10,9 @@ import com.service.marketplace.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

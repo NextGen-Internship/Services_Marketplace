@@ -16,5 +16,4 @@ public class CategoryRequest {
     @NotBlank(message = "Description cannot be blank")
     @Size(min = 3, message = "Description must be at least 3 characters long")
     private String description;
-
 }

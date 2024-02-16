@@ -1,5 +1,6 @@
 package com.service.marketplace.service.serviceImpl;
 
+import com.service.marketplace.dto.request.FilesRequest;
 import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
@@ -11,18 +12,17 @@ import com.service.marketplace.persistence.repository.CategoryRepository;
 import com.service.marketplace.persistence.repository.CityRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
-import com.service.marketplace.service.CloudinaryService;
+import com.service.marketplace.service.FilesService;
 import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class ServiceServiceImpl implements ServiceService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
-    private final CloudinaryService cloudinaryService;
+    private final FilesService filesService;
 
     @Override
     public List<ServiceResponse> getAllServices() {
@@ -49,11 +49,6 @@ public class ServiceServiceImpl implements ServiceService {
         com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElse(null);
 
         if (service != null) {
-            List<Integer> cityIds = new ArrayList<>();
-            for (City city : service.getCities()) {
-                cityIds.add(city.getId());
-            }
-
             return serviceMapper.serviceToServiceResponse(service);
         } else {
             return null;
@@ -61,16 +56,21 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ServiceResponse createService(ServiceRequest serviceToCreate) {
+    public ServiceResponse createService(ServiceRequest serviceToCreate, MultipartFile[] files) {
         List<City> cities = cityRepository.findAllById(serviceToCreate.getCityIds());
         User provider = userRepository.findById(serviceToCreate.getProviderId()).orElse(null);
         Category category = categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null);
 
-        com.service.marketplace.persistence.entity.Service newService = serviceMapper.serviceRequestToService(serviceToCreate,
-                provider, category, cities);
+        com.service.marketplace.persistence.entity.Service newService = serviceMapper.serviceRequestToService(serviceToCreate, provider, category, cities);
 
+        ServiceResponse serviceResponse = serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
 
-        return serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
+        for (MultipartFile multipartFile : files) {
+            FilesRequest filesRequest = new FilesRequest(multipartFile, serviceResponse.getId(), null);
+            filesService.createFile(filesRequest);
+        }
+
+        return serviceResponse;
     }
 
     @Override
@@ -86,7 +86,9 @@ public class ServiceServiceImpl implements ServiceService {
             existingService.setDescription(updatedService.getDescription());
             existingService.setServiceStatus(updatedService.getServiceStatus());
             existingService.setPrice(updatedService.getPrice());
+            existingService.setCategory(updatedService.getCategory());
             existingService.setCities(updatedService.getCities());
+            existingService.setUpdatedAt(updatedService.getUpdatedAt());
 
             return serviceMapper.serviceToServiceResponse(serviceRepository.save(existingService));
         } else {
@@ -134,7 +136,20 @@ public class ServiceServiceImpl implements ServiceService {
 
             return serviceMapper.toServiceResponseList(userServices);
         } else {
-            return Collections.emptyList(); // Handle the case when the user is not found
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<ServiceResponse> getServicesByCategory(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+
+        if (category != null) {
+            List<com.service.marketplace.persistence.entity.Service> categoryServices = serviceRepository.findByCategory(category);
+
+            return serviceMapper.toServiceResponseList(categoryServices);
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -147,17 +162,6 @@ public class ServiceServiceImpl implements ServiceService {
 
         List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(currentUser);
         return serviceMapper.toServiceResponseList(userServices);
-    }
-
-    @Override
-    public void uploadPicture(String url, Integer entityId) {
-        if (url.isEmpty()) {
-            throw new IllegalArgumentException("Url is empty");
-        }
-
-        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(entityId).orElseThrow(() -> new EntityNotFoundException("Service not found"));
-        service.setPicture(url);
-        serviceRepository.save(service);
     }
 
 }

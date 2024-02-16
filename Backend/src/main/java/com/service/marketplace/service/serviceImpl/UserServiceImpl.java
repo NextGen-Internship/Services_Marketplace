@@ -14,7 +14,6 @@ import com.service.marketplace.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -59,7 +58,6 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public UserResponse getUserById(Integer userId) {
         return userRepository.findById(userId)
@@ -102,12 +100,9 @@ public class UserServiceImpl implements UserService {
         if (userToUpdate.getPhoneNumber() != null) {
             phoneNum = userToUpdate.getPhoneNumber();
         }
-
-        // existingUser.setEmail(userToUpdate.getEmail());
         existingUser.setFirstName(userToUpdate.getFirstName());
         existingUser.setLastName(userToUpdate.getLastName());
         existingUser.setPhoneNumber(phoneNum);
-        // existingUser.setExperience(userToUpdate.getExperience());
         existingUser.setDescription(userToUpdate.getDescription());
 
         userRepository.save(existingUser);
@@ -154,7 +149,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.userToUserResponse(user);
     }
 
-
     @Override
     public boolean deleteUserById(Integer userId) {
         return userRepository.findById(userId).map(user -> {
@@ -163,5 +157,4 @@ public class UserServiceImpl implements UserService {
             return true;
         }).orElse(false);
     }
-
 }

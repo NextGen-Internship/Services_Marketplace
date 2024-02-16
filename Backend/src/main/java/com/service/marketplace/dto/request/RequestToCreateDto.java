@@ -18,5 +18,5 @@ public class RequestToCreateDto {
     @NotEmpty(message = "Description cannot be empty")
     private String description;
 
-    private boolean isActive;
+    private boolean isActive = true;
 }

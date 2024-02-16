@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class RequestResponse {
+    private Integer id;
     private Integer customerId;
     private Integer serviceId;
     private String description;

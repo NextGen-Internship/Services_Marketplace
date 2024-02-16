@@ -72,34 +72,41 @@
     background-color: #5db6ee;
 }
 
-.edit-details-button {
-    margin: 10px;
-    padding: 10px 25px;
-    border: none;
-    background-color: #3c96f0; 
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px; 
-    font-size: 20px; 
-    font-weight: bold;}
-
-.edit-details-button:hover {
-    background-color: #5db6ee; 
-}
-
-.button-container {
-    position: absolute; 
-    top: 80px; 
-    right: 10px; 
-    display: flex; 
-    gap: 10px; 
-}
-
 .service-details-container h2 {
     text-align: center;
     margin-top: 0; /* Изчистете горния марджин, ако има такъв */
+  }
+
+  .service-details-container .carousel .slide img {
+    margin-top: 190px;
+    max-height: 400px;
+    max-width: 520px;
+    margin-bottom: 30px;
+  }
+
+  .add-review-btn{
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .add-review-btn:hover{
+    background-color: #5db6ee;
+  }
+
+  .reviews-btn{
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #3c96f0;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .reviews-btn:hover{
+    background-color: #5db6ee;
   }

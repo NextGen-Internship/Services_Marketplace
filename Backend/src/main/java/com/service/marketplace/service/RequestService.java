@@ -15,4 +15,6 @@ public interface RequestService {
     RequestResponse updateRequest(Integer requestId, RequestToCreateDto requestToUpdate);
 
     void deleteRequestById(Integer requestId);
+
+    List<RequestResponse> getRequestsByProvider();
 }
