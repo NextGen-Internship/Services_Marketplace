@@ -16,7 +16,7 @@ const SuccessPage = () => {
         console.log('Subscription success! Session ID:', sessionId);
     }, [location.search]);
 
-    const onButtonClick = () => {
+    useEffect(() => {
         const handleCheckoutSuccess = async () => {
             try {
                 const localToken = localStorage.getItem('Jwt_Token');
@@ -42,7 +42,9 @@ const SuccessPage = () => {
         };
 
         handleCheckoutSuccess();
+    }, []);
 
+    const onButtonClick = () => {
         navigate("/home-page");
     }
 
