@@ -205,7 +205,7 @@ const ServiceDetailsPage = () => {
             }
             <button className='add-review-btn' onClick={handleReviewFormToggle} >Add review</button>
 
-            <button onClick={handleReviewToggle}>Reviews</button>
+            <button className='reviews-btn' onClick={handleReviewToggle}>Reviews</button>
             {showAddReviewForm && (
                 <ReviewAddForm onAdd={addReview} serviceId={serviceId} />
             )}
