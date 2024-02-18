@@ -5,7 +5,7 @@ import '../styles/Profile.css';
 import SubscriptionComponent from './SubscriptionComponent.jsx';
 import axios from 'axios';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser, getServiceById } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
@@ -25,6 +25,7 @@ const Profile = () => {
   const [showServices, setShowServices] = useState(false);
   const [showRequest, setShowRequest] = useState(false);
   const [showOffers, setShowOffers] = useState(false);
+  const [hasVipService, setHasVipService] = useState(false);
   const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
   const [userServices, setUserServices] = useState([]);
@@ -103,6 +104,31 @@ const Profile = () => {
 
     fetchCurrentUser();
   }, []);
+
+  useEffect(() => {
+    const checkVipService = async () => {
+      try {
+        const token = localStorage.getItem('Jwt_Token');
+        if (!token) {
+          console.error('No token found');
+          navigate('/login');
+          return;
+        }
+        
+        const decodedToken = jwtDecode(token);
+
+        const response = await getServiceById;
+        if (response.data.hasVipService) {
+          setHasVipService(true);
+        } else {
+          setHasVipService(false);
+        }
+      } catch (error) {
+        console.error('Error checking VIP service status:', error);
+      }
+    };
+
+  }, [user, navigate]);
 
   const handleInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -416,7 +442,6 @@ const Profile = () => {
     };
 
     try {
-      console.log(checkoutData);
         const response = await axios.post(`http://localhost:8080/api/subscribe/vip`, checkoutData);
         console.log(response);
         const sessionId = response.data.sessionId;
@@ -648,8 +673,9 @@ const Profile = () => {
             <p>Description: {service.description}</p>
             <p>Cities: {getCityNamesByIds(service.cityIds)}</p>
             <button onClick={() => editServiceBox(service.id)}>Edit</button>
+            {!hasVipService && (
             <button onClick={() => handleBecomeVIP(service.id)}>Become VIP</button>
-          </>
+    )}          </>
           )}
         </div>
       </div>
