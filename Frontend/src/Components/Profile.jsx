@@ -416,7 +416,9 @@ const Profile = () => {
     };
 
     try {
+      console.log(checkoutData);
         const response = await axios.post(`http://localhost:8080/api/subscribe/vip`, checkoutData);
+        console.log(response);
         const sessionId = response.data.sessionId;
         const stripe = await loadStripe(environment.stripe);
         localStorage.setItem("sessionId", sessionId);  //проверяваме дали има sessionId в success page, ako ima -> endpoint v backend i tap suzdavame takuv vipservice object i go zapisvame

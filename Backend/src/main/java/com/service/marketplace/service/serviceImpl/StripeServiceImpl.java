@@ -7,8 +7,10 @@ import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.persistence.repository.VipServiceRepository;
 import com.service.marketplace.service.StripeService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
@@ -40,6 +42,8 @@ public class StripeServiceImpl implements StripeService {
     private static final Gson gson = new Gson();
     private final UserService userService;
     private final UserRepository userRepository;
+    private final ServiceRepository serviceRepository;
+    private final VipServiceRepository vipServiceRepository;
     private final SubscriptionRepository subscriptionRepository;
 
     private String vipSessionId = "";
@@ -199,6 +203,59 @@ public class StripeServiceImpl implements StripeService {
         switch (event.getType()) {
             case "checkout.session.completed": {
                 try {
+                        String sessionId = null;
+
+                            System.out.println("!!! Checking session id...");
+                            Session session = (Session)stripeObject;
+                            sessionId = session.getId();
+
+                            System.out.println("!!! Session id: " + sessionId);
+
+                        System.out.println("@@@@@@@@@@@@@@@@@@@@@@Webhook for created VIP service");
+                        String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
+                        //List<PaymentIntent> paymentIntents;
+
+                        try {
+                            Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
+                            String customerId = customer.getId();
+                            // try {
+                            Map<String, String> metadata = getMetadataFromPaymentIntent(sessionId);
+                            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            System.out.println(metadata);
+                            if (metadata.size() > 0 && metadata.containsKey("serviceType") && "VIP".equals(metadata.get("serviceType"))) {
+                                System.out.println("===== VIP service detected");
+                                PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
+                                        .setCustomer(customerId)
+                                        .build();
+                                PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
+
+                                // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
+                                PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
+                                        .max(Comparator.comparing(PaymentIntent::getCreated))
+                                        .orElse(null);
+                                System.out.println(latestPaymentIntent);
+
+                                String serviceIdString = metadata.get("serviceId");
+                                Integer serviceId = Integer.parseInt(serviceIdString);
+
+                                Optional<com.service.marketplace.persistence.entity.Service> serviceOptional = serviceRepository.findById(serviceId);
+
+                                com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
+                                vipService.setStripeId(latestPaymentIntent.getId());
+                                vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
+                                vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 30L * 24 * 60 * 60) * 1000L));
+                                vipService.setActive(true);
+                                vipService.setService(serviceOptional.get());
+                                vipServiceRepository.save(vipService);
+
+
+                                return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
+                            }
+                        } catch (StripeException e) {
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+                        }
+
+
                     Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
                     String customerId = customer.getId();
 
@@ -241,36 +298,10 @@ public class StripeServiceImpl implements StripeService {
                 break;
             }
             case "payment_intent.created": {
+                System.out.println("Webhook for created payment intent");
 
-                System.out.println("@@@@@@@@@@@@@@@@@@@@@@Webhook for created VIP service");
-                String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
-                //List<PaymentIntent> paymentIntents;
-
-                try {
-                    Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
-                    String customerId = customer.getId();
-                    // try {
-                    Map<String, String> metadata = getMetadataFromPaymentIntent(vipSessionId);
-                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    System.out.println(metadata);
-                        if ("VIP".equals(metadata.get("serviceType"))) {
-                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
-                                    .setCustomer(customerId)
-                                    .build();
-                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
-
-                            // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
-                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
-                                    .max(Comparator.comparing(PaymentIntent::getCreated))
-                                    .orElse(null);
-                            System.out.println(latestPaymentIntent);
-                        }
-                    } catch (StripeException e) {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-                    }
-
-                }
-            break;
+                break;
+            }
             case "customer.subscription.created": {
                 System.out.println("Webhook for created subscription");
                 break;
@@ -387,7 +418,10 @@ public class StripeServiceImpl implements StripeService {
 
         try {
             Session session = Session.create(params);
-            vipSessionId = session.getId();
+//            session.setMetadata(new HashMap<String, String>() {{
+//                put("sessionId", session.getId());
+//            }});
+            //vipSessionId = session.getId();
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("sessionId", session.getId());
             return gson.toJson(responseData);
@@ -424,7 +458,7 @@ public class StripeServiceImpl implements StripeService {
             PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
 
             // Access the metadata
-            Map<String, String> metadata = paymentIntent.getMetadata();
+            Map<String, String> metadata = session.getMetadata();
 
             return metadata;
         } catch (StripeException e) {
