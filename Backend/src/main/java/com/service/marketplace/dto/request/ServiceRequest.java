@@ -35,6 +35,4 @@ public class ServiceRequest {
     private Integer categoryId;
 
     private List<Integer> cityIds;
-
-    private Boolean isVip;
 }

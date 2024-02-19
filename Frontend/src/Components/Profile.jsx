@@ -429,6 +429,8 @@ const Profile = () => {
   const handleBecomeVIP = async (serviceId) => {
     const vipPriceId = environment.vipPriceId;
 
+    console.log("Service ID: " + serviceId);
+
 
     const localToken = localStorage.getItem('Jwt_Token');
     if (!localToken) {
@@ -647,8 +649,10 @@ const Profile = () => {
 
 
 
-  const renderServiceBox = (service) => {
-    const isEditing = serviceBoxIdToEdit === service.id;
+  const renderServiceBox = (serviceToRender) => {
+    const isEditing = serviceBoxIdToEdit === serviceToRender.id;
+
+    console.log(serviceToRender);
 
       const getCityNamesByIds = (cityIds) => {
       const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
@@ -656,7 +660,7 @@ const Profile = () => {
     };
 
     return (
-      <div key={service.id} className="service-box-profile">
+      <div key={serviceToRender.id} className="service-box-profile">
         <div className="service-info">
           {isEditing ? (
             <>
@@ -689,12 +693,12 @@ const Profile = () => {
             </>
           ) : (
             <>
-            <h3>{service.title}</h3>
-            <p>Price: {service.price} BGN</p>
-            <p>Description: {service.description}</p>
-            <p>Cities: {getCityNamesByIds(service.cityIds)}</p>
-            <button onClick={() => editServiceBox(service.id)}>Edit</button>
-            {becomeVipButton}
+            <h3>{serviceToRender.title}</h3>
+            <p>Price: {serviceToRender.price} BGN</p>
+            <p>Description: {serviceToRender.description}</p>
+            <p>Cities: {getCityNamesByIds(serviceToRender.cityIds)}</p>
+            <button onClick={() => editServiceBox(serviceToRender.id)}>Edit</button>
+            {!serviceToRender.vip && (<button onClick={() => handleBecomeVIP(serviceToRender.id)}>Become VIP</button>)}
              </>
           )}
         </div>
