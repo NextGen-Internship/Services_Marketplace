@@ -20,29 +20,24 @@ public class CategoryController {
         List<CategoryResponse> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
-
     @GetMapping("/{categoryId}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable("categoryId") Integer categoryId) {
         CategoryResponse category = categoryService.getCategoryById(categoryId);
-
         if (category != null) {
             return ResponseEntity.ok(category);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/create")
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryToCreate) {
         CategoryResponse newCategory = categoryService.createCategory(categoryToCreate);
         return ResponseEntity.ok(newCategory);
     }
-
     @PutMapping("/update/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryToUpdate) {
         try {
             CategoryResponse updatedCategory = categoryService.updateCategory(categoryId, categoryToUpdate);
-
             if (updatedCategory == null) {
                 return ResponseEntity.notFound().build();
             } else {
@@ -53,7 +48,6 @@ public class CategoryController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
     @DeleteMapping("/delete/{categoryId}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("categoryId") Integer categoryId) {
         categoryService.deleteCategoryById(categoryId);

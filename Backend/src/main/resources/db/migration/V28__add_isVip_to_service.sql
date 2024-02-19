@@ -1,2 +1,2 @@
 ALTER TABLE service
-add column isVip BOOLEAN NOT NULL DEFAULT FALSE;
+add column is_vip BOOLEAN NOT NULL DEFAULT FALSE;

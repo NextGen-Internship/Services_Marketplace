@@ -211,7 +211,6 @@ public class StripeServiceImpl implements StripeService {
 
                             System.out.println("!!! Session id: " + sessionId);
 
-                        System.out.println("@@@@@@@@@@@@@@@@@@@@@@Webhook for created VIP service");
                         String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
                         //List<PaymentIntent> paymentIntents;
 
@@ -240,12 +239,16 @@ public class StripeServiceImpl implements StripeService {
 
                                 Optional<com.service.marketplace.persistence.entity.Service> serviceOptional = serviceRepository.findById(serviceId);
 
+                                com.service.marketplace.persistence.entity.Service service = new com.service.marketplace.persistence.entity.Service();
+
+
                                 com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
                                 vipService.setStripeId(latestPaymentIntent.getId());
                                 vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
                                 vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 30L * 24 * 60 * 60) * 1000L));
                                 vipService.setActive(true);
                                 vipService.setService(serviceOptional.get());
+                                serviceRepository.getReferenceById(serviceId).setIsVip("1");
                                 vipServiceRepository.save(vipService);
 
 
