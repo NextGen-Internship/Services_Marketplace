@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.service.marketplace.dto.request.Checkout;
+import com.service.marketplace.dto.request.OfferPaymentRequest;
 import com.service.marketplace.dto.request.StripeAccountRequest;
+import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.OfferRepository;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.StripeService;
@@ -17,10 +20,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
-import com.stripe.param.AccountCreateParams;
-import com.stripe.param.CustomerListParams;
-import com.stripe.param.SubscriptionListParams;
-import com.stripe.param.SubscriptionUpdateParams;
+import com.stripe.param.*;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +47,8 @@ public class StripeServiceImpl implements StripeService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final OfferRepository offerRepository;
+
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
 
@@ -337,6 +339,56 @@ public class StripeServiceImpl implements StripeService {
             } catch (StripeException e) {
                 System.err.println("Error: " + e.getMessage());
             }
+        }
+    }
+
+    public String createProduct(OfferPaymentRequest offerPaymentRequest) throws StripeException {
+        Stripe.apiKey = stripeApiKey;
+
+        ProductCreateParams params =
+                ProductCreateParams.builder()
+                        .setName(offerPaymentRequest.getDescription())
+                        .setDefaultPriceData(ProductCreateParams.DefaultPriceData.builder()
+                                .setUnitAmount(offerPaymentRequest.getPrice().longValueExact() * 100).setCurrency("usd").build()).build();
+
+        Product product = Product.create(params);
+        Offer existingOffer = offerRepository.findById(offerPaymentRequest.getOfferId()).orElse(null);
+        existingOffer.setProductId(product.getId());
+        offerRepository.save(existingOffer);
+        return product.getId();
+    }
+
+    public String payCheckout(OfferPaymentRequest offerPaymentRequest) throws StripeException {
+        Stripe.apiKey = stripeApiKey;
+        Product product = Product.retrieve(createProduct(offerPaymentRequest));
+        User user = userRepository.findById(Integer.valueOf(offerPaymentRequest.getUserId())).orElse(null);
+
+        SessionCreateParams params = new SessionCreateParams.Builder()
+                .setSuccessUrl(offerPaymentRequest.getSuccessUrl())
+                .setCancelUrl(offerPaymentRequest.getCancelUrl())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .addLineItem(new SessionCreateParams.LineItem.Builder()
+                        .setQuantity(1L)
+                        .setPrice(product.getDefaultPrice())
+                        .build()).setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder()
+                        .setTransferData(SessionCreateParams.PaymentIntentData.TransferData.builder()
+                                .setDestination(user.getStripeAccountId()).build()).build()
+                )
+                .setCustomerEmail(user.getEmail())
+                .build();
+
+        try {
+            Session session = Session.create(params);
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("sessionId", session.getId());
+            return gson.toJson(responseData);
+        } catch (Exception e) {
+            Map<String, Object> messageData = new HashMap<>();
+            messageData.put("message", e.getMessage());
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("error", messageData);
+            return gson.toJson(responseData);
         }
     }
 }

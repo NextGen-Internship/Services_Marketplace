@@ -543,6 +543,16 @@ const getRequestById = async (requestId) => {
       }
     };
 
+    const OfferPaymentChechout = async (formData) => {
+      try {
+        const response = await axios.post(config.baseUrl + config.createOfferPayment, formData);
+        return response.data;
+      } catch (error) {
+        console.error("Error pay", error);
+        throw error;
+      }
+    };
+
     export {
       getAllServices,
       getAllCategories,
@@ -574,5 +584,6 @@ const getRequestById = async (requestId) => {
       createOffer,
       getOffersByUser,
       getRequestById,
+      OfferPaymentChechout,
     }
     export default apiService;
