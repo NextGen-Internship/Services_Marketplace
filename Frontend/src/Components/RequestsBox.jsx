@@ -3,6 +3,7 @@ import { OfferAddForm } from './OfferAddForm';
 import { createOffer } from '../service/ApiService';
 import { useEffect } from 'react';
 import { getUserById,getServiceById} from '../service/ApiService';
+import '../styles/RequestBox.css';
 
 
 const RequestsBox = ({ request }) => {
@@ -57,7 +58,7 @@ const RequestsBox = ({ request }) => {
         <div key={request.id} className="request-box">
             <p>Description: {request.description}</p>
             <p>Customer: {showCustomer}</p>
-            <p>Service ID: {service}</p>
+            <p>Service: {service}</p>
             <button onClick={handleMakeOfferForm}>Make Offer</button>
             
             {showMakeOfferForm &&

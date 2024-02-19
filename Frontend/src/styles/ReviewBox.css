@@ -1,21 +1,29 @@
 .review-box-service {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
+    width: 70%; /* Adjusted width */
+    margin: 20px auto;
+    padding: 20px; /* Added padding for better spacing */
+    border: 1px solid #ddd; /* Added border for a container-like appearance */
 }
 
 .review-info {
-    font-family: Arial, sans-serif;
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box
 }
 
 .review-info h3 {
-    margin-top: 0;
-    font-size: 18px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box
 }
 
 .review-info p {
-    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box
 }
 
 .review-carousel {
@@ -45,7 +53,7 @@
     margin: 10px;
     padding: 10px 25px;
     border: none;
-    background-color: #3c96f0; 
+    background-color:  #4caf50; 
     color: white;
     border-radius: 5px;
     cursor: pointer;

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { getUserById, getRequestById, getServiceById } from '../service/ApiService';
+import '../styles/OffersBox.css';
 
 export const OfferBox = ({ offer }) => {
     const [provider, setProvide] = useState('');
