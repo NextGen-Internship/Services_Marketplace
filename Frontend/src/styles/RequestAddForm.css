@@ -1,19 +1,20 @@
-.review-add-form-container {
+/* Style for the request-add-form-container */
+.request-add-form-container {
     width: 70%; /* Adjusted width */
     margin: 20px auto;
     padding: 20px; /* Added padding for better spacing */
     border: 1px solid #ddd; /* Added border for a container-like appearance */
 }
 
-/* Style for the review-add-form-title */
-.review-add-form-title {
+/* Style for the request-add-form-title */
+.request-add-form-title {
     color: #333;
     font-size: 24px;
     margin-bottom: 15px;
 }
 
-/* Style for the review-add-form */
-.review-add-form {
+/* Style for the request-add-form */
+.request-add-form {
     display: flex;
     flex-direction: column;
 }
@@ -30,11 +31,9 @@
     display: block;
 }
 
-/* Style for the input fields */
-.review-description-input,
-.review-rating-input,
-input[type="file"] {
-    width: 100%;
+/* Style for the input field */
+.request-description-input {
+    width: 100%; /* Changed width to 100% for full width */
     padding: 10px;
     margin-top: 5px;
     box-sizing: border-box;
@@ -44,15 +43,20 @@ input[type="file"] {
 .submit-button {
     background-color: #4caf50;
     color: white;
-    padding: 10px 15px;
+    width: 150px;
+    border-radius: 5px;
     border: none;
     cursor: pointer;
     font-size: 16px;
+    display: block;
+    margin: auto;
 }
+
 
 /* Style for the hr (horizontal line) */
 hr {
-    border: 1px solid #ddd;
+    border: none; /* Removed border for a cleaner appearance */
+    border-top: 1px solid #ddd; /* Added border-top to create a separator line */
     margin: 20px 0;
 }
 
