@@ -143,6 +143,7 @@ public class StripeServiceImpl implements StripeService {
                         .setQuantity(1L)
                         .setPrice(checkout.getPriceId())
                         .build())
+                .setCustomerEmail(checkout.getEmail())
                 .build();
 
         try {
@@ -191,17 +192,10 @@ public class StripeServiceImpl implements StripeService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
         }
 
-        EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-        StripeObject stripeObject = null;
-        if (dataObjectDeserializer.getObject().isPresent()) {
-            stripeObject = dataObjectDeserializer.getObject().get();
-        } else {
-        }
-
-        String userEmail = extractUserEmailFromPayload(payload);
-
         switch (event.getType()) {
             case "checkout.session.completed": {
+                String userEmail = extractUserEmailFromPayload(payload);
+
                 try {
                     Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
                     String customerId = customer.getId();
@@ -227,15 +221,12 @@ public class StripeServiceImpl implements StripeService {
                     java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
                     java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
 
-                    String subscriptionStatus = subscriptions.get(0).getStatus();
-                    boolean isActive = "active".equals(subscriptionStatus);
-
                     com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
                     subscription.setStripeId(subscriptions.get(0).getId());
                     subscription.setStartDate(startDate);
                     subscription.setEndDate(endDate);
                     subscription.setUser(userToBeUpdated);
-                    subscription.setActive(isActive);
+                    subscription.setActive("active".equals(subscriptions.get(0).getStatus()));
 
                     subscriptionRepository.save(subscription);
                 } catch (StripeException e) {

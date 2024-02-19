@@ -54,7 +54,8 @@ const Profile = () => {
     email: '',
     phoneNumber: '',
     picture: '',
-    roles: []
+    roles: [],
+    stripeAccountId: ''
   });
   const [editableService, setEditableService] = useState({
     id: 0,
@@ -151,7 +152,8 @@ const Profile = () => {
       lastName: user.lastName,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      roles: user.roles
+      roles: user.roles,
+      stripeAccountId: user.stripeAccountId
     };
     console.log(updatedUserData);
 
@@ -312,7 +314,7 @@ const Profile = () => {
     setPreviewVisible(false);
     setShowPersonalInfo(false);
   };
-  
+
   useEffect(() => {
     const getPictureMethod = async () => {
       const currentUser = await getCurrentUser();
@@ -687,44 +689,48 @@ const Profile = () => {
       )}
       {showBecomeProviderForm && (
         <div className="provider-info">
-          <div className="input-group">
-            <label>First and Middle:</label>
-            <input type="text" name="firstMiddleName" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Last Name:</label>
-            <input type="text" name="lastName" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Date of birth:</label>
-            <input type="date" name="dateOfBirth" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Phone number:</label>
-            <input type="text" name="phoneNumber" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Email:</label>
-            <input type="email" name="email" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Address:</label>
-            <input type="address" name="address" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>City:</label>
-            <input type="city" name="city" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Postal code:</label>
-            <input type="Postal code" name="postalCode" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>IBAN:</label>
-            <input type="text" name="iban" onChange={handleProviderInfoChange} />
-          </div>
+          {!user.stripeAccountId && (
+            <div>
+              <div className="input-group">
+                <label>First and Middle:</label>
+                <input type="text" name="firstMiddleName" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Last Name:</label>
+                <input type="text" name="lastName" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Date of birth:</label>
+                <input type="date" name="dateOfBirth" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Phone number:</label>
+                <input type="text" name="phoneNumber" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Email:</label>
+                <input type="email" name="email" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Address:</label>
+                <input type="address" name="address" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>City:</label>
+                <input type="city" name="city" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Postal code:</label>
+                <input type="Postal code" name="postalCode" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>IBAN:</label>
+                <input type="text" name="iban" onChange={handleProviderInfoChange} />
+              </div>
+            </div>)
+          }
           <div>
-            <SubscriptionComponent handleAccountCreation={handleAccountCreation} />
+            <SubscriptionComponent handleAccountCreation={!user.stripeAccountId ? handleAccountCreation : undefined} />
           </div>
         </div>
       )
@@ -756,7 +762,7 @@ const Profile = () => {
           )}
         </div>
       )}
-        {showOffers && (
+      {showOffers && (
         <div className="user-offers-profile">
           {userOffer.length > 0 ? (
             userOffer.map((offer, index) => (

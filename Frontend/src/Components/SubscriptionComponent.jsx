@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { environment } from '../environment.js';
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import Subscription from './Subscription.jsx';
-import { getUserById } from '../service/ApiService.js';
 
 const SubscriptionComponent = ({ handleAccountCreation }) => {
     const navigate = useNavigate();
@@ -59,8 +58,10 @@ const SubscriptionComponent = ({ handleAccountCreation }) => {
                 <Subscription priceId={environment.halfYearPriceId} onSelected={setSelectedPriceId} isSelected={selectedPriceId === environment.halfYearPriceId} />
                 <Subscription priceId={environment.yearlyPriceId} onSelected={setSelectedPriceId} isSelected={selectedPriceId === environment.yearlyPriceId} />
                 <button className="save-button" onClick={() => {
-                    handleAccountCreation();
-                    handleCheckout()
+                    if (handleAccountCreation != undefined) {
+                        handleAccountCreation();
+                    }
+                    handleCheckout();
                 }}>
                     Subscribe
                 </button>
