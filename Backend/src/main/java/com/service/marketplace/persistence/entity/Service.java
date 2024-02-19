@@ -56,6 +56,6 @@ public class Service extends BaseEntity {
     private String picture;
 
     @Column(name = "is_vip")
-    private String isVip;
+    private boolean isVip;
 
 }

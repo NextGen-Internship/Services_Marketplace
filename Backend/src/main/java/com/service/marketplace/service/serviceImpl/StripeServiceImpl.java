@@ -221,7 +221,7 @@ public class StripeServiceImpl implements StripeService {
                             Map<String, String> metadata = getMetadataFromPaymentIntent(sessionId);
                             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                             System.out.println(metadata);
-                            if (metadata.size() > 0 && metadata.containsKey("serviceType") && "VIP".equals(metadata.get("serviceType"))) {
+                            if (!metadata.isEmpty() && metadata.containsKey("serviceType") && "VIP".equals(metadata.get("serviceType"))) {
                                 System.out.println("===== VIP service detected");
                                 PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
                                         .setCustomer(customerId)
@@ -239,18 +239,9 @@ public class StripeServiceImpl implements StripeService {
 
                                 Optional<com.service.marketplace.persistence.entity.Service> serviceOptional = serviceRepository.findById(serviceId);
 
-                                com.service.marketplace.persistence.entity.Service service = new com.service.marketplace.persistence.entity.Service();
-
-
-                                com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
-                                vipService.setStripeId(latestPaymentIntent.getId());
-                                vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
-                                vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 30L * 24 * 60 * 60) * 1000L));
-                                vipService.setActive(true);
-                                vipService.setService(serviceOptional.get());
-                                serviceRepository.getReferenceById(serviceId).setIsVip("1");
-                                vipServiceRepository.save(vipService);
-
+                                Optional.ofNullable(latestPaymentIntent)
+                                        .filter(paymentIntent -> serviceOptional.isPresent())
+                                        .ifPresent(s -> updateVipService(serviceOptional.get(), s));
 
                                 return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
                             }
@@ -321,6 +312,19 @@ public class StripeServiceImpl implements StripeService {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    private void updateVipService(com.service.marketplace.persistence.entity.Service service, PaymentIntent latestPaymentIntent) {
+        com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
+        vipService.setStripeId(latestPaymentIntent.getId());
+        vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
+        vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 30L * 24 * 60 * 60) * 1000L));
+        vipService.setActive(true);
+        vipService.setService(service);
+
+        service.setVip(true);
+        serviceRepository.save(service);
+        vipServiceRepository.save(vipService);
     }
 
     public ResponseEntity<String> cancelSubscription(String stripeId) {

@@ -36,5 +36,5 @@ public class ServiceRequest {
 
     private List<Integer> cityIds;
 
-    private String isVip;
+    private Boolean isVip;
 }

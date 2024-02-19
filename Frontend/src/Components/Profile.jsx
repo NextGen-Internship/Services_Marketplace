@@ -53,7 +53,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState('');
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [user, setUser] = useState({
+    const [user, setUser] = useState({
     firstName: '',
     lastName: '',
     email: '',
@@ -84,6 +84,8 @@ const Profile = () => {
   });
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
   const [isEditingPicture, setIsEditingPicture] = useState(false);
+  const [service, setService] = useState({ isVip: 0 }); 
+
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -278,6 +280,8 @@ const Profile = () => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
 
+
+
   useEffect(() => {
     const getPictureMethod = async () => {
       const currentUser = await getCurrentUser();
@@ -404,6 +408,10 @@ const Profile = () => {
     <button onClick={() => handleBecomeProviderToggle()}>Become a Provider</button>
   );
 
+  const becomeVipButton = service.isVip === 0 && (
+    <button onClick={() => handleBecomeVIP()}>Become VIP</button>
+    
+  )
 
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
@@ -420,6 +428,7 @@ const Profile = () => {
 
   const handleBecomeVIP = async (serviceId) => {
     const vipPriceId = environment.vipPriceId;
+
 
     const localToken = localStorage.getItem('Jwt_Token');
     if (!localToken) {
@@ -446,10 +455,12 @@ const Profile = () => {
         console.log(response);
         const sessionId = response.data.sessionId;
         const stripe = await loadStripe(environment.stripe);
-        localStorage.setItem("sessionId", sessionId);  //проверяваме дали има sessionId в success page, ako ima -> endpoint v backend i tap suzdavame takuv vipservice object i go zapisvame
+        localStorage.setItem("sessionId", sessionId);  
         if (stripe) {
             stripe.redirectToCheckout({ sessionId });
+            setService(prevService => ({...prevService, isVip: 1}));
         }
+        
     } catch (error) {
         console.error('Error during VIP checkout:', error);
     }
@@ -625,6 +636,16 @@ const Profile = () => {
 
   console.log(editableService);
 
+  // const handleVIPPaymentSuccess = (serviceId) => {
+  //   setUserServices(currentServices => currentServices.map(service => {
+  //     if(service.id === serviceId) {
+  //       return {...service, isVip: 1};
+  //     }
+  //     return service;
+  //   }));
+  // }
+
+
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
@@ -673,9 +694,8 @@ const Profile = () => {
             <p>Description: {service.description}</p>
             <p>Cities: {getCityNamesByIds(service.cityIds)}</p>
             <button onClick={() => editServiceBox(service.id)}>Edit</button>
-            {!hasVipService && (
-            <button onClick={() => handleBecomeVIP(service.id)}>Become VIP</button>
-    )}          </>
+            {becomeVipButton}
+             </>
           )}
         </div>
       </div>
