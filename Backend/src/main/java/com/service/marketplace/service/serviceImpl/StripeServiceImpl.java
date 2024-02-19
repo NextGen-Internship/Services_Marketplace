@@ -245,7 +245,6 @@ public class StripeServiceImpl implements StripeService {
                 break;
             }
             case "customer.subscription.created": {
-                System.out.println("Webhook for created subscription");
                 break;
             }
             case "customer.subscription.deleted": {
