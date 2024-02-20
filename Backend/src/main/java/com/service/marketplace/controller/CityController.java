@@ -20,6 +20,7 @@ public class CityController {
         List<CityResponse> cities = cityService.getAllCities();
         return ResponseEntity.ok(cities);
     }
+
     @GetMapping("/{cityId}")
     public ResponseEntity<CityResponse> getCityById(@PathVariable("cityId") Integer cityId) {
         CityResponse city = cityService.getCityById(cityId);
@@ -30,11 +31,13 @@ public class CityController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PostMapping("/create")
     public ResponseEntity<CityResponse> createCity(@RequestBody CityRequest cityToCreate) {
         CityResponse newCity = cityService.createCity(cityToCreate);
         return ResponseEntity.ok(newCity);
     }
+
     @PutMapping("/update/{cityId}")
     public ResponseEntity<CityResponse> updateCity(@PathVariable("cityId") Integer cityId, @RequestBody CityRequest cityToUpdate) {
         CityResponse updatedCity = cityService.updateCity(cityId, cityToUpdate);
@@ -45,6 +48,7 @@ public class CityController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @DeleteMapping("/delete/{cityId}")
     public ResponseEntity<Void> deleteCity(@PathVariable("cityId") Integer cityId) {
         cityService.deleteCityById(cityId);

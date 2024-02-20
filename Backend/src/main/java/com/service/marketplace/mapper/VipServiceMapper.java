@@ -15,6 +15,7 @@ public interface VipServiceMapper {
 
     @Mapping(target = "serviceId", source = "service.id")
     VipServiceResponse toVipServiceResponse(VipService vipService);
+
     List<VipServiceResponse> toVipServiceResponseList(List<VipService> vipServices);
 
     VipServiceResponse getVipServiceByUserId(Integer userId);

@@ -7,7 +7,6 @@ import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.entity.VipService;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
@@ -204,89 +203,85 @@ public class StripeServiceImpl implements StripeService {
         switch (event.getType()) {
             case "checkout.session.completed": {
                 try {
-                        String sessionId = null;
+                    String sessionId = null;
 
-                            System.out.println("!!! Checking session id...");
-                            Session session = (Session)stripeObject;
-                            sessionId = session.getId();
+                    System.out.println("!!! Checking session id...");
+                    Session session = (Session) stripeObject;
+                    sessionId = session.getId();
 
-                            System.out.println("!!! Session id: " + sessionId);
+                    System.out.println("!!! Session id: " + sessionId);
 
-                        String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
-                        //List<PaymentIntent> paymentIntents;
+                    String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
 
-                        try {
-                            Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
-                            String customerId = customer.getId();
-                            // try {
-                            Map<String, String> metadata = getMetadataFromPaymentIntent(sessionId);
-                            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                            System.out.println(metadata);
-                            if (!metadata.isEmpty() && metadata.containsKey("serviceType") && "VIP".equals(metadata.get("serviceType"))) {
-                                System.out.println("===== VIP service detected");
-                                PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
-                                        .setCustomer(customerId)
-                                        .build();
-                                PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
-
-                                // Optionally find the latest if necessary, but currentPaymentIntent is already the latest.
-                                PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
-                                        .max(Comparator.comparing(PaymentIntent::getCreated))
-                                        .orElse(null);
-                                System.out.println(latestPaymentIntent);
-
-                                String serviceIdString = metadata.get("serviceId");
-                                Integer serviceId = Integer.parseInt(serviceIdString);
-
-                                Optional<com.service.marketplace.persistence.entity.Service> serviceOptional = serviceRepository.findById(serviceId);
-
-                                Optional.ofNullable(latestPaymentIntent)
-                                        .filter(paymentIntent -> serviceOptional.isPresent())
-                                        .ifPresent(s -> updateVipService(serviceOptional.get(), s));
-
-                                return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
-                            }
-                        } catch (StripeException e) {
-                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-                        }
-
-
-                    Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
-                    String customerId = customer.getId();
-
-                    List<Subscription> subscriptions;
                     try {
-                        subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
+                        Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
+                        String customerId = customer.getId();
+
+                        Map<String, String> metadata = getMetadataFromPaymentIntent(sessionId);
+                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        System.out.println(metadata);
+                        if (!metadata.isEmpty() && metadata.containsKey("serviceType") && "VIP".equals(metadata.get("serviceType"))) {
+                            System.out.println("===== VIP service detected");
+                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
+                                    .setCustomer(customerId)
+                                    .build();
+                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
+
+                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
+                                    .max(Comparator.comparing(PaymentIntent::getCreated))
+                                    .orElse(null);
+                            System.out.println(latestPaymentIntent);
+
+                            String serviceIdString = metadata.get("serviceId");
+                            Integer serviceId = Integer.parseInt(serviceIdString);
+
+                            Optional<com.service.marketplace.persistence.entity.Service> serviceOptional = serviceRepository.findById(serviceId);
+
+                            Optional.ofNullable(latestPaymentIntent)
+                                    .filter(paymentIntent -> serviceOptional.isPresent())
+                                    .ifPresent(s -> updateVipService(serviceOptional.get(), s));
+
+                            return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
+                        } else {
+
+                            List<Subscription> subscriptions;
+                            try {
+                                subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
+                            } catch (StripeException e) {
+                                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+                            }
+
+                            boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
+                            User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+                            if (hasActiveSubscription) {
+                                if (userToBeUpdated != null) {
+                                    userService.updateUserRoleToProvider(userToBeUpdated.getId());
+                                }
+                            }
+
+                            long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
+                            long currentPeriodEnd = subscriptions.get(0).getCurrentPeriodEnd();
+
+                            java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
+                            java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
+
+                            String subscriptionStatus = subscriptions.get(0).getStatus();
+                            boolean isActive = "active".equals(subscriptionStatus);
+
+                            com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
+                            subscription.setStripeId(subscriptions.get(0).getId());
+                            subscription.setStartDate(startDate);
+                            subscription.setEndDate(endDate);
+                            subscription.setUser(userToBeUpdated);
+                            subscription.setActive(isActive);
+
+                            subscriptionRepository.save(subscription);
+                        }
                     } catch (StripeException e) {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
                     }
 
-                    boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
-                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
-                    if (hasActiveSubscription) {
-                        if (userToBeUpdated != null) {
-                            userService.updateUserRoleToProvider(userToBeUpdated.getId());
-                        }
-                    }
-
-                    long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
-                    long currentPeriodEnd = subscriptions.get(0).getCurrentPeriodEnd();
-
-                    java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
-                    java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
-
-                    String subscriptionStatus = subscriptions.get(0).getStatus();
-                    boolean isActive = "active".equals(subscriptionStatus);
-
-                    com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
-                    subscription.setStripeId(subscriptions.get(0).getId());
-                    subscription.setStartDate(startDate);
-                    subscription.setEndDate(endDate);
-                    subscription.setUser(userToBeUpdated);
-                    subscription.setActive(isActive);
-
-                    subscriptionRepository.save(subscription);
-                } catch (StripeException e) {
+                } catch (RuntimeException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
                 }
 
@@ -414,14 +409,14 @@ public class StripeServiceImpl implements StripeService {
 
         for (com.service.marketplace.persistence.entity.VipService vipService : vipServices) {
             try {
-                PaymentIntent stripeVipService= PaymentIntent.retrieve(vipService.getStripeId());
+                PaymentIntent stripeVipService = PaymentIntent.retrieve(vipService.getStripeId());
 
-                    com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(vipService.getService().getId()).orElse(null);
-                    service.setVip(false);
-                    serviceRepository.save(service);
+                com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(vipService.getService().getId()).orElse(null);
+                service.setVip(false);
+                serviceRepository.save(service);
 
-                    vipService.setActive(false);
-                    vipServiceRepository.save(vipService);
+                vipService.setActive(false);
+                vipServiceRepository.save(vipService);
 
             } catch (StripeException e) {
                 System.err.println("Error: " + e.getMessage());

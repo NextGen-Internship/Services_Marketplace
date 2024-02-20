@@ -1,9 +1,6 @@
 package com.service.marketplace.controller;
 
-import com.service.marketplace.dto.response.ServiceResponse;
-import com.service.marketplace.dto.response.SubscriptionResponse;
 import com.service.marketplace.dto.response.VipServiceResponse;
-import com.service.marketplace.service.SubscriptionService;
 import com.service.marketplace.service.VipServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -3,8 +3,10 @@ package com.service.marketplace.persistence.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-;
+
 import java.util.Date;
+
+;
 
 @Entity
 @Data
