@@ -1,7 +1,9 @@
 package com.service.marketplace.service;
 
+import com.service.marketplace.dto.request.OfferRequest;
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -17,4 +19,6 @@ public interface RequestService {
     void deleteRequestById(Integer requestId);
 
     List<RequestResponse> getRequestsByProvider();
+
+    ResponseEntity<String> cancelRequest(RequestToCreateDto requestDto, Integer requestId);
 }

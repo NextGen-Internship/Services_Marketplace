@@ -1,5 +1,6 @@
 package com.service.marketplace.persistence.entity;
 
+import com.service.marketplace.persistence.enums.OfferStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,9 +28,10 @@ public class Request extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    //TODO: make this enum
-    @Column(name = "is_active")
-    private boolean isActive = true;
+
+    @Column(name = "request_status")
+    @Enumerated(EnumType.STRING)
+    private OfferStatus requestStatus ;
 
     @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne

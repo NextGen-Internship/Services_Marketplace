@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import axios from 'axios';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { environment } from '../environment.js';
@@ -9,6 +10,7 @@ export const OfferBox = ({ offer }) => {
     const [provider, setProvide] = useState('');
     const [service, setService] = useState('');
     const [request, setRequest] = useState();
+   
     const productRequest = {
         description: offer.description,
         price: offer.price,
@@ -21,6 +23,8 @@ export const OfferBox = ({ offer }) => {
     const handleShowOffers = () => {
         setShowOffers(!showOffers);
     }
+
+    console.log(offer.requestId)
 
     useEffect(() => {
         const fetchCurrentUser = async () => {
@@ -77,27 +81,61 @@ export const OfferBox = ({ offer }) => {
                 });
             }
 
-            } catch (error) {
+        } catch (error) {
 
-                console.log('Error creating payment', error)
-            }
-
+            console.log('Error creating payment', error)
         }
 
-    return (
-            <div>
-                <div key={offer.id} className="offers-box">
-                    <p>Provider: {provider}</p>
-                    <p>Service: {service}</p>
-                    <p>Description: {offer.description}</p>
-                    <p>Price: {offer.price}</p>
-
-                    <button onClick={handleOfferPayment}>Pay</button>
-                    <br></br>
-                    <button>Cancel Offer</button>
-                </div>
-            </div>
-        )
     }
+    const [Offer, setOffer] = useState({
+        request_id: offer.requestId,
+        provider_id: offer.providerId,
+        description: offer.description,
+        price: offer.price,
+        offerStatus: offer.offerStatus
+    });
+
+    const cancelOffer = async (offerId, Offer) => {
+        try {
+            const response = await axios.post(`http://localhost:8080/v1/offer/cancel/${offerId}`, Offer);
+            console.log('Offer cancelled:', response.data);
+        } catch (error) {
+            console.error('Error cancelling offer:', error);
+        }
+    };
+
+    const handleDeclineOffer = async () => {
+       
+        if (offer.requestId) {
+            console.log("we are here man")
+            setOffer
+                ({
+                    request_id: offer.requestId,
+                    provider_id: offer.providerId,
+                    description: offer.description,
+                    price: offer.price,
+                    offerStatus: 'DECLINED'
+                })
+            cancelOffer(offer.requestId, Offer);
+        } else {
+            console.error('No offer ID found');
+        }
+    };
+
+    return (
+        <div>
+            <div key={offer.id} className="offers-box">
+                <p>Provider: {provider}</p>
+                <p>Service: {service}</p>
+                <p>Description: {offer.description}</p>
+                <p>Price: {offer.price}</p>
+
+                <button onClick={handleOfferPayment}>Pay</button>
+                <br></br>
+                <button onClick={handleDeclineOffer}>Cancel Offer</button>
+            </div>
+        </div>
+    )
+}
 
 

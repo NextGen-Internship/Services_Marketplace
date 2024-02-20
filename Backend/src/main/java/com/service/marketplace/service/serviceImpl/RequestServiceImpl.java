@@ -1,8 +1,10 @@
 package com.service.marketplace.service.serviceImpl;
 
+import com.service.marketplace.dto.request.OfferRequest;
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.mapper.RequestMapper;
+import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RequestRepository;
@@ -12,6 +14,7 @@ import com.service.marketplace.service.RequestService;
 import com.service.marketplace.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -81,5 +84,17 @@ public class RequestServiceImpl implements RequestService {
 
         }
         return requestMapper.toRequestResponseList(requests);
+    }
+
+    public ResponseEntity<String> cancelRequest(RequestToCreateDto requestDto, Integer requestId) {
+        try {
+            Request existingRequest = requestRepository.findById(requestId).orElse(null);
+            existingRequest.setRequestStatus(requestDto.getRequestStatus());
+            requestRepository.save(existingRequest);
+        } catch (Exception e) {
+            System.err.println("Request update error: " + e.getMessage());
+        }
+
+        return null;
     }
 }

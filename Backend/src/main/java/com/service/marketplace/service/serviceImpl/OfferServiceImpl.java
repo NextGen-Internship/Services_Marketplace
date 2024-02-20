@@ -6,6 +6,7 @@ import com.service.marketplace.mapper.OfferMapper;
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.OfferStatus;
 import com.service.marketplace.persistence.repository.OfferRepository;
 import com.service.marketplace.persistence.repository.RequestRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
@@ -13,6 +14,7 @@ import com.service.marketplace.service.OfferService;
 import com.service.marketplace.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -68,6 +70,17 @@ public class OfferServiceImpl implements OfferService {
             offers.addAll(requestOffer);
         }
         return offerMapper.toOfferResponseList(offers);
+    }
+
+    public ResponseEntity<String> cancelOffer(OfferRequest offerRequest,Integer offerId) {
+        try {
+            Offer existingOffer = offerRepository.findById(offerId).orElse(null);
+            existingOffer.setOfferStatus(offerRequest.getOfferStatus());
+            offerRepository.save(existingOffer);
+        } catch (Exception e) {
+            System.err.println("Offer update error: " + e.getMessage());
+        }
+        return null;
     }
 }
 

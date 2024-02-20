@@ -1,5 +1,6 @@
 package com.service.marketplace.controller;
 
+import com.service.marketplace.dto.request.OfferRequest;
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.service.RequestService;
@@ -59,5 +60,10 @@ public class RequestController {
     public ResponseEntity<List<RequestResponse>> getRequestsByProvider() {
         List<RequestResponse> requests = requestService.getRequestsByProvider();
         return ResponseEntity.ok(requests);
+    }
+
+    @PostMapping("/cancel/{requestId}")
+    public ResponseEntity<String> cancelRequest(@RequestBody RequestToCreateDto requestDto, @PathVariable("requestId") Integer requestId) {
+        return requestService.cancelRequest(requestDto, requestId);
     }
 }

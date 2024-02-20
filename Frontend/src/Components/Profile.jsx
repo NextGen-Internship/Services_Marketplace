@@ -550,10 +550,7 @@ const Profile = () => {
   const showRequestsButton = (
     <button onClick={handleRequest}>Requests</button>
   );
-  // const handleRequestDetails = (request) => {
-  //   setSelectedRequest(request);
-  //   // You can perform additional actions here if needed
-  // };
+ 
 
   console.log(editableService);
 
