@@ -13,15 +13,15 @@ const Footer = () => {
       <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Play&display=swap" rel="stylesheet" />
 
       <footer>
-        <div class="footer">
-          <div class="row">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-instagram"></i></a>
-            <a href="#"><i class="fa fa-youtube"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
+        <div className="footer">
+          <div className="row">
+            <a href="#"><i className="fa fa-facebook"></i></a>
+            <a href="#"><i className="fa fa-instagram"></i></a>
+            <a href="#"><i className="fa fa-youtube"></i></a>
+            <a href="#"><i className="fa fa-twitter"></i></a>
           </div>
 
-          <div class="row">
+          <div className="row">
             <ul>
               <li><Link to="/contact-us">Contact us</Link></li>
               <li><a href="services">Our Services</a></li>
@@ -31,7 +31,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div class="row">
+          <div className="row">
             Blankfactor Copyright © 2024 Blankfactor - All rights reserved
           </div>
         </div>
