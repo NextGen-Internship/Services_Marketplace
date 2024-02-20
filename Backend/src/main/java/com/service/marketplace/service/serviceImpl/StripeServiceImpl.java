@@ -314,7 +314,7 @@ public class StripeServiceImpl implements StripeService {
         com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
         vipService.setStripeId(latestPaymentIntent.getId());
         vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
-        vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 60) * 1000L));
+        vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 14L * 24 * 60 * 60) * 1000L));
         vipService.setActive(true);
         vipService.setService(service);
 
