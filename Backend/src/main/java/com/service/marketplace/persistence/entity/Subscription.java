@@ -27,4 +27,7 @@ public class Subscription extends BaseEntity {
 
     @Column(name = "stripe_id", nullable = false)
     private String stripeId;
+
+    @Column(name = "isCancelled")
+    private boolean isCancelled = false;
 }

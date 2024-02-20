@@ -48,6 +48,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState('');
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState();
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
@@ -135,11 +136,7 @@ const Profile = () => {
     }
 
     const decodedToken = jwtDecode(localToken);
-
-    console.log(decodedToken);
-
     const userId = decodedToken['jti'];
-    console.log(userId);
 
     if (!userId) {
       console.error('No user email found');
@@ -155,13 +152,10 @@ const Profile = () => {
       roles: user.roles,
       stripeAccountId: user.stripeAccountId
     };
-    console.log(updatedUserData);
 
     try {
       const updatedUser = await updateCurrentUser(updatedUserData, localFile);
-      console.log(updatedUser.picture);
       setProfilePicture(updatedUser.picture);
-      console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
     } catch (error) {
@@ -192,73 +186,72 @@ const Profile = () => {
 
         setPreviewVisible(true);
         setIsEditingPicture(false);
-        console.log('Profile picture updated successfully');
       } catch (error) {
         console.error('Error updating profile picture:', error);
       }
     }
   };
 
-  const handleBecomeProvider = async (newRole) => {
-    setShowServices(false);
-    setShowPersonalInfo(false);
-    console.log('Request to become a provider sent');
+  // const handleBecomeProvider = async (newRole) => {
+  //   setShowServices(false);
+  //   setShowPersonalInfo(false);
+  //   console.log('Request to become a provider sent');
 
-    const localToken = localStorage.getItem('Jwt_Token');
-    if (!localToken) {
-      console.error('No token found');
-      navigate('/login');
-      return;
-    }
+  //   const localToken = localStorage.getItem('Jwt_Token');
+  //   if (!localToken) {
+  //     console.error('No token found');
+  //     navigate('/login');
+  //     return;
+  //   }
 
-    const decodedToken = jwtDecode(localToken);
-    const userId = decodedToken['jti'];
-    if (!userId) {
-      console.error('No user ID found');
-      navigate('/login');
-      return;
-    }
+  //   const decodedToken = jwtDecode(localToken);
+  //   const userId = decodedToken['jti'];
+  //   if (!userId) {
+  //     console.error('No user ID found');
+  //     navigate('/login');
+  //     return;
+  //   }
 
-    try {
-      const response = await updateUserRole(userId, newRole);
-      console.log("Request data:", { userId, newRole });
+  //   try {
+  //     const response = await updateUserRole(userId, newRole);
+  //     console.log("Request data:", { userId, newRole });
 
-      console.log('User role updated successfully:', response);
+  //     console.log('User role updated successfully:', response);
 
-      //setUser(prevUser => ({ ...prevUser, roles: prevUser.roles.push() }));
-      setUser(await getCurrentUser())
-      console.log('Updated role:', newRole);
-      console.log('User role:', user.roles);
+  //     //setUser(prevUser => ({ ...prevUser, roles: prevUser.roles.push() }));
+  //     setUser(await getCurrentUser())
+  //     console.log('Updated role:', newRole);
+  //     console.log('User role:', user.roles);
 
-      if (isProvider(user)) {
-        setShowPersonalInfo(true);
-        setShowServices(true);
-        setBecomeProviderBtn(false);
-      }
+  //     if (isProvider(user)) {
+  //       setShowPersonalInfo(true);
+  //       setShowServices(true);
+  //       setBecomeProviderBtn(false);
+  //     }
 
-    } catch (error) {
-      console.error('Error updating user role:', error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error updating user role:', error);
+  //   }
+  // };
 
-  const handlePhoneChange = (phone) => {
-    setPhoneNumber(phone);
-    setUser(current => ({ ...current, phoneNumber: phone }));
-  };
+  // const handlePhoneChange = (phone) => {
+  //   setPhoneNumber(phone);
+  //   setUser(current => ({ ...current, phoneNumber: phone }));
+  // };
 
   const isProvider = (usr) => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
 
-  useEffect(() => {
-    const getPictureMethod = async () => {
-      const currentUser = await getCurrentUser();
-      const picUrl = currentUser.picture;
-      console.log('polled url', picUrl);
-      setProfilePicture(picUrl);
-      setUser(prevUser => ({ ...prevUser, picture: picUrl }));
-    };
-  }, []);
+  // useEffect(() => {
+  //   const getPictureMethod = async () => {
+  //     const currentUser = await getCurrentUser();
+  //     const picUrl = currentUser.picture;
+  //     console.log('polled url', picUrl);
+  //     setProfilePicture(picUrl);
+  //     setUser(prevUser => ({ ...prevUser, picture: picUrl }));
+  //   };
+  // }, []);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -292,7 +285,6 @@ const Profile = () => {
 
       try {
         const updatedUserData = await getCurrentUser();
-        console.log('User data:', updatedUserData);
         setUser(updatedUserData);
 
         if (isProvider(updatedUserData)) {
@@ -319,7 +311,6 @@ const Profile = () => {
     const getPictureMethod = async () => {
       const currentUser = await getCurrentUser();
       const picUrl = currentUser.picture;
-      console.log('polled url', picUrl);
       setProfilePicture(picUrl);
       setUser(prevUser => ({ ...prevUser, picture: picUrl }));
     };
@@ -337,14 +328,9 @@ const Profile = () => {
         const userData = await getCurrentUser();
         setUser(userData);
         setPhoneNumber(userData.phoneNumber);
-        console.log('User data:');
-        console.log(userData);
 
         if (user.picture !== defaultImageUrl) {
-          console.log("custom avatar!")
           await getPictureMethod();
-          console.log('User Avatar img: ', user.picture)
-          console.log(profilePicture);
         }
         else {
           console.log("default");
@@ -468,8 +454,8 @@ const Profile = () => {
   const fetchSubscription = async (userId) => {
     try {
       const response = await getSubscriptionByUserId(userId);
-      console.log(response);
       setSubscriptionId(response.stripeId);
+      setIsButtonDisabled(response.cancelled);
     } catch (error) {
       console.error('Error fetching subscription data:', error);
     }
@@ -477,6 +463,7 @@ const Profile = () => {
 
   const handleSubscriptionCancel = async () => {
     if (subscriptionId) {
+      setIsButtonDisabled(true);
       cancelSubscription(subscriptionId);
     } else {
       console.error('No subscription ID found');
@@ -552,13 +539,6 @@ const Profile = () => {
   const showRequestsButton = (
     <button onClick={handleRequest}>Requests</button>
   );
-  // const handleRequestDetails = (request) => {
-  //   setSelectedRequest(request);
-  //   // You can perform additional actions here if needed
-  // };
-
-  console.log(editableService);
-
 
   const renderServiceBox = (service) => {
     const isEditing = serviceBoxIdToEdit === service.id;
@@ -637,7 +617,7 @@ const Profile = () => {
       </div>
       {isProvider(user) &&
         (<div className="provider-info">
-          <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
+          <button className='save-button' onClick={handleSubscriptionCancel} disabled={isButtonDisabled} >Cancel Subscription</button>
         </div>)
       }
       {isEditingPicture && (

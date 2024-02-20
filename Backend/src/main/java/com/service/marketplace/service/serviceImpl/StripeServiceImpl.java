@@ -160,7 +160,6 @@ public class StripeServiceImpl implements StripeService {
         }
     }
 
-
     @Override
     public String getProductPrice(String priceId) {
         Stripe.apiKey = stripeApiKey;
@@ -263,6 +262,9 @@ public class StripeServiceImpl implements StripeService {
                         SubscriptionUpdateParams.builder().setCancelAtPeriodEnd(true).build();
 
                 Subscription canceledSubscription = subscription.update(params);
+                com.service.marketplace.persistence.entity.Subscription existingSubscription = subscriptionRepository.findByStripeId(stripeId);
+                existingSubscription.setCancelled(true);
+                subscriptionRepository.save(existingSubscription);
 
                 if (canceledSubscription.getCancelAtPeriodEnd()) {
                     return ResponseEntity.ok("Subscription is successfully canceled.");
@@ -304,7 +306,7 @@ public class StripeServiceImpl implements StripeService {
     public void checkSubscriptionsStatus() {
         Stripe.apiKey = stripeApiKey;
 
-        List<com.service.marketplace.persistence.entity.Subscription> subscriptions = subscriptionRepository.findAll();
+        List<com.service.marketplace.persistence.entity.Subscription> subscriptions = subscriptionRepository.findByIsActiveTrue();
 
         for (com.service.marketplace.persistence.entity.Subscription subscription : subscriptions) {
             try {
@@ -319,9 +321,7 @@ public class StripeServiceImpl implements StripeService {
                     Set<Role> userRoles = user.getRoles();
                     Role role = new Role("PROVIDER");
                     userRoles.remove(role);
-
                     user.setRoles(userRoles);
-
                     userRepository.save(user);
                 }
             } catch (StripeException e) {

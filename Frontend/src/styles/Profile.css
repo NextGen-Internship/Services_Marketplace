@@ -256,3 +256,9 @@
     background-color: #f2f2f2;
     border-radius: 5px;
 }
+
+.save-button[disabled] {
+    background-color: #879098;
+    color: #ffffff;
+    cursor: not-allowed;
+  }
