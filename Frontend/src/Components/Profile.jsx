@@ -340,7 +340,6 @@ const Profile = () => {
         console.error('Error fetching user data:', error);
       }
     };
-    console.log('Fetched user role:', user.roles);
 
     fetchUserData();
   }, [profilePicture]);
