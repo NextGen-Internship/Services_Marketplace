@@ -439,6 +439,7 @@ public class StripeServiceImpl implements StripeService {
                         .build())
                 .putMetadata("serviceType", "VIP")
                 .putMetadata("serviceId", checkout.getServiceId())
+                .setCustomerEmail(checkout.getEmail())
                 .build();
 
 
