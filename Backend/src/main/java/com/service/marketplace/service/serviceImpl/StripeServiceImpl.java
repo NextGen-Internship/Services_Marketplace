@@ -7,6 +7,7 @@ import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.entity.VipService;
 import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
@@ -318,7 +319,7 @@ public class StripeServiceImpl implements StripeService {
         com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
         vipService.setStripeId(latestPaymentIntent.getId());
         vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
-        vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 30L * 24 * 60 * 60) * 1000L));
+        vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 60) * 1000L));
         vipService.setActive(true);
         vipService.setService(service);
 
@@ -399,6 +400,29 @@ public class StripeServiceImpl implements StripeService {
 
                     userRepository.save(user);
                 }
+            } catch (StripeException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+    }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void checkVipServiceStatus() {
+        Stripe.apiKey = stripeApiKey;
+
+        List<com.service.marketplace.persistence.entity.VipService> vipServices = vipServiceRepository.findAll();
+
+        for (com.service.marketplace.persistence.entity.VipService vipService : vipServices) {
+            try {
+                PaymentIntent stripeVipService= PaymentIntent.retrieve(vipService.getStripeId());
+
+                    com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(vipService.getService().getId()).orElse(null);
+                    service.setVip(false);
+                    serviceRepository.save(service);
+
+                    vipService.setActive(false);
+                    vipServiceRepository.save(vipService);
+
             } catch (StripeException e) {
                 System.err.println("Error: " + e.getMessage());
             }

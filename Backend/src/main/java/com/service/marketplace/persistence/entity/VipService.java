@@ -27,23 +27,5 @@ public class VipService extends BaseEntity {
     @Column(name = "stripe_id", nullable = false)
     private String stripeId;
 
-    public void setActive(boolean active) {
-        isActive = true;
-    }
 
-    public Service getService() {
-        return service;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public String getStripeId() {
-        return stripeId;
-    }
 }
