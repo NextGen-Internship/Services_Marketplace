@@ -2,6 +2,9 @@ package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.FilesRequest;
 import com.service.marketplace.dto.response.FilesResponse;
+import com.service.marketplace.exception.FileNotFoundException;
+import com.service.marketplace.exception.ReviewNotFoundException;
+import com.service.marketplace.exception.ServiceNotFoundException;
 import com.service.marketplace.mapper.FilesMapper;
 import com.service.marketplace.persistence.entity.Files;
 import com.service.marketplace.persistence.entity.Review;
@@ -35,13 +38,13 @@ public class FilesServiceImpl implements FilesService {
 
     @Override
     public FilesResponse getFileById(Integer fileId) {
-        Files file = filesRepository.findById(fileId).orElse(null);
+        Files file = filesRepository.findById(fileId).orElseThrow(() -> new FileNotFoundException(fileId));
 
-        if (file != null) {
+        //if (file != null) {
             return filesMapper.filesToFilesResponse(file);
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
     }
     @Override
     public FilesResponse createFile(FilesRequest fileToCreate) {
@@ -50,9 +53,9 @@ public class FilesServiceImpl implements FilesService {
         com.service.marketplace.persistence.entity.Service service = null;
 
         if (fileToCreate.getReviewId() != null) {
-            review = reviewRepository.findById(fileToCreate.getReviewId()).orElse(null);
+            review = reviewRepository.findById(fileToCreate.getReviewId()).orElseThrow(() -> new ReviewNotFoundException());
         } else if (fileToCreate.getServiceId() != null) {
-            service = serviceRepository.findById(fileToCreate.getServiceId()).orElse(null);
+            service = serviceRepository.findById(fileToCreate.getServiceId()).orElseThrow(() -> new ServiceNotFoundException());
         }
 
         Files newFile = null;
@@ -84,27 +87,27 @@ public class FilesServiceImpl implements FilesService {
 
     @Override
     public List<FilesResponse> getFilesByServiceId(Integer serviceId) {
-        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElse(null);
+        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElseThrow(() -> new ServiceNotFoundException());
 
-        if (service != null) {
+        //if (service != null) {
             List<Files> serviceFiles = filesRepository.findByService(service);
 
             return filesMapper.toFilesResponseList(serviceFiles);
-        } else {
-            return Collections.emptyList();
-        }
+//        } else {
+//            return Collections.emptyList();
+//        }
     }
 
     @Override
     public List<FilesResponse> getFilesByReviewId(Integer reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElse(null);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException(reviewId));
 
-        if (review != null) {
+       // if (review != null) {
             List<Files> reviewFiles = filesRepository.findByReview(review);
 
             return filesMapper.toFilesResponseList(reviewFiles);
-        } else {
-            return Collections.emptyList();
-        }
+//        } else {
+//            return Collections.emptyList();
+//        }
     }
 }

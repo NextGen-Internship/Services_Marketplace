@@ -3,6 +3,9 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.FilesRequest;
 import com.service.marketplace.dto.request.ReviewRequest;
 import com.service.marketplace.dto.response.ReviewResponse;
+import com.service.marketplace.exception.ReviewNotFoundException;
+import com.service.marketplace.exception.ServiceNotFoundException;
+import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.mapper.ReviewMapper;
 import com.service.marketplace.persistence.entity.Review;
 import com.service.marketplace.persistence.entity.User;
@@ -36,19 +39,19 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewResponse getReviewById(Integer reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElse(null);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException(reviewId));
 
-        if (review != null) {
+        //if (review != null) {
             return reviewMapper.reviewToReviewResponse(review);
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
     }
 
     @Override
     public ReviewResponse createReview(ReviewRequest reviewToCreate, MultipartFile[] files) {
-        User customer = userRepository.findById(reviewToCreate.getCustomerId()).orElse(null);
-        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(reviewToCreate.getServiceId()).orElse(null);
+        User customer = userRepository.findById(reviewToCreate.getCustomerId()).orElseThrow(() -> new UserNotFoundException());
+        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(reviewToCreate.getServiceId()).orElseThrow(() -> new ServiceNotFoundException());
 
         Review newReview = reviewMapper.reviewRequestToReview(reviewToCreate, customer, service);
         ReviewResponse reviewResponse = reviewMapper.reviewToReviewResponse(reviewRepository.save(newReview));
@@ -65,20 +68,20 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewResponse updateReview(Integer reviewId, ReviewRequest reviewToUpdate) {
-        Review existingReview = reviewRepository.findById(reviewId).orElse(null);
-        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(reviewToUpdate.getServiceId()).orElse(null);
+        Review existingReview = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException(reviewId));
+        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(reviewToUpdate.getServiceId()).orElseThrow(() -> new ServiceNotFoundException());
 
         Review updatedReview = reviewMapper.reviewRequestToReview(reviewToUpdate, service);
 
-        if (existingReview != null) {
+       // if (existingReview != null) {
             existingReview.setDescription(updatedReview.getDescription());
             existingReview.setRating(updatedReview.getRating());
             existingReview.setUpdatedAt(updatedReview.getUpdatedAt());
 
             return reviewMapper.reviewToReviewResponse(reviewRepository.save(existingReview));
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
     }
 
     @Override
@@ -88,7 +91,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<ReviewResponse> getReviewByUserId(Integer userId) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
         if (user != null) {
             List<Review> userReviews = reviewRepository.findByCustomer(user);
@@ -101,14 +104,14 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<ReviewResponse> getReviewByServiceId(Integer serviceId) {
-        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElse(null);
+        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElseThrow(() -> new ServiceNotFoundException());
 
-        if (service != null) {
+        //if (service != null) {
             List<Review> serviceReviews = reviewRepository.findByService(service);
 
             return reviewMapper.toReviewResponseList(serviceReviews);
-        } else {
-            return Collections.emptyList();
-        }
+//        } else {
+//            return Collections.emptyList();
+//        }
     }
 }

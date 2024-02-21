@@ -20,6 +20,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl implements JwtService {
+    //NOTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @Value("${jwt.secret.key}")
     private String secretKey;
 

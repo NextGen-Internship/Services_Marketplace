@@ -30,7 +30,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public SubscriptionResponse getSubscriptionById(Integer subscriptionId) {
+    public SubscriptionResponse getSubscriptionById(Integer subscriptionId) { //YES
         Subscription subscription = subscriptionRepository.findById(subscriptionId).orElseThrow(() -> new SubscriptionNotFoundException(subscriptionId));
 
         //return (subscription != null) ? subscriptionMapper.subscriptionToSubscriptionResponse(subscription) : null;
@@ -42,7 +42,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public SubscriptionResponse getSubscriptionByUserId(Integer userId) {
+    public SubscriptionResponse getSubscriptionByUserId(Integer userId) {  //YES
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         if (user != null) {

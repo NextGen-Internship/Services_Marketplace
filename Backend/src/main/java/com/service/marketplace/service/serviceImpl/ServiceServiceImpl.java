@@ -4,6 +4,8 @@ import com.service.marketplace.dto.request.FilesRequest;
 import com.service.marketplace.dto.request.ServiceFilterRequest;
 import com.service.marketplace.dto.request.ServiceRequest;
 import com.service.marketplace.dto.response.ServiceResponse;
+import com.service.marketplace.exception.ServiceNotFoundException;
+import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.mapper.ServiceMapper;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.entity.City;
@@ -46,7 +48,7 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public ServiceResponse getServiceById(Integer serviceId) {
-        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElse(null);
+        com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(serviceId).orElseThrow(() -> new ServiceNotFoundException(serviceId));
 
         if (service != null) {
             return serviceMapper.serviceToServiceResponse(service);
@@ -57,9 +59,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public ServiceResponse createService(ServiceRequest serviceToCreate, MultipartFile[] files) {
-        List<City> cities = cityRepository.findAllById(serviceToCreate.getCityIds());
-        User provider = userRepository.findById(serviceToCreate.getProviderId()).orElse(null);
-        Category category = categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null);
+        List<City> cities = cityRepository.findAllById(serviceToCreate.getCityIds()); //!!!!!!!!!!!!!!!!!
+        User provider = userRepository.findById(serviceToCreate.getProviderId()).orElseThrow(() -> new UserNotFoundException());
+        Category category = categoryRepository.findById(serviceToCreate.getCategoryId()).orElse(null); //!!!!!!!!!!!!!!!!!!
 
         com.service.marketplace.persistence.entity.Service newService = serviceMapper.serviceRequestToService(serviceToCreate, provider, category, cities);
 
@@ -75,13 +77,13 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public ServiceResponse updateService(Integer serviceId, ServiceRequest serviceToUpdate) {
-        com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(serviceId).orElse(null);
-        Category category = categoryRepository.findById(serviceToUpdate.getCategoryId()).orElse(null);
-        List<City> cities = cityRepository.findAllById(serviceToUpdate.getCityIds());
+        com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(serviceId).orElseThrow(() -> new ServiceNotFoundException(serviceId));
+        Category category = categoryRepository.findById(serviceToUpdate.getCategoryId()).orElse(null);//!!!!!!!!!!!!!!!!!
+        List<City> cities = cityRepository.findAllById(serviceToUpdate.getCityIds());//!!!!!!!!!!!!!!
 
         com.service.marketplace.persistence.entity.Service updatedService = serviceMapper.serviceRequestToService(serviceToUpdate, category, cities);
 
-        if (existingService != null) {
+        //if (existingService != null) {
             existingService.setTitle(updatedService.getTitle());
             existingService.setDescription(updatedService.getDescription());
             existingService.setServiceStatus(updatedService.getServiceStatus());
@@ -91,9 +93,9 @@ public class ServiceServiceImpl implements ServiceService {
             existingService.setUpdatedAt(updatedService.getUpdatedAt());
 
             return serviceMapper.serviceToServiceResponse(serviceRepository.save(existingService));
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
     }
 
     @Override
@@ -129,20 +131,20 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public List<ServiceResponse> getServicesByUserId(Integer userId) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
-        if (user != null) {
+       // if (user != null) {
             List<com.service.marketplace.persistence.entity.Service> userServices = serviceRepository.findByProvider(user);
 
             return serviceMapper.toServiceResponseList(userServices);
-        } else {
-            return Collections.emptyList();
-        }
+//        } else {
+//            return Collections.emptyList();
+//        }
     }
 
     @Override
     public List<ServiceResponse> getServicesByCategory(Integer categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElse(null);
+        Category category = categoryRepository.findById(categoryId).orElse(null);//!!!!!!!!!!!!!!!!!!!!!!!!!
 
         if (category != null) {
             List<com.service.marketplace.persistence.entity.Service> categoryServices = serviceRepository.findByCategory(category);

@@ -2,6 +2,7 @@ package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.CityRequest;
 import com.service.marketplace.dto.response.CityResponse;
+import com.service.marketplace.exception.CityNotFoundException;
 import com.service.marketplace.mapper.CityMapper;
 import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.repository.CityRepository;
@@ -26,9 +27,11 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public CityResponse getCityById(Integer cityId) {
-        City city = cityRepository.findById(cityId).orElse(null);
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
 
-        return (city != null) ? cityMapper.cityToCityResponse(city) : null;
+        return
+                //(city != null) ?
+                        cityMapper.cityToCityResponse(city); //: null;
     }
 
     @Override
@@ -40,19 +43,19 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public CityResponse updateCity(Integer cityId, CityRequest cityToUpdate) {
-        City existingCity = cityRepository.findById(cityId).orElse(null);
+        City existingCity = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
 
         City updatedCity = cityMapper.cityRequestToCity(cityToUpdate);
 
-        if (existingCity != null) {
+        //if (existingCity != null) {
             existingCity.setName(updatedCity.getName());
             existingCity.setZipCode(updatedCity.getZipCode());
             existingCity.setAddress(updatedCity.getAddress());
 
             return cityMapper.cityToCityResponse(cityRepository.save(existingCity));
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
     }
 
     @Override

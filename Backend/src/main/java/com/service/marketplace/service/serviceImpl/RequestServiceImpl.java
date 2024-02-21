@@ -2,6 +2,9 @@ package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
+import com.service.marketplace.exception.RequestNotFoundException;
+import com.service.marketplace.exception.ServiceNotFoundException;
+import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.mapper.RequestMapper;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
@@ -36,17 +39,17 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestResponse getRequestById(Integer requestId) {
-        Request requestEntity = requestRepository.findById(requestId).orElse(null);
-        if (requestEntity != null) {
+        Request requestEntity = requestRepository.findById(requestId).orElseThrow(() -> new RequestNotFoundException(requestId));
+        //if (requestEntity != null) {
             return requestMapper.requestToRequestResponse(requestEntity);
-        }
-        return null;
+//        }
+//        return null;
     }
 
     @Override
     public RequestResponse createRequest(RequestToCreateDto requestToCreate) {
-        User customer = userRepository.findById(requestToCreate.getCustomerId()).orElse(null);
-        com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(requestToCreate.getServiceId()).orElse(null);
+        User customer = userRepository.findById(requestToCreate.getCustomerId()).orElseThrow(() -> new UserNotFoundException());
+        com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(requestToCreate.getServiceId()).orElseThrow(() -> new ServiceNotFoundException());
         Request newRequest = requestMapper.requestRequestToRequest(requestToCreate,
                 customer, existingService);
         Request savedRequest = requestRepository.save(newRequest);
@@ -55,14 +58,14 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestResponse updateRequest(Integer requestId, RequestToCreateDto requestToUpdate) {
-        Request existingRequest = requestRepository.findById(requestId).orElse(null);
-        if (existingRequest != null) {
+        Request existingRequest = requestRepository.findById(requestId).orElseThrow(() -> new RequestNotFoundException(requestId));
+        //if (existingRequest != null) {
             requestMapper.requestFromRequest(requestToUpdate, existingRequest);
             Request updatedRequest = requestRepository.save(existingRequest);
             return requestMapper.requestToRequestResponse(updatedRequest);
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
     }
 
     @Override

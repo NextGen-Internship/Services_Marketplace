@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class StripeController {
     private final StripeService stripeService;
     @PostMapping("/createAccount")
-    public String createStripeAccount(@RequestBody StripeAccountRequest stripeAccountRequest) throws StripeException {
+    public String createStripeAccount(@RequestBody StripeAccountRequest stripeAccountRequest) {
         return stripeService.createStripeAccount(stripeAccountRequest);
     }
     @PostMapping("/subscription")
-    public String subscriptionWithCheckoutPage(@RequestBody Checkout checkout) throws StripeException {
+    public String subscriptionWithCheckoutPage(@RequestBody Checkout checkout)  {
         return stripeService.subscriptionWithCheckoutPage(checkout);
     }
     @GetMapping("/plan")

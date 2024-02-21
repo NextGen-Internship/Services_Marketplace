@@ -4,6 +4,8 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.service.marketplace.exception.FileConversionException;
+import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.StorageService;
@@ -49,7 +51,7 @@ public class StorageServiceImpl implements StorageService {
         URL preSignedUrl = generatePreSignedUrl(bucketName, fileName);
         int userId = userService.getCurrentUser().getId();
 
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         user.setPicture(String.valueOf(preSignedUrl));
         user.setMediaKey(fileName);
         userRepository.save(user);
@@ -77,7 +79,7 @@ public class StorageServiceImpl implements StorageService {
 
     public String getPicture() throws MalformedURLException {
         int userId = userService.getCurrentUser().getId();
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         URL presignedUrl = user.getPicture() != null ? new URL(user.getPicture()) : null;
         if (presignedUrl != null && isPresignedUrlExpired(presignedUrl)) {
             String mediaKey = user.getMediaKey();
@@ -95,12 +97,13 @@ public class StorageServiceImpl implements StorageService {
         return fileName + " removed...";
     }
 
-    private File convertMultipartFile(MultipartFile file) {
+    private File convertMultipartFile(MultipartFile file) throws FileConversionException {
         File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
             fos.write(file.getBytes());
         } catch (IOException e) {
             log.error("Error converting multipartFile to file", e);
+            throw new FileConversionException(e.getMessage(), e);
         }
         return convertedFile;
     }

@@ -2,6 +2,9 @@ package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.OfferRequest;
 import com.service.marketplace.dto.response.OfferResponse;
+import com.service.marketplace.exception.OfferNotFoundException;
+import com.service.marketplace.exception.RequestNotFoundException;
+import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.mapper.OfferMapper;
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
@@ -37,17 +40,17 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public OfferResponse getOfferById(Integer offerId) {
-        Offer offerEntity = offerRepository.findById(offerId).orElse(null);
-        if (offerEntity != null) {
+        Offer offerEntity = offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException(offerId));
+        //if (offerEntity != null) {
             return offerMapper.offerToOfferResponse(offerEntity);
-        }
-        return null;
+//        }
+//        return null;
     }
 
     @Override
     public OfferResponse createOffer(OfferRequest offerToCreate) {
-        User provider = userRepository.findById(offerToCreate.getProvider_id()).orElse(null);
-        Request existingRequest = requestRepository.findById(offerToCreate.getRequest_id()).orElse(null);
+        User provider = userRepository.findById(offerToCreate.getProvider_id()).orElseThrow(() -> new UserNotFoundException());
+        Request existingRequest = requestRepository.findById(offerToCreate.getRequest_id()).orElseThrow(() -> new RequestNotFoundException());
         Offer newOffer = offerMapper.OfferRequestToOffer(offerToCreate, provider, existingRequest);
         Offer savedOffer = offerRepository.save(newOffer);
         return offerMapper.offerToOfferResponse(savedOffer);

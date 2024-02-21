@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     private final CloudinaryService cloudinaryService;
 
     @Override
-    public User getCurrentUser() {
+    public User getCurrentUser() { //YES
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated()) {
@@ -62,14 +62,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getUserById(Integer userId) {
+    public UserResponse getUserById(Integer userId) { //YES
         return userRepository.findById(userId)
                 .map(userMapper::userToUserResponse)
                 .orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Override
-    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile) {
+    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile) { //?????????????????
         User existingUser = null;
 
         if (userId != null) {
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest) {
+    public UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest) { //?????????????????????
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         String roleName = providerRequest.getRole();
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUserRoleToProvider(Integer userId) {
+    public UserResponse updateUserRoleToProvider(Integer userId) { //???????????????????
         User user = userRepository.findById(userId).orElse(null);
 
         Role role = roleRepository.findByName("PROVIDER").orElseThrow(() -> new RoleNotFoundException("Role not found!"));
@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUserById(Integer userId) {
+    public boolean deleteUserById(Integer userId) {  //YES
         return userRepository.findById(userId).map(user -> {
             user.setActive(false);
             userRepository.save(user);

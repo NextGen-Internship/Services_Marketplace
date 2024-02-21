@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.io.FileNotFoundException;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -98,6 +97,48 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         body.put("errorCode", ex.getErrorCode());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    //Storage Service Impl
+    @ExceptionHandler(FileConversionException.class)
+    public ResponseEntity<?> handleFileConversionException(FileConversionException ex, WebRequest request) {
+        return new ResponseEntity<>("File conversion error: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // Service Impl
+    @ExceptionHandler(ServiceNotFoundException.class)
+    public ResponseEntity<?> handleServiceNotFoundException(ServiceNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("Service not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    //Review Service Impl
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<?> handleReviewNotFoundException(ReviewNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("Review not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    //Request Service Impl
+    @ExceptionHandler(RequestNotFoundException.class)
+    public ResponseEntity<?> handleRequestNotFoundException(RequestNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("Request not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    //Offer Service Impl
+    @ExceptionHandler(OfferNotFoundException.class)
+    public ResponseEntity<?> handleOfferNotFoundException(OfferNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("Offer not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // File Service Impl
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<?> handleFileNotFoundException(FileNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("File not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    //City Service Impl
+    @ExceptionHandler(CityNotFoundException.class)
+    public ResponseEntity<?> handleCityNotFoundException(CityNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("City not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
 
