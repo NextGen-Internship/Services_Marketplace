@@ -140,6 +140,18 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleCityNotFoundException(CityNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>("City not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    //Category Service Impl
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<?> handleCategoryNotFoundException(CategoryNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("Category not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    //VipService
+    @ExceptionHandler(VipServiceNotFoundException.class)
+    public ResponseEntity<?> handleVipServiceNotFoundException(VipServiceNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>("VipService not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
 
 

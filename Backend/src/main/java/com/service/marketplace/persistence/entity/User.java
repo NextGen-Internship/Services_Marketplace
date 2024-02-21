@@ -1,10 +1,7 @@
 package com.service.marketplace.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,15 +18,19 @@ import java.util.stream.Collectors;
 @Table(name = "user")
 public class User extends BaseEntity implements UserDetails {
 
+    @NonNull
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
+    @NonNull
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @NonNull
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
+    @NonNull
     @Column(name = "password")
     private String password;
 
@@ -50,6 +51,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "media_key")
     private String mediaKey;
+
 
     @Column(name = "is_active")
     private boolean isActive = true;

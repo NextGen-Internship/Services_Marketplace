@@ -1,6 +1,7 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.response.VipServiceResponse;
+import com.service.marketplace.exception.VipServiceNotFoundException;
 import com.service.marketplace.mapper.VipServiceMapper;
 import com.service.marketplace.persistence.entity.VipService;
 import com.service.marketplace.persistence.repository.UserRepository;
@@ -27,9 +28,11 @@ public class VipServiceImpl implements VipServiceService {
 
     @Override
     public VipServiceResponse getVipServiceById(Integer vipServiceId) {
-        VipService vipService = vipServiceRepository.findById(vipServiceId).orElse(null);
+        VipService vipService = vipServiceRepository.findById(vipServiceId).orElseThrow(() -> new VipServiceNotFoundException(vipServiceId));
 
-        return (vipService != null) ? vipServiceMapper.toVipServiceResponse(vipService) : null;
+        return //(vipService != null) ?
+                vipServiceMapper.toVipServiceResponse(vipService);
+        //: null;
     }
 
     @Override

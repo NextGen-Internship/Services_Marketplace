@@ -2,6 +2,7 @@ package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.CategoryRequest;
 import com.service.marketplace.dto.response.CategoryResponse;
+import com.service.marketplace.exception.CategoryNotFoundException;
 import com.service.marketplace.mapper.CategoryMapper;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.repository.CategoryRepository;
@@ -25,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getCategoryById(Integer categoryId) {
-        CategoryResponse category = categoryMapper.categoryToCategoryResponse(categoryRepository.findById(categoryId).orElse(null));
+        CategoryResponse category = categoryMapper.categoryToCategoryResponse(categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException(categoryId)));
 
         return category;
     }
@@ -38,16 +39,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse updateCategory(Integer categoryId, CategoryRequest categoryToUpdate) {
-        Category existingCategory = categoryRepository.findById(categoryId).orElse(null);
+        Category existingCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
-        if (existingCategory != null) {
+       // if (existingCategory != null) {
             existingCategory.setName(categoryToUpdate.getName());
             existingCategory.setDescription(categoryToUpdate.getDescription());
 
             return categoryMapper.categoryToCategoryResponse(categoryRepository.save(existingCategory));
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
     }
 
     @Override

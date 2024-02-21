@@ -4,6 +4,7 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.AuthenticationRequest;
 import com.service.marketplace.dto.request.RegisterRequest;
 import com.service.marketplace.dto.response.AuthenticationResponse;
+import com.service.marketplace.exception.RoleNotFoundException;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RoleRepository;
@@ -29,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RoleRepository roleRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        Role role = roleRepository.findByName("CUSTOMER").orElseThrow();
+        Role role = roleRepository.findByName("CUSTOMER").orElseThrow(() -> new RoleNotFoundException("Role not found"));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         var user = User.builder()
