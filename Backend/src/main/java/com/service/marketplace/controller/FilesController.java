@@ -19,6 +19,7 @@ public class FilesController {
         List<FilesResponse> files = filesService.getAllFiles();
         return ResponseEntity.ok(files);
     }
+
     @GetMapping("/{fileId}")
     public ResponseEntity<FilesResponse> getFileById(@PathVariable("fileId") Integer fileId) {
         FilesResponse file = filesService.getFileById(fileId);
@@ -28,16 +29,19 @@ public class FilesController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/service/{serviceId}")
     public ResponseEntity<List<FilesResponse>> getFilesByServiceId(@PathVariable("serviceId") Integer serviceId) {
         List<FilesResponse> serviceFiles = filesService.getFilesByServiceId(serviceId);
         return ResponseEntity.ok(serviceFiles);
     }
+
     @GetMapping("/review/{reviewId}")
     public ResponseEntity<List<FilesResponse>> getFilesByReviewId(@PathVariable("reviewId") Integer reviewId) {
         List<FilesResponse> reviewFiles = filesService.getFilesByReviewId(reviewId);
         return ResponseEntity.ok(reviewFiles);
     }
+
     @DeleteMapping("/delete/{fileId}")
     public ResponseEntity<Void> deleteFile(@PathVariable("fileId") Integer fileId) {
         filesService.deleteFileById(fileId);

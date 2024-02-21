@@ -11,4 +11,5 @@ public class Checkout {
     private String cancelUrl;
     private String email;
     private String userId;
+    private String serviceId;
 }

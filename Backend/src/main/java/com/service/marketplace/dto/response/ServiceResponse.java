@@ -18,4 +18,5 @@ public class ServiceResponse {
     private Integer categoryId;
     private List<Integer> cityIds;
     private LocalDateTime updatedAt;
+    private boolean isVip;
 }

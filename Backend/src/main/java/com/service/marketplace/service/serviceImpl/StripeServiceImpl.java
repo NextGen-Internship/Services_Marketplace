@@ -7,8 +7,10 @@ import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.repository.ServiceRepository;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.persistence.repository.VipServiceRepository;
 import com.service.marketplace.service.StripeService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
@@ -17,10 +19,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
-import com.stripe.param.AccountCreateParams;
-import com.stripe.param.CustomerListParams;
-import com.stripe.param.SubscriptionListParams;
-import com.stripe.param.SubscriptionUpdateParams;
+import com.stripe.param.*;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -46,7 +42,11 @@ public class StripeServiceImpl implements StripeService {
     private static final Gson gson = new Gson();
     private final UserService userService;
     private final UserRepository userRepository;
+    private final ServiceRepository serviceRepository;
+    private final VipServiceRepository vipServiceRepository;
     private final SubscriptionRepository subscriptionRepository;
+
+    private String vipSessionId = "";
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
 
@@ -203,44 +203,92 @@ public class StripeServiceImpl implements StripeService {
         switch (event.getType()) {
             case "checkout.session.completed": {
                 try {
-                    Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
-                    String customerId = customer.getId();
+                    String sessionId = null;
 
-                    List<Subscription> subscriptions;
+                    System.out.println("!!! Checking session id...");
+                    Session session = (Session) stripeObject;
+                    sessionId = session.getId();
+
+                    System.out.println("!!! Session id: " + sessionId);
+
+                    String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
+
                     try {
-                        subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
+                        Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
+                        String customerId = customer.getId();
+
+                        Map<String, String> metadata = getMetadataFromPaymentIntent(sessionId);
+                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        System.out.println(metadata);
+                        if (!metadata.isEmpty() && metadata.containsKey("serviceType") && "VIP".equals(metadata.get("serviceType"))) {
+                            System.out.println("===== VIP service detected");
+                            PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
+                                    .setCustomer(customerId)
+                                    .build();
+                            PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
+
+                            PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
+                                    .max(Comparator.comparing(PaymentIntent::getCreated))
+                                    .orElse(null);
+                            System.out.println(latestPaymentIntent);
+
+                            String serviceIdString = metadata.get("serviceId");
+                            Integer serviceId = Integer.parseInt(serviceIdString);
+
+                            Optional<com.service.marketplace.persistence.entity.Service> serviceOptional = serviceRepository.findById(serviceId);
+
+                            Optional.ofNullable(latestPaymentIntent)
+                                    .filter(paymentIntent -> serviceOptional.isPresent())
+                                    .ifPresent(s -> updateVipService(serviceOptional.get(), s));
+
+                            return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
+                        } else {
+
+                            List<Subscription> subscriptions;
+                            try {
+                                subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
+                            } catch (StripeException e) {
+                                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+                            }
+
+                            boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
+                            User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+                            if (hasActiveSubscription) {
+                                if (userToBeUpdated != null) {
+                                    userService.updateUserRoleToProvider(userToBeUpdated.getId());
+                                }
+                            }
+
+                            long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
+                            long currentPeriodEnd = subscriptions.get(0).getCurrentPeriodEnd();
+
+                            java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
+                            java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
+
+                            String subscriptionStatus = subscriptions.get(0).getStatus();
+                            boolean isActive = "active".equals(subscriptionStatus);
+
+                            com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
+                            subscription.setStripeId(subscriptions.get(0).getId());
+                            subscription.setStartDate(startDate);
+                            subscription.setEndDate(endDate);
+                            subscription.setUser(userToBeUpdated);
+                            subscription.setActive(isActive);
+
+                            subscriptionRepository.save(subscription);
+                        }
                     } catch (StripeException e) {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
                     }
 
-                    boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
-                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
-                    if (hasActiveSubscription) {
-                        if (userToBeUpdated != null) {
-                            userService.updateUserRoleToProvider(userToBeUpdated.getId());
-                        }
-                    }
-
-                    long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
-                    long currentPeriodEnd = subscriptions.get(0).getCurrentPeriodEnd();
-
-                    java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
-                    java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
-
-                    String subscriptionStatus = subscriptions.get(0).getStatus();
-                    boolean isActive = "active".equals(subscriptionStatus);
-
-                    com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
-                    subscription.setStripeId(subscriptions.get(0).getId());
-                    subscription.setStartDate(startDate);
-                    subscription.setEndDate(endDate);
-                    subscription.setUser(userToBeUpdated);
-                    subscription.setActive(isActive);
-
-                    subscriptionRepository.save(subscription);
-                } catch (StripeException e) {
+                } catch (RuntimeException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
                 }
+
+                break;
+            }
+            case "payment_intent.created": {
+                System.out.println("Webhook for created payment intent");
 
                 break;
             }
@@ -260,6 +308,19 @@ public class StripeServiceImpl implements StripeService {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    private void updateVipService(com.service.marketplace.persistence.entity.Service service, PaymentIntent latestPaymentIntent) {
+        com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
+        vipService.setStripeId(latestPaymentIntent.getId());
+        vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
+        vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 14L * 24 * 60 * 60) * 1000L));
+        vipService.setActive(true);
+        vipService.setService(service);
+
+        service.setVip(true);
+        serviceRepository.save(service);
+        vipServiceRepository.save(vipService);
     }
 
     public ResponseEntity<String> cancelSubscription(String stripeId) {
@@ -339,4 +400,98 @@ public class StripeServiceImpl implements StripeService {
             }
         }
     }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void checkVipServiceStatus() {
+        Stripe.apiKey = stripeApiKey;
+
+        List<com.service.marketplace.persistence.entity.VipService> vipServices = vipServiceRepository.findAll();
+
+        for (com.service.marketplace.persistence.entity.VipService vipService : vipServices) {
+            try {
+                PaymentIntent stripeVipService = PaymentIntent.retrieve(vipService.getStripeId());
+
+                com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(vipService.getService().getId()).orElse(null);
+                service.setVip(false);
+                serviceRepository.save(service);
+
+                vipService.setActive(false);
+                vipServiceRepository.save(vipService);
+
+            } catch (StripeException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public String vipWithCheckoutPage(Checkout checkout) {
+        Stripe.apiKey = stripeApiKey;
+
+        SessionCreateParams params = new SessionCreateParams.Builder()
+                .setSuccessUrl(checkout.getSuccessUrl())
+                .setCancelUrl(checkout.getCancelUrl())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .addLineItem(new SessionCreateParams.LineItem.Builder()
+                        .setQuantity(1L)
+                        .setPrice(checkout.getPriceId())
+                        .build())
+                .putMetadata("serviceType", "VIP")
+                .putMetadata("serviceId", checkout.getServiceId())
+                .setCustomerEmail(checkout.getEmail())
+                .build();
+
+
+        try {
+            Session session = Session.create(params);
+//            session.setMetadata(new HashMap<String, String>() {{
+//                put("sessionId", session.getId());
+//            }});
+            //vipSessionId = session.getId();
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("sessionId", session.getId());
+            return gson.toJson(responseData);
+        } catch (Exception e) {
+            Map<String, Object> messageData = new HashMap<>();
+            messageData.put("message", e.getMessage());
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("error", messageData);
+            return gson.toJson(responseData);
+        }
+    }
+
+    public Map<String, String> getMetadataFromPaymentIntent(String sessionId) {
+        Stripe.apiKey = stripeApiKey;
+        String priceId = "price_1OhuIFI2KDxgMJyoGon8NKEY";
+
+        try {
+            // Retrieve the session
+            Session session = Session.retrieve(sessionId);
+            Price price = Price.retrieve(priceId);
+            String productId = price.getProduct();
+            Product product = Product.retrieve(productId);
+
+            // Get the PaymentIntent ID from the session
+            String paymentIntentId = session.getPaymentIntent();
+
+            if (paymentIntentId == null) {
+                // Handle the case where there is no PaymentIntent associated with the session
+                log.error("No PaymentIntent associated with the session: {}", sessionId);
+                return Collections.emptyMap();
+            }
+
+            // Retrieve the PaymentIntent
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+
+            // Access the metadata
+            Map<String, String> metadata = session.getMetadata();
+
+            return metadata;
+        } catch (StripeException e) {
+            log.error("Failed to retrieve PaymentIntent or Session: {}", e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+
 }
