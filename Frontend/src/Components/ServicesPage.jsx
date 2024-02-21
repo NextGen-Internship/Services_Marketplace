@@ -95,6 +95,20 @@ const ServicesPage = () => {
 
             sessionStorage.setItem('PageNumber', response.number);
             sessionStorage.removeItem('CategoryFilter');
+
+            services.sort((a,b) => {
+                if (a.vip && !b.vip) {
+                    return -1;
+                }
+
+                else if (!a.vip && b.vip) {
+                    return 1;
+                }
+
+                else {
+                    return 0;
+                }
+            })
         } catch (error) {
             console.error('Error fetching users:', error);
         }
@@ -122,6 +136,21 @@ const ServicesPage = () => {
 
             sessionStorage.setItem('PageNumber', response.number);
             sessionStorage.setItem('FilterParams', JSON.stringify(serviceFilterRequest));
+
+            services.sort((a,b) => {
+                if (a.vip && !b.vip) {
+                    return -1;
+                }
+
+                else if (!a.vip && b.vip) {
+                    return 1;
+                }
+
+                else {
+                    return 0;
+                }
+            })
+            console.log(services);
         } catch (error) {
             console.error('Error fetching services:', error);
         }
@@ -133,7 +162,19 @@ const ServicesPage = () => {
                 <Filters applyFilters={getFilteredServices} cities={cities} categories={categories} />
             </div>
             <div className='services'>
-                {services.length > 0 ? <ServiceBoxes services={services} cities={cities} />
+                {services.length > 0 ? <ServiceBoxes services={services.sort((a,b) => {
+                if (a.vip && !b.vip) {
+                    return -1;
+                }
+
+                else if (!a.vip && b.vip) {
+                    return 1;
+                }
+
+                else {
+                    return 0;
+                }
+            })} cities={cities} />
                     : 'No Services to Show'}
                 <ReactPaginate
                     pageCount={totalPages}

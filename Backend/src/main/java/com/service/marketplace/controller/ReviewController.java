@@ -15,11 +15,13 @@ import java.util.List;
 @RequestMapping("/api/reviews")
 public class ReviewController {
     private final ReviewService reviewService;
+
     @GetMapping("/all")
     public ResponseEntity<List<ReviewResponse>> getAllReviews() {
         List<ReviewResponse> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
+
     @GetMapping("/{serviceId}")
     public ResponseEntity<ReviewResponse> getReviewById(@PathVariable("reviewId") Integer reviewId) {
         ReviewResponse review = reviewService.getReviewById(reviewId);
@@ -29,21 +31,25 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReviewResponse>> getReviewsByUserId(@PathVariable("userId") Integer userId) {
         List<ReviewResponse> userReviews = reviewService.getReviewByUserId(userId);
         return ResponseEntity.ok(userReviews);
     }
+
     @GetMapping("/service/{serviceId}")
     public ResponseEntity<List<ReviewResponse>> getReviewsByServiceId(@PathVariable("serviceId") Integer serviceId) {
         List<ReviewResponse> serviceReviews = reviewService.getReviewByServiceId(serviceId);
         return ResponseEntity.ok(serviceReviews);
     }
+
     @PostMapping("/create")
     public ResponseEntity<ReviewResponse> createReview(@ModelAttribute ReviewRequest reviewToCreate, @RequestParam(value = "files", required = false) MultipartFile[] files) {
         ReviewResponse newReview = reviewService.createReview(reviewToCreate, files);
         return ResponseEntity.ok(newReview);
     }
+
     @PutMapping("/update/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(@PathVariable("reviewId") Integer reviewID, @RequestBody ReviewRequest reviewToUpdate) {
         ReviewResponse updatedReview = reviewService.updateReview(reviewID, reviewToUpdate);
@@ -53,6 +59,7 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @DeleteMapping("/delete/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable("reviewId") Integer reviewId) {
         reviewService.deleteReviewById(reviewId);
