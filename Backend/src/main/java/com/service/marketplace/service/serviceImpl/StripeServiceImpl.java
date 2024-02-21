@@ -9,6 +9,7 @@ import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.EmailSenderService;
 import com.service.marketplace.service.StripeService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
@@ -47,6 +48,8 @@ public class StripeServiceImpl implements StripeService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final EmailSenderService emailSenderService;
+
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
 
@@ -228,6 +231,21 @@ public class StripeServiceImpl implements StripeService {
                     subscription.setActive("active".equals(subscriptions.get(0).getStatus()));
 
                     subscriptionRepository.save(subscription);
+
+                    String emailSubject = "Thank You for Subscribing!";
+                    String emailBody = String.format("Dear %s %s,\n" +
+                            "\n" +
+                            "Congratulations! Your subscription to Service Marketplace is now active. \uD83C\uDF89\n" +
+                            "\n" +
+                            "Thank you for choosing us! We appreciate your trust and look forward to providing you with a seamless experience. As a subscriber, you gain access to exclusive features and updates.\n" +
+                            "\n" +
+                            "If you have any questions or need assistance, feel free to reach out. We're here to help!\n" +
+                            "\n" +
+                            "Best regards,\n" +
+                            "\n" +
+                            "Service Marketplace Team", userToBeUpdated.getFirstName(), userToBeUpdated.getLastName());
+
+                    emailSenderService.sendSimpleEmail(userEmail, emailSubject, emailBody);
                 } catch (StripeException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
                 }
