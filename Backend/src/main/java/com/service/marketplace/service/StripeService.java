@@ -20,4 +20,6 @@ public interface StripeService {
     String  payCheckout(OfferPaymentRequest offerPaymentRequest) throws StripeException;
 
 
+
+    String vipWithCheckoutPage(Checkout checkout) throws StripeException;
 }

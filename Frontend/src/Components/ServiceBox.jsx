@@ -71,6 +71,9 @@ const ServiceBox = ({ service, cities }) => {
                 <div className="service-description">
                     <p>{service.description}</p>
                 </div>
+                <div className="service-is-vip">
+                    <p>{service.vip ? "VIP" : ""}</p>
+                </div>
                 <div className="service-details">
                     <p>{getCitiesNames(service, cities)} - {formattedDate}</p>
                     <Link to={{

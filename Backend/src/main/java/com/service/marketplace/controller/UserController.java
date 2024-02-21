@@ -19,11 +19,13 @@ import java.util.List;
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
+
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable("userId") Integer userId) {
         UserResponse userResponse = userService.getUserById(userId);
@@ -34,6 +36,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/current")
     public ResponseEntity<UserResponse> getCurrentUser() {
         User user = userService.getCurrentUser();
@@ -44,6 +47,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @Valid
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") Integer userId,
@@ -61,6 +65,7 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
     @Valid
     @PutMapping("/update/current")
     public ResponseEntity<UserResponse> updateCurrentUser(@RequestParam(value = "userId", required = false) Integer userId,
@@ -68,6 +73,7 @@ public class UserController {
                                                           @RequestParam(value = "file", required = false) MultipartFile file) {
         return new ResponseEntity<>(userService.updateUser(userId, userToUpdate, file), HttpStatus.OK);
     }
+
     @Valid
     @PutMapping("/role/{userId}")
     public ResponseEntity<UserResponse> updateUserRole(@PathVariable("userId") Integer userId,
@@ -84,6 +90,7 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
         boolean deleted = userService.deleteUserById(userId);

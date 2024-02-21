@@ -430,5 +430,10 @@ public class StripeServiceImpl implements StripeService {
         }
     }
 
+    @Override
+    public String vipWithCheckoutPage(Checkout checkout) throws StripeException {
+        return null;
+    }
+
 
 }

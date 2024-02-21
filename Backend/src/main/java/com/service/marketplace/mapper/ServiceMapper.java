@@ -25,6 +25,7 @@ public interface ServiceMapper {
                 .map(City::getId)
                 .collect(Collectors.toList());
     }
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "description", source = "request.description")
     @Mapping(target = "provider", source = "provider")
