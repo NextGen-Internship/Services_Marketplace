@@ -177,6 +177,30 @@ public class StripeServiceImpl implements StripeService {
         }
     }
 
+    public Map<String, String> getMetadataFromPaymentIntent(String sessionId) {
+        Stripe.apiKey = stripeApiKey;
+        try {
+            // Retrieve the session
+            Session session = Session.retrieve(sessionId);
+
+            // Get the PaymentIntent ID from the session
+            String paymentIntentId = session.getPaymentIntent();
+
+            if (paymentIntentId == null) {
+                // Handle the case where there is no PaymentIntent associated with the session
+                log.error("No PaymentIntent associated with the session: {}", sessionId);
+                return Collections.emptyMap();
+            }
+            // Access the metadata
+            Map<String, String> metadata = session.getMetadata();
+            return metadata;
+        } catch (StripeException e) {
+            log.error("Failed to retrieve PaymentIntent or Session: {}", e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+
+
     @Override
     public ResponseEntity<String> handleStripeWebhook(String payload, String sigHeader) {
         String endpointSecret = "whsec_cc0df325d4cf2f830514ec91c6e23dde3a856062b86ec456d8aa4791581aa91d";
@@ -202,46 +226,60 @@ public class StripeServiceImpl implements StripeService {
 
         switch (event.getType()) {
             case "checkout.session.completed": {
-                try {
-                    Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
-                    String customerId = customer.getId();
 
-                    List<Subscription> subscriptions;
+                String sessionId = null;
+                Session session = (Session) stripeObject;
+                sessionId = session.getId();
+                Map<String, String> metadata = getMetadataFromPaymentIntent(sessionId);
+
+                if (!metadata.isEmpty() && metadata.containsKey("PAYMENT_TYPE") && "PAYMENT".equals(metadata.get("PAYMENT_TYPE"))) {
+                    String offerIdString = metadata.get("offerId");
+                    Integer offerId = Integer.parseInt(offerIdString);
+                    Offer offer = offerRepository.findById(offerId).orElseThrow();
+                    offer.setOfferStatus(OfferStatus.ACCEPTED);
+                    offerRepository.save(offer);
+                } else {
+
                     try {
-                        subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
-                    } catch (StripeException e) {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-                    }
+                        Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
+                        String customerId = customer.getId();
 
-                    boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
-                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
-                    if (hasActiveSubscription) {
-                        if (userToBeUpdated != null) {
-                            userService.updateUserRoleToProvider(userToBeUpdated.getId());
+                        List<Subscription> subscriptions;
+                        try {
+                            subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
+                        } catch (StripeException e) {
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
                         }
+
+                        boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
+                        User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+                        if (hasActiveSubscription) {
+                            if (userToBeUpdated != null) {
+                                userService.updateUserRoleToProvider(userToBeUpdated.getId());
+                            }
+                        }
+
+                        long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
+                        long currentPeriodEnd = subscriptions.get(0).getCurrentPeriodEnd();
+
+                        java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
+                        java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
+
+                        String subscriptionStatus = subscriptions.get(0).getStatus();
+                        boolean isActive = "active".equals(subscriptionStatus);
+
+                        com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
+                        subscription.setStripeId(subscriptions.get(0).getId());
+                        subscription.setStartDate(startDate);
+                        subscription.setEndDate(endDate);
+                        subscription.setUser(userToBeUpdated);
+                        subscription.setActive(isActive);
+
+                        subscriptionRepository.save(subscription);
+                    } catch (StripeException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
                     }
-
-                    long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
-                    long currentPeriodEnd = subscriptions.get(0).getCurrentPeriodEnd();
-
-                    java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
-                    java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
-
-                    String subscriptionStatus = subscriptions.get(0).getStatus();
-                    boolean isActive = "active".equals(subscriptionStatus);
-
-                    com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
-                    subscription.setStripeId(subscriptions.get(0).getId());
-                    subscription.setStartDate(startDate);
-                    subscription.setEndDate(endDate);
-                    subscription.setUser(userToBeUpdated);
-                    subscription.setActive(isActive);
-
-                    subscriptionRepository.save(subscription);
-                } catch (StripeException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
                 }
-
                 break;
             }
             case "customer.subscription.created": {
@@ -374,6 +412,8 @@ public class StripeServiceImpl implements StripeService {
                                 .setDestination(user.getStripeAccountId()).build()).build()
                 )
                 .setCustomerEmail(user.getEmail())
+                .putMetadata("PAYMENT_TYPE", "PAYMENT")
+                .putMetadata("offerId", String.valueOf(offerPaymentRequest.getOfferId()))
                 .build();
 
         try {

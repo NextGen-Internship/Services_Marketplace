@@ -27,8 +27,6 @@ const RequestsBox = ({ request }) => {
         requestStatus: request.requestStatus
     });
 
-
-
     const cancelRequest = async (requestId, Request) => {
         try {
             const response = await axios.post(`http://localhost:8080/v1/request/cancel/${requestId}`, Request)
@@ -53,9 +51,11 @@ const RequestsBox = ({ request }) => {
         }
     };
 
-    const addOffer = async (offer) => {
+    const addOffer = async (offer,Request) => {
+        console.log(Request);
         try {
             const addOffer = await createOffer(offer);
+            const updateRequestStatus = await axios.put(`http://localhost:8080/v1/request/${offer.request_id}`, Request);
             console.log(offer)
         } catch (error) {
             console.error(error);

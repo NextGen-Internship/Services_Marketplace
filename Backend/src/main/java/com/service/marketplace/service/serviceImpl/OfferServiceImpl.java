@@ -1,7 +1,9 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.OfferRequest;
+import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.OfferResponse;
+import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.mapper.OfferMapper;
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
@@ -54,6 +56,21 @@ public class OfferServiceImpl implements OfferService {
         Offer savedOffer = offerRepository.save(newOffer);
         return offerMapper.offerToOfferResponse(savedOffer);
     }
+
+    @Override
+    public OfferResponse updateOffer(Integer offerId, OfferRequest offerToUpdate) {
+        Offer existingOffer = offerRepository.findById(offerId).orElse(null);
+        if (existingOffer != null) {
+            Offer updateOffer = offerMapper.OfferRequestToOffer(offerToUpdate);
+            existingOffer.setOfferStatus(updateOffer.getOfferStatus());
+             offerRepository.save(existingOffer);
+            return offerMapper.offerToOfferResponse(existingOffer);
+        } else {
+            return null;
+        }
+    }
+
+
 
     @Override
     public void deleteOfferById(Integer offerId) {

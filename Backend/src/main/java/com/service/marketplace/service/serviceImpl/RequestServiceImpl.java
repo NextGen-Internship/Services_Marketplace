@@ -62,6 +62,7 @@ public class RequestServiceImpl implements RequestService {
         if (existingRequest != null) {
             requestMapper.requestFromRequest(requestToUpdate, existingRequest);
             Request updatedRequest = requestRepository.save(existingRequest);
+            existingRequest.setRequestStatus(requestToUpdate.getRequestStatus());
             return requestMapper.requestToRequestResponse(updatedRequest);
         } else {
             return null;

@@ -11,6 +11,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class OfferRequest {
 
+    @NotNull(message = "Offer ID cannot be null")
+    private Integer offerId;
+
     @NotNull(message = "Request ID cannot be null")
     private Integer request_id;
 
