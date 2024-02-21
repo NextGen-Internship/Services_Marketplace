@@ -3,6 +3,9 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.SetProviderRequest;
 import com.service.marketplace.dto.request.UserUpdateRequest;
 import com.service.marketplace.dto.response.UserResponse;
+import com.service.marketplace.exception.FileUploadException;
+import com.service.marketplace.exception.RoleNotFoundException;
+import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.mapper.UserMapper;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
@@ -38,16 +41,16 @@ public class UserServiceImpl implements UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated()) {
-            return null;
+            throw new UserNotFoundException("No authenticated user found");
         }
 
         Object principal = auth.getPrincipal();
         if (principal instanceof User user) {
             String email = user.getEmail();
-            return userRepository.findByEmail(email).orElse(null);
+            return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        } else {
+            throw new UserNotFoundException("Authenticated user is not of expected type");
         }
-
-        return null;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(Integer userId) {
         return userRepository.findById(userId)
                 .map(userMapper::userToUserResponse)
-                .orElse(null);
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Override
@@ -70,9 +73,12 @@ public class UserServiceImpl implements UserService {
         User existingUser = null;
 
         if (userId != null) {
-            existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+            existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
         } else {
             existingUser = this.getCurrentUser();
+            if (existingUser == null) {
+                throw new UserNotFoundException("No authenticated user found");
+            }
         }
 
         if (multipartFile != null) {
@@ -80,16 +86,12 @@ public class UserServiceImpl implements UserService {
 
             existingUser = this.getCurrentUser();
 
-            if (existingUser == null) {
-                throw new EntityNotFoundException("User not found");
-            }
 
             if (multipartFile != null) {
                 try {
                     newPictureUrl = cloudinaryService.uploadFile(multipartFile);
                 } catch (IOException e) {
-                    String errorMessage = "Error uploading picture";
-                    throw new RuntimeException(errorMessage, e);
+                    throw new FileUploadException("Error uploading picture", e);
                 }
             }
 
@@ -112,11 +114,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest) {
-        User existingUser = userRepository.findById(userId).orElse(null);
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         String roleName = providerRequest.getRole();
         Role role = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new IllegalArgumentException("Role not found: " + roleName));
+                .orElseThrow(() -> new RoleNotFoundException("Role not found: " + roleName));
 
         if (!existingUser.getRoles().contains(role)) {
             existingUser.getRoles().add(role);
@@ -131,7 +133,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUserRoleToProvider(Integer userId) {
         User user = userRepository.findById(userId).orElse(null);
 
-        Role role = roleRepository.findByName("PROVIDER").orElseThrow(() -> new IllegalArgumentException("Role not found."));
+        Role role = roleRepository.findByName("PROVIDER").orElseThrow(() -> new RoleNotFoundException("Role not found!"));
 
         if (!user.getRoles().contains(role)) {
             user.getRoles().add(role);
@@ -155,6 +157,6 @@ public class UserServiceImpl implements UserService {
             user.setActive(false);
             userRepository.save(user);
             return true;
-        }).orElse(false);
+        }).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
     }
 }
