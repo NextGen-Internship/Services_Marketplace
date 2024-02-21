@@ -35,7 +35,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -231,6 +230,24 @@ public class StripeServiceImpl implements StripeService {
                             Optional.ofNullable(latestPaymentIntent)
                                     .filter(paymentIntent -> serviceOptional.isPresent())
                                     .ifPresent(s -> updateVipService(serviceOptional.get(), s));
+
+                            User user = userRepository.findByEmail(userEmail).orElseThrow();
+
+                            String emailSubject = "Congratulations on upgrading your service to VIP!";
+                            String emailBody = String.format("Dear %s %s,\n" +
+                                    "\n" +
+                                    "Congratulations on successfully upgrading your service to VIP with Service Marketplace!\n" +
+                                    "\n" +
+                                    "We're delighted to inform you that your service is now part of our exclusive VIP services. As having a VIP service, you'll enjoy premium features and benefits tailored to enhance your experience.\n" +
+                                    "\n" +
+                                    "Thank you for choosing to upgrade your service with us. If you have any questions or need assistance, feel free to reach out to our support team.\n" +
+                                    "\n" +
+                                    "Best regards,\n" +
+                                    "\n" +
+                                    "Service Marketplace Team", user.getFirstName(), user.getLastName());
+
+                            emailSenderService.sendSimpleEmail(user.getEmail(), emailSubject, emailBody);
+
 
                             return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
                         } else {
