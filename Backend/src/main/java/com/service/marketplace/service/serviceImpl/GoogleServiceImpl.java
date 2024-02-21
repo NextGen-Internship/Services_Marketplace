@@ -9,6 +9,7 @@ import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RoleRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.service.EmailSenderService;
 import com.service.marketplace.service.GoogleService;
 import com.service.marketplace.service.JwtService;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class GoogleServiceImpl implements GoogleService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private RoleRepository roleRepository;
+    private final EmailSenderService emailSenderService;
 
     public AuthenticationResponse verifyGoogleToken(String googleToken) throws IOException, GeneralSecurityException {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
@@ -54,6 +56,22 @@ public class GoogleServiceImpl implements GoogleService {
                 newUser.setPicture(pictureUrl);
                 newUser.setRoles(roles);
                 userRepository.save(newUser);
+
+                String emailSubject = "Thank You for Registering!";
+                String emailBody = String.format("Dear %s %s,\n" +
+                        "\n" +
+                        "Congratulations! Your registration with our platform is now complete. \uD83C\uDF89\n" +
+                        "\n" +
+                        "Thank you for choosing us! We are thrilled to welcome you to our community and are excited about the journey ahead. You now have access to a wide range of features and opportunities.\n" +
+                        "\n" +
+                        "Should you have any questions or require assistance, please do not hesitate to contact us. We are here to support you!\n" +
+                        "\n" +
+                        "Best regards,\n" +
+                        "\n" +
+                        "Our Platform Team", newUser.getFirstName(), newUser.getLastName());
+
+                emailSenderService.sendSimpleEmail(newUser.getEmail(), emailSubject, emailBody);
+
                 String jwtToken = jwtService.generateToken(newUser);
                 return new AuthenticationResponse(jwtToken);
             }

@@ -210,11 +210,9 @@ public class StripeServiceImpl implements StripeService {
                     }
 
                     boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
-                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElseThrow();
                     if (hasActiveSubscription) {
-                        if (userToBeUpdated != null) {
-                            userService.updateUserRoleToProvider(userToBeUpdated.getId());
-                        }
+                        userService.updateUserRoleToProvider(userToBeUpdated.getId());
                     }
 
                     long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
@@ -283,6 +281,23 @@ public class StripeServiceImpl implements StripeService {
                 com.service.marketplace.persistence.entity.Subscription existingSubscription = subscriptionRepository.findByStripeId(stripeId);
                 existingSubscription.setCancelled(true);
                 subscriptionRepository.save(existingSubscription);
+
+                User user = userRepository.findById(existingSubscription.getUser().getId()).orElseThrow();
+
+                String emailSubject = "We're Sorry to See You Go";
+                String emailBody = String.format("Dear %s %s,\n" +
+                        "\n" +
+                        "We're sorry to inform you that your subscription with Service Marketplace has been canceled.\n" +
+                        "\n" +
+                        "We value your past support and hope to serve you again in the future. If you have any feedback on how we can improve, please don't hesitate to share it with us.\n" +
+                        "\n" +
+                        "Should you have any questions or require further assistance, please feel free to reach out to our support team.\n" +
+                        "\n" +
+                        "Best regards,\n" +
+                        "\n" +
+                        "Service Marketplace Team", user.getFirstName(), user.getLastName());
+
+                emailSenderService.sendSimpleEmail(user.getEmail(), emailSubject, emailBody);
 
                 if (canceledSubscription.getCancelAtPeriodEnd()) {
                     return ResponseEntity.ok("Subscription is successfully canceled.");

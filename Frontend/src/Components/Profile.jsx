@@ -5,7 +5,7 @@ import '../styles/Profile.css';
 import SubscriptionComponent from './SubscriptionComponent.jsx';
 import axios from 'axios';
 import '../styles/ServicesPage.css';
-import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser } from '../service/ApiService.js';
+import { getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
@@ -26,7 +26,6 @@ const Profile = () => {
   const [userServices, setUserServices] = useState([]);
   const [userRequest, setUserRequest] = useState([]);
   const [userOffer, setUserOffer] = useState(true);
-  const [showReviews, setShowReviews] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);

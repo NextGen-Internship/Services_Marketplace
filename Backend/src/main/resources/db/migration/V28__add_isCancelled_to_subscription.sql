@@ -1,2 +1,2 @@
 ALTER TABLE subscription
-add column isCancelled BOOLEAN;
+add column is_cancelled BOOLEAN;
