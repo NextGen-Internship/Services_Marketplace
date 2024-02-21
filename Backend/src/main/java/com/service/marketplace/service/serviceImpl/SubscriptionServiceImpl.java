@@ -1,6 +1,8 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.response.SubscriptionResponse;
+import com.service.marketplace.exception.SubscriptionNotFoundException;
+import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.mapper.SubscriptionMapper;
 import com.service.marketplace.persistence.entity.Subscription;
 import com.service.marketplace.persistence.entity.User;
@@ -9,7 +11,6 @@ import com.service.marketplace.persistence.repository.UserRepository;
 import com.service.marketplace.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -30,9 +31,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public SubscriptionResponse getSubscriptionById(Integer subscriptionId) {
-        Subscription subscription = subscriptionRepository.findById(subscriptionId).orElse(null);
+        Subscription subscription = subscriptionRepository.findById(subscriptionId).orElseThrow(() -> new SubscriptionNotFoundException(subscriptionId));
 
-        return (subscription != null) ? subscriptionMapper.subscriptionToSubscriptionResponse(subscription) : null;
+        //return (subscription != null) ? subscriptionMapper.subscriptionToSubscriptionResponse(subscription) : null;
+        return subscriptionMapper.subscriptionToSubscriptionResponse(subscription);
     }
     @Override
     public void deleteSubscriptionById(Integer subscriptionId) {
@@ -41,7 +43,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public SubscriptionResponse getSubscriptionByUserId(Integer userId) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         if (user != null) {
             List<Subscription> userSubscriptions = subscriptionRepository.findByUser(user);
@@ -55,4 +57,5 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             return new SubscriptionResponse();
         }
     }
+
 }

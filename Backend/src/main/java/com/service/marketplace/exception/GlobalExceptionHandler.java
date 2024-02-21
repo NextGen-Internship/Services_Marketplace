@@ -1,5 +1,6 @@
 package com.service.marketplace.exception;
 
+import com.stripe.exception.StripeException;
 import jakarta.persistence.EntityNotFoundException;
 import org.flywaydb.core.api.ErrorDetails;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.io.FileNotFoundException;
 import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
@@ -48,6 +52,52 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException ex) {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //Subscription Controller
+    @ExceptionHandler(SubscriptionNotFoundException.class)
+    public ResponseEntity<Object> handleSubscriptionNotFoundException(SubscriptionNotFoundException ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    //Stripe Service Impl
+    @ExceptionHandler(PayloadProcessingException.class)
+    public ResponseEntity<Object> handlePayloadProcessingException(PayloadProcessingException ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(StripeAccountCreationException.class)
+    public ResponseEntity<Object> handleStripeAccountCreationException(StripeAccountCreationException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(StripeSessionCreationException.class)
+    public ResponseEntity<Map<String, Object>> handleStripeSessionCreationException(StripeException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(StripeServiceException.class)
+    public ResponseEntity<Map<String, Object>> handleStripeServiceException(StripeServiceException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        body.put("errorCode", ex.getErrorCode());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }
 

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.service.marketplace.dto.request.Checkout;
 import com.service.marketplace.dto.request.StripeAccountRequest;
+import com.service.marketplace.exception.*;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.SubscriptionRepository;
@@ -114,19 +115,14 @@ public class StripeServiceImpl implements StripeService {
             Account account = Account.create(accountCreateParams);
             account.setPayoutsEnabled(true);
 
-            User user = userRepository.findByEmail(stripeAccountRequest.getEmail()).orElse(null);
+            User user = userRepository.findByEmail(stripeAccountRequest.getEmail()).orElseThrow(() -> new UserNotFoundException());
 
-            if (user != null) {
-                user.setStripeAccountId(account.getId());
-            } else {
-                throw new RuntimeException("Failed to create Stripe account.");
-            }
+            user.setStripeAccountId(account.getId());
             userRepository.save(user);
 
             return account.getId();
         } catch (StripeException e) {
-            log.error("Failed to create Stripe account: {}", e.getMessage());
-            throw new RuntimeException("Failed to create Stripe account.", e);
+            throw new StripeAccountCreationException("Failed to create Stripe account.", e);
         }
     }
 
@@ -151,11 +147,7 @@ public class StripeServiceImpl implements StripeService {
             responseData.put("sessionId", session.getId());
             return gson.toJson(responseData);
         } catch (Exception e) {
-            Map<String, Object> messageData = new HashMap<>();
-            messageData.put("message", e.getMessage());
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("error", messageData);
-            return gson.toJson(responseData);
+            throw new StripeSessionCreationException();
         }
     }
 
@@ -169,11 +161,7 @@ public class StripeServiceImpl implements StripeService {
 
             return gson.toJson(price);
         } catch (StripeException e) {
-            Map<String, Object> messageData = new HashMap<>();
-            messageData.put("message", e.getMessage());
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("error", messageData);
-            return gson.toJson(responseData);
+            throw new StripeServiceException("Failed to retrieve product price: " + e.getMessage(), "STRIPE_SERVICE_EXCEPTION");
         }
     }
 
@@ -185,10 +173,9 @@ public class StripeServiceImpl implements StripeService {
         try {
             event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
         } catch (SignatureVerificationException e) {
-            System.out.println("Failed signature verification");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            throw new StripeServiceException("Failed signature verification", "SIGNATURE_VERIFICATION_FAILED");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+            throw new StripeServiceException("Error handling webhook event: " + e.getMessage(), "WEBHOOK_HANDLING_ERROR");
         }
 
         EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
@@ -210,15 +197,15 @@ public class StripeServiceImpl implements StripeService {
                     try {
                         subscriptions = Subscription.list(SubscriptionListParams.builder().setCustomer(customerId).build()).getData();
                     } catch (StripeException e) {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+                        throw new StripeServiceException("Error handling webhook event: " + e.getMessage(), "STRIPE_EXCEPTION");
                     }
 
                     boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
-                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+                    User userToBeUpdated = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException());
                     if (hasActiveSubscription) {
-                        if (userToBeUpdated != null) {
+                        //if (userToBeUpdated != null) {
                             userService.updateUserRoleToProvider(userToBeUpdated.getId());
-                        }
+                        //}
                     }
 
                     long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
@@ -239,7 +226,7 @@ public class StripeServiceImpl implements StripeService {
 
                     subscriptionRepository.save(subscription);
                 } catch (StripeException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
+                    throw new StripeServiceException(("Error retrieving customer data from Stripe " + e.getMessage()), "STRIPE_EXCEPTION");
                 }
 
                 break;
@@ -278,12 +265,14 @@ public class StripeServiceImpl implements StripeService {
                     return ResponseEntity.ok("Subscription is successfully canceled.");
                 } else {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("The subscription cancellation was unsuccessful.");
+                    //throw new StripeServiceException("The subscription cancellation was unsuccessful " + e.getM)
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The subscription is not active and it cannot be canceled.");
             }
         } catch (StripeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error with stripe interaction: " + e.getMessage());
+            throw new StripeServiceException(("Error with stripe interaction: " + e.getMessage()), "STRIPE_EXCEPTION");
+            //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error with stripe interaction: " + e.getMessage());
         }
     }
 
@@ -297,16 +286,13 @@ public class StripeServiceImpl implements StripeService {
                     String email = data.get("email").getAsString();
                     return email;
                 } else {
-                    System.err.println("Missing email field in payload");
-                    return null;
+                    throw new PayloadProcessingException("Missing email field in payload");
                 }
             } else {
-                System.err.println("Missing or null 'data' field in payload");
-                return null;
+                throw new PayloadProcessingException("Missing or null 'data' field in payload");
             }
         } catch (Exception e) {
-            System.err.println("Error extracting user email from payload: " + e.getMessage());
-            return null;
+            throw new PayloadProcessingException("Error extracting user email from payload", e);
         }
     }
 
@@ -321,7 +307,7 @@ public class StripeServiceImpl implements StripeService {
                 Subscription stripeSubscription = Subscription.retrieve(subscription.getStripeId());
 
                 if ("canceled".equals(stripeSubscription.getStatus())) {
-                    User user = userRepository.findById(subscription.getUser().getId()).orElse(null);
+                    User user = userRepository.findById(subscription.getUser().getId()).orElseThrow(() -> new UserNotFoundException());
 
                     subscription.setActive(false);
                     subscriptionRepository.save(subscription);
@@ -335,7 +321,7 @@ public class StripeServiceImpl implements StripeService {
                     userRepository.save(user);
                 }
             } catch (StripeException e) {
-                System.err.println("Error: " + e.getMessage());
+               throw new StripeServiceException("Error: " + e.getMessage(), "STRIPE_EXCEPTION");
             }
         }
     }
