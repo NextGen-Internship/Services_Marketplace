@@ -1,6 +1,6 @@
 
-ALTER TABLE request
-DROP COLUMN is_active;
+alter table request
+drop COLUMN is_active;
 
-ALTER TABLE request
-ADD COLUMN request_status VARCHAR(50) ;
+alter table request
+add column request_status VARCHAR(50) ;

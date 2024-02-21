@@ -1,6 +1,5 @@
 package com.service.marketplace.service;
 
-import com.service.marketplace.dto.request.OfferRequest;
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
 import org.springframework.http.ResponseEntity;

@@ -107,7 +107,8 @@ export const OfferBox = ({ offer }) => {
     const handleDeclineOffer = async () => {
        
         if (offer.requestId) {
-            console.log("we are here man")
+            console.log("we are here man");
+            console.log(offer);
             setOffer
                 ({
                     request_id: offer.requestId,
@@ -116,7 +117,7 @@ export const OfferBox = ({ offer }) => {
                     price: offer.price,
                     offerStatus: 'DECLINED'
                 })
-            cancelOffer(offer.requestId, Offer);
+            cancelOffer(offer.id, Offer);
         } else {
             console.error('No offer ID found');
         }

@@ -1,14 +1,11 @@
 package com.service.marketplace.service.serviceImpl;
 
 import com.service.marketplace.dto.request.OfferRequest;
-import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.OfferResponse;
-import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.mapper.OfferMapper;
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
-import com.service.marketplace.persistence.enums.OfferStatus;
 import com.service.marketplace.persistence.repository.OfferRepository;
 import com.service.marketplace.persistence.repository.RequestRepository;
 import com.service.marketplace.persistence.repository.UserRepository;
@@ -63,13 +60,12 @@ public class OfferServiceImpl implements OfferService {
         if (existingOffer != null) {
             Offer updateOffer = offerMapper.OfferRequestToOffer(offerToUpdate);
             existingOffer.setOfferStatus(updateOffer.getOfferStatus());
-             offerRepository.save(existingOffer);
+            offerRepository.save(existingOffer);
             return offerMapper.offerToOfferResponse(existingOffer);
         } else {
             return null;
         }
     }
-
 
 
     @Override
@@ -89,7 +85,7 @@ public class OfferServiceImpl implements OfferService {
         return offerMapper.toOfferResponseList(offers);
     }
 
-    public ResponseEntity<String> cancelOffer(OfferRequest offerRequest,Integer offerId) {
+    public ResponseEntity<String> cancelOffer(OfferRequest offerRequest, Integer offerId) {
         try {
             Offer existingOffer = offerRepository.findById(offerId).orElse(null);
             existingOffer.setOfferStatus(offerRequest.getOfferStatus());

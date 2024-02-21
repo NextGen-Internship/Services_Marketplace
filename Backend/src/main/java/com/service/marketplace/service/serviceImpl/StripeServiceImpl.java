@@ -10,9 +10,7 @@ import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.enums.OfferStatus;
-import com.service.marketplace.persistence.repository.OfferRepository;
-import com.service.marketplace.persistence.repository.SubscriptionRepository;
-import com.service.marketplace.persistence.repository.UserRepository;
+import com.service.marketplace.persistence.repository.*;
 import com.service.marketplace.service.StripeService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
@@ -34,6 +32,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 
@@ -46,6 +47,8 @@ public class StripeServiceImpl implements StripeService {
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final OfferRepository offerRepository;
+    private final ServiceRepository serviceRepository;
+    private final VipServiceRepository vipServiceRepository;
 
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
@@ -219,13 +222,11 @@ public class StripeServiceImpl implements StripeService {
         StripeObject stripeObject = null;
         if (dataObjectDeserializer.getObject().isPresent()) {
             stripeObject = dataObjectDeserializer.getObject().get();
-        } else {
         }
-
-        String userEmail = extractUserEmailFromPayload(payload);
 
         switch (event.getType()) {
             case "checkout.session.completed": {
+                String userEmail = extractUserEmailFromPayload(payload);
 
                 String sessionId = null;
                 Session session = (Session) stripeObject;
@@ -238,8 +239,35 @@ public class StripeServiceImpl implements StripeService {
                     Offer offer = offerRepository.findById(offerId).orElseThrow();
                     offer.setOfferStatus(OfferStatus.ACCEPTED);
                     offerRepository.save(offer);
-                } else {
+                } else if (!metadata.isEmpty() && metadata.containsKey("serviceType") && "VIP".equals(metadata.get("serviceType"))) {
+                    try {
+                        Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
+                        String customerId = customer.getId();
 
+                        PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
+                                .setCustomer(customerId)
+                                .build();
+                        PaymentIntentCollection paymentIntents = PaymentIntent.list(paymentIntentParams);
+
+                        PaymentIntent latestPaymentIntent = paymentIntents.getData().stream()
+                                .max(Comparator.comparing(PaymentIntent::getCreated))
+                                .orElse(null);
+
+                        String serviceIdString = metadata.get("serviceId");
+                        Integer serviceId = Integer.parseInt(serviceIdString);
+
+                        Optional<com.service.marketplace.persistence.entity.Service> serviceOptional = serviceRepository.findById(serviceId);
+
+                        Optional.ofNullable(latestPaymentIntent)
+                                .filter(paymentIntent -> serviceOptional.isPresent())
+                                .ifPresent(s -> updateVipService(serviceOptional.get(), s));
+
+                        return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
+                    } catch (Exception e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+
+                    }
+                } else {
                     try {
                         Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
                         String customerId = customer.getId();
@@ -280,8 +308,9 @@ public class StripeServiceImpl implements StripeService {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
                     }
                 }
-                break;
             }
+            break;
+
             case "customer.subscription.created": {
                 System.out.println("Webhook for created subscription");
                 break;
@@ -299,6 +328,7 @@ public class StripeServiceImpl implements StripeService {
 
         return ResponseEntity.ok().build();
     }
+
 
     public ResponseEntity<String> cancelSubscription(String stripeId) {
         Stripe.apiKey = stripeApiKey;
@@ -431,8 +461,77 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public String vipWithCheckoutPage(Checkout checkout) throws StripeException {
-        return null;
+    public String vipWithCheckoutPage(Checkout checkout) {
+        Stripe.apiKey = stripeApiKey;
+
+        SessionCreateParams params = new SessionCreateParams.Builder()
+                .setSuccessUrl(checkout.getSuccessUrl())
+                .setCancelUrl(checkout.getCancelUrl())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .addLineItem(new SessionCreateParams.LineItem.Builder()
+                        .setQuantity(1L)
+                        .setPrice(checkout.getPriceId())
+                        .build())
+                .putMetadata("serviceType", "VIP")
+                .putMetadata("serviceId", checkout.getServiceId())
+                .setCustomerEmail(checkout.getEmail())
+                .build();
+
+
+        try {
+            Session session = Session.create(params);
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("sessionId", session.getId());
+            return gson.toJson(responseData);
+        } catch (Exception e) {
+            Map<String, Object> messageData = new HashMap<>();
+            messageData.put("message", e.getMessage());
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("error", messageData);
+            return gson.toJson(responseData);
+        }
+    }
+
+
+    private void updateVipService(com.service.marketplace.persistence.entity.Service service, PaymentIntent latestPaymentIntent) {
+        com.service.marketplace.persistence.entity.VipService vipService = new com.service.marketplace.persistence.entity.VipService();
+        vipService.setStripeId(latestPaymentIntent.getId());
+        vipService.setStartDate(new Date(latestPaymentIntent.getCreated() * 1000L));
+        vipService.setEndDate(new Date((latestPaymentIntent.getCreated() + 14L * 24 * 60 * 60) * 1000L));
+        vipService.setActive(true);
+        vipService.setService(service);
+
+        service.setVip(true);
+        serviceRepository.save(service);
+        vipServiceRepository.save(vipService);
+    }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void checkVipServiceStatus() {
+        Stripe.apiKey = stripeApiKey;
+
+
+        List<com.service.marketplace.persistence.entity.VipService> vipServices = vipServiceRepository.findAll();
+
+        for (com.service.marketplace.persistence.entity.VipService vipService : vipServices) {
+            try {
+                Date endDate = vipService.getEndDate();
+                Instant instant = endDate.toInstant();
+                ZoneId zoneId = ZoneId.systemDefault();
+                LocalDateTime endDateAsLocalDateTime = instant.atZone(zoneId).toLocalDateTime();
+                PaymentIntent stripeVipService = PaymentIntent.retrieve(vipService.getStripeId());
+                if (LocalDateTime.now().isAfter(endDateAsLocalDateTime)) {
+                    com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(vipService.getService().getId()).orElse(null);
+                    service.setVip(false);
+                    serviceRepository.save(service);
+                    vipService.setActive(false);
+                    vipServiceRepository.save(vipService);
+                }
+            } catch (StripeException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
     }
 
 

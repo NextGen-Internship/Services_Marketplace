@@ -1,6 +1,5 @@
 package com.service.marketplace.controller;
 
-import com.service.marketplace.dto.request.OfferRequest;
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.service.RequestService;

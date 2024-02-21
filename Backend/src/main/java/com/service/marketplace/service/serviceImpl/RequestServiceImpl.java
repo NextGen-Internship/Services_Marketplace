@@ -1,10 +1,8 @@
 package com.service.marketplace.service.serviceImpl;
 
-import com.service.marketplace.dto.request.OfferRequest;
 import com.service.marketplace.dto.request.RequestToCreateDto;
 import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.mapper.RequestMapper;
-import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.RequestRepository;

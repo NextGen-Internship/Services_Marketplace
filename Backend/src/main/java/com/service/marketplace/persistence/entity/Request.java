@@ -31,7 +31,7 @@ public class Request extends BaseEntity {
 
     @Column(name = "request_status")
     @Enumerated(EnumType.STRING)
-    private OfferStatus requestStatus ;
+    private OfferStatus requestStatus;
 
     @JoinColumn(name = "service_id", nullable = false)
     @ManyToOne

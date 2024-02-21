@@ -18,7 +18,7 @@ public interface OfferService {
 
     List<OfferResponse> getOfferByCustomer();
 
-    ResponseEntity<String> cancelOffer(OfferRequest offerRequest,Integer offerId);
+    ResponseEntity<String> cancelOffer(OfferRequest offerRequest, Integer offerId);
 
     OfferResponse updateOffer(Integer offerId, OfferRequest offerToUpdate);
 }
