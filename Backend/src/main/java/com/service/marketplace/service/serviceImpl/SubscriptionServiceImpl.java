@@ -34,6 +34,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         return (subscription != null) ? subscriptionMapper.subscriptionToSubscriptionResponse(subscription) : null;
     }
+
     @Override
     public void deleteSubscriptionById(Integer subscriptionId) {
         subscriptionRepository.deleteById(subscriptionId);

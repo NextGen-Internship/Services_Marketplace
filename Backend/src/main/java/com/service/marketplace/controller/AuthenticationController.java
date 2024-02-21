@@ -24,12 +24,14 @@ public class AuthenticationController {
 
     private final AuthenticationService authService;
     private final GoogleService googleService;
+
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
         return ResponseEntity.ok(authService.register(request));
     }
+
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
@@ -37,6 +39,7 @@ public class AuthenticationController {
         AuthenticationResponse authenticationResponse = authService.login(request);
         return ResponseEntity.ok(authenticationResponse);
     }
+
     @PostMapping("/google/login")
     public ResponseEntity<AuthenticationResponse> googleLogin(
             @RequestBody AuthenticationResponse authenticationResponse

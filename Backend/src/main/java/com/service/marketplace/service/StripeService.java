@@ -15,4 +15,6 @@ public interface StripeService {
     ResponseEntity<String> handleStripeWebhook(String request, String payload);
 
     ResponseEntity<String> cancelSubscription(String subscriptionId);
+
+    String vipWithCheckoutPage(Checkout checkout) throws StripeException;
 }

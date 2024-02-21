@@ -5,14 +5,18 @@ import '../styles/Profile.css';
 import SubscriptionComponent from './SubscriptionComponent.jsx';
 import axios from 'axios';
 import '../styles/ServicesPage.css';
-import { getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser } from '../service/ApiService.js';
+import { getUserById, updateUser, updateUserRole, getCurrentUser, getServicesByCurrentUser, updateService, getAllCategories, getAllCities, updateCurrentUser, getSubscriptionByUserId, getRequestByProvider, getOffersByUser, getServiceById } from '../service/ApiService.js';
 import { jwtDecode } from "jwt-decode";
 import MyServicesModal from './MyServicesModal';
 import ReactPaginate from 'react-paginate';
 import { FaRegEdit } from "react-icons/fa";
 import Multiselect from 'multiselect-react-dropdown';
+import VIP from './VIP';
+import { loadStripe } from '@stripe/stripe-js';
+import { environment } from '../environment.js';
 import RequestsBox from './RequestsBox.jsx';
 import { OfferBox } from './OfferBox.jsx';
+
 
 const Profile = () => {
   const defaultImageUrl = 'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg';
@@ -21,6 +25,7 @@ const Profile = () => {
   const [showServices, setShowServices] = useState(false);
   const [showRequest, setShowRequest] = useState(false);
   const [showOffers, setShowOffers] = useState(false);
+  const [hasVipService, setHasVipService] = useState(false);
   const [showBecomeProviderForm, setShowBecomeProviderForm] = useState(false)
   const navigate = useNavigate();
   const [userServices, setUserServices] = useState([]);
@@ -80,6 +85,8 @@ const Profile = () => {
   });
   const [serviceBoxIdToEdit, setServiceBoxIdToEdit] = useState(-1);
   const [isEditingPicture, setIsEditingPicture] = useState(false);
+  const [service, setService] = useState({ isVip: 0 }); 
+
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -100,6 +107,31 @@ const Profile = () => {
 
     fetchCurrentUser();
   }, []);
+
+  useEffect(() => {
+    const checkVipService = async () => {
+      try {
+        const token = localStorage.getItem('Jwt_Token');
+        if (!token) {
+          console.error('No token found');
+          navigate('/login');
+          return;
+        }
+        
+        const decodedToken = jwtDecode(token);
+
+        const response = await getServiceById;
+        if (response.data.hasVipService) {
+          setHasVipService(true);
+        } else {
+          setHasVipService(false);
+        }
+      } catch (error) {
+        console.error('Error checking VIP service status:', error);
+      }
+    };
+
+  }, [user, navigate]);
 
   const handleInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -191,66 +223,9 @@ const Profile = () => {
     }
   };
 
-  // const handleBecomeProvider = async (newRole) => {
-  //   setShowServices(false);
-  //   setShowPersonalInfo(false);
-  //   console.log('Request to become a provider sent');
-
-  //   const localToken = localStorage.getItem('Jwt_Token');
-  //   if (!localToken) {
-  //     console.error('No token found');
-  //     navigate('/login');
-  //     return;
-  //   }
-
-  //   const decodedToken = jwtDecode(localToken);
-  //   const userId = decodedToken['jti'];
-  //   if (!userId) {
-  //     console.error('No user ID found');
-  //     navigate('/login');
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await updateUserRole(userId, newRole);
-  //     console.log("Request data:", { userId, newRole });
-
-  //     console.log('User role updated successfully:', response);
-
-  //     //setUser(prevUser => ({ ...prevUser, roles: prevUser.roles.push() }));
-  //     setUser(await getCurrentUser())
-  //     console.log('Updated role:', newRole);
-  //     console.log('User role:', user.roles);
-
-  //     if (isProvider(user)) {
-  //       setShowPersonalInfo(true);
-  //       setShowServices(true);
-  //       setBecomeProviderBtn(false);
-  //     }
-
-  //   } catch (error) {
-  //     console.error('Error updating user role:', error);
-  //   }
-  // };
-
-  // const handlePhoneChange = (phone) => {
-  //   setPhoneNumber(phone);
-  //   setUser(current => ({ ...current, phoneNumber: phone }));
-  // };
-
   const isProvider = (usr) => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
-
-  // useEffect(() => {
-  //   const getPictureMethod = async () => {
-  //     const currentUser = await getCurrentUser();
-  //     const picUrl = currentUser.picture;
-  //     console.log('polled url', picUrl);
-  //     setProfilePicture(picUrl);
-  //     setUser(prevUser => ({ ...prevUser, picture: picUrl }));
-  //   };
-  // }, []);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -360,6 +335,10 @@ const Profile = () => {
     <button onClick={() => handleBecomeProviderToggle()}>Become a Provider</button>
   );
 
+  const becomeVipButton = service.isVip === 0 && (
+    <button onClick={() => handleBecomeVIP()}>Become VIP</button>
+    
+  )
 
   const handleEditPictureToggle = () => {
     setIsEditingPicture(!isEditingPicture);
@@ -373,6 +352,49 @@ const Profile = () => {
     setPreviewVisible(false);
     setShowBecomeProviderForm(false);
   };
+
+  const handleBecomeVIP = async (serviceId) => {
+    const vipPriceId = environment.vipPriceId;
+
+    console.log("Service ID: " + serviceId);
+
+
+    const localToken = localStorage.getItem('Jwt_Token');
+    if (!localToken) {
+        console.error('No token found'); 
+        navigate('/login');
+        return;
+    }
+
+    const decodedToken = jwtDecode(localToken);
+    const userEmail = decodedToken['sub'];
+    const userId = decodedToken['jti'];
+
+    const checkoutData = {
+        priceId: vipPriceId,
+        successUrl: 'http://localhost:3000/success',
+        cancelUrl: 'http://localhost:3000/cancel',
+        email: userEmail,
+        userId: userId,
+        serviceId: serviceId,
+    };
+
+    try {
+        const response = await axios.post(`http://localhost:8080/api/subscribe/vip`, checkoutData);
+        console.log(response);
+        const sessionId = response.data.sessionId;
+        const stripe = await loadStripe(environment.stripe);
+        localStorage.setItem("sessionId", sessionId);  
+        if (stripe) {
+            stripe.redirectToCheckout({ sessionId });
+            setService(prevService => ({...prevService, isVip: 1}));
+        }
+        
+    } catch (error) {
+        console.error('Error during VIP checkout:', error);
+    }
+};
+
 
   const handleServicesToggle = async () => {
     if (!isProvider(user)) {
@@ -538,11 +560,18 @@ const Profile = () => {
     <button onClick={handleRequest}>Requests</button>
   );
 
-  const renderServiceBox = (service) => {
-    const isEditing = serviceBoxIdToEdit === service.id;
+  const renderServiceBox = (serviceToRender) => {
+    const isEditing = serviceBoxIdToEdit === serviceToRender.id;
+
+    console.log(serviceToRender);
+
+      const getCityNamesByIds = (cityIds) => {
+      const cityNames = cityIds.map(cityId => cities.find(city => city.id.toString() === cityId)?.name || '');
+      return cityNames.filter(Boolean).join(', ');
+    };
 
     return (
-      <div key={service.id} className="service-box-profile">
+      <div key={serviceToRender.id} className="service-box-profile">
         <div className="service-info">
           {isEditing ? (
             <>
@@ -575,11 +604,13 @@ const Profile = () => {
             </>
           ) : (
             <>
-              <h3>{service.title}</h3>
-              <p>Price: {service.price} BGN.</p>
-              <p>{service.description}</p>
-              <button onClick={() => editServiceBox(service.id)}><FaRegEdit /></button>
-            </>
+            <h3>{serviceToRender.title}</h3>
+            <p>Price: {serviceToRender.price} BGN</p>
+            <p>Description: {serviceToRender.description}</p>
+            <p>Cities: {getCityNamesByIds(serviceToRender.cityIds)}</p>
+            <button onClick={() => editServiceBox(serviceToRender.id)}>Edit</button>
+            {!serviceToRender.vip && (<button onClick={() => handleBecomeVIP(serviceToRender.id)}>Become VIP</button>)}
+             </>
           )}
         </div>
       </div>
