@@ -254,37 +254,6 @@ const updateUserRole = async (userId, newRole) => {
   }
 };
 
-// const getPicture = async () => {
-//   try {
-//     const response = await axios.get(config.baseUrl + config.getPicture, 
-//       {
-//         headers: {
-//           "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-//         }
-//       }
-//     );
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error retrieving user profile picture", error);
-//     throw error;
-//   }
-// };
-
-// const updateCurrentUser = async (formData) => {
-//     try {
-//       const response = await axios.put(config.baseUrl + config.updateCurrentUser, formData, {
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//           "Authorization": `Bearer ${localStorage.getItem('Jwt_Token')}`
-//         }
-//       });
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error uploading user picture", error);
-//       throw error;
-//     }
-//   };
-
 const updateCurrentUser = async (userToUpdate, file) => {
   try {
     const formData = new FormData();
@@ -553,6 +522,16 @@ const getRequestById = async (requestId) => {
       }
     };
 
+    const OfferPaymentChechout = async (formData) => {
+      try {
+        const response = await axios.post(config.baseUrl + config.createOfferPayment, formData);
+        return response.data;
+      } catch (error) {
+        console.error("Error pay", error);
+        throw error;
+      }
+    };
+
     export {
       getAllServices,
       getAllCategories,
@@ -585,5 +564,6 @@ const getRequestById = async (requestId) => {
       getOffersByUser,
       getRequestById,
       refreshToken,
+      OfferPaymentChechout,
     }
     export default apiService;

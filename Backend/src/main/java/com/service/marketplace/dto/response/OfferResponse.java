@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 public class OfferResponse {
-    private Integer id;
+    private Integer Id;
     private Integer requestId;
     private Integer providerId;
     private String description;

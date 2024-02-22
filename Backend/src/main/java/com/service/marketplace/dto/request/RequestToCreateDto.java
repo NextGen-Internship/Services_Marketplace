@@ -1,5 +1,6 @@
 package com.service.marketplace.dto.request;
 
+import com.service.marketplace.persistence.enums.OfferStatus;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -18,5 +19,5 @@ public class RequestToCreateDto {
     @NotEmpty(message = "Description cannot be empty")
     private String description;
 
-    private boolean isActive = true;
+    private OfferStatus requestStatus = OfferStatus.PENDING;
 }

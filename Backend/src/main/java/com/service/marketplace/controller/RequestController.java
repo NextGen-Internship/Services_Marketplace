@@ -67,4 +67,9 @@ public class RequestController {
         List<RequestResponse> requests = requestService.getRequestsByProvider();
         return ResponseEntity.ok(requests);
     }
+
+    @PostMapping("/cancel/{requestId}")
+    public ResponseEntity<String> cancelRequest(@RequestBody RequestToCreateDto requestDto, @PathVariable("requestId") Integer requestId) {
+        return requestService.cancelRequest(requestDto, requestId);
+    }
 }

@@ -53,4 +53,9 @@ public class OfferController {
         List<OfferResponse> offers = offerService.getOfferByCustomer();
         return ResponseEntity.ok(offers);
     }
+
+    @PostMapping("/cancel/{offerId}")
+    public ResponseEntity<String> cancelOffer(@RequestBody OfferRequest offerRequest, @PathVariable("offerId") Integer offerId) {
+        return offerService.cancelOffer(offerRequest, offerId);
+    }
 }

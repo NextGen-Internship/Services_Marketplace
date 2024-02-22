@@ -1,15 +1,41 @@
 import React from 'react'
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
+import { getRequestById } from '../service/ApiService';
 
-export const OfferAddForm = ({onAdd,requestId }) => {
+export const OfferAddForm = ({ onAdd, requestId }) => {
 
     const [offerDescription, setOfferDescription] = useState('');
     const [offerPrice, setOfferPrice] = useState('');
     const navigate = useNavigate();
+    const [request, setRequest] = useState({
+        id: '',
+        customerId: '',
+        serviceId: '',
+        description: '',
+        requestStatus: ''
+    }
+    );
     console.log(requestId)
     const localToken = localStorage.getItem('Jwt_Token');
+
+
+    useEffect(() => {
+        const fetchCurrentRequest = async () => {
+            try {
+                const requestDetails = await getRequestById(requestId);
+                setRequest(requestDetails);
+
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+            }
+        }
+        fetchCurrentRequest();
+    }, []);
+
+
     if (!localToken) {
         console.error('No JWT token found');
         navigate('/sign-in');
@@ -17,6 +43,11 @@ export const OfferAddForm = ({onAdd,requestId }) => {
     }
     const decodedToken = jwtDecode(localToken);
     const userId = decodedToken['jti'];
+
+
+
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,7 +69,7 @@ export const OfferAddForm = ({onAdd,requestId }) => {
         }
 
 
-        
+
         const offerRequest = {
             request_id: requestId,
             provider_id: userId,
@@ -47,9 +78,16 @@ export const OfferAddForm = ({onAdd,requestId }) => {
             offerStatus: 'PENDING'
         };
 
+        const acceptRequest = {
+            customerId: request.customerId,
+            serviceId: request.serviceId,
+            description: request.description,
+            requestStatus: 'ACCEPTED'
+        };
+
         console.log(offerRequest);
 
-        onAdd(offerRequest);
+        onAdd(offerRequest,acceptRequest);
         setOfferDescription('');
         setOfferPrice('');
     };

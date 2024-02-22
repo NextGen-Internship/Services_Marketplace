@@ -21,6 +21,14 @@ public interface OfferMapper {
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     Offer OfferRequestToOffer(OfferRequest requestOffer, User provider, Request requests);
 
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "description", source = "requestOffer.description")
+    @Mapping(target = "offerPrice", source = "requestOffer.price")
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
+    Offer OfferRequestToOffer(OfferRequest requestOffer);
+
     @Mapping(target = "providerId", source = "offers.provider.id")
     @Mapping(target = "requestId", source = "offers.request.id")
     @Mapping(target = "price", source = "offers.offerPrice")

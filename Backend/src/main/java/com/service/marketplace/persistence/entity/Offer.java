@@ -38,6 +38,10 @@ public class Offer extends BaseEntity {
     @JoinColumn(name = "request_id")
     @OneToOne
     private Request request;
+
+    @Column(name = "stripe_product_id")
+    private String productId;
+
 }
 
 
