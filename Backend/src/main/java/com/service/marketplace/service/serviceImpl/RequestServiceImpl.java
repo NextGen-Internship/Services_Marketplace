@@ -5,7 +5,6 @@ import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.exception.RequestNotFoundException;
 import com.service.marketplace.exception.ServiceNotFoundException;
 import com.service.marketplace.exception.UserNotFoundException;
-import com.service.marketplace.exception.VipServiceNotFoundException;
 import com.service.marketplace.mapper.RequestMapper;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
@@ -49,7 +48,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestResponse createRequest(RequestToCreateDto requestToCreate) {
-        User customer = userRepository.findById(requestToCreate.getCustomerId()).orElseThrow(() -> new UserNotFoundException());
+        User customer = userRepository.findById(requestToCreate.getCustomerId()).orElseThrow(() -> new UserNotFoundException("User not found!"));
         com.service.marketplace.persistence.entity.Service existingService = serviceRepository.findById(requestToCreate.getServiceId()).orElseThrow(() -> new ServiceNotFoundException());
         Request newRequest = requestMapper.requestRequestToRequest(requestToCreate,
                 customer, existingService);

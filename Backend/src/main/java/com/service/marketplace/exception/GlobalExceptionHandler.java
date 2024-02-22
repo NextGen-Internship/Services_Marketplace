@@ -1,5 +1,6 @@
 package com.service.marketplace.exception;
 
+import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import jakarta.persistence.EntityNotFoundException;
 import org.flywaydb.core.api.ErrorDetails;
@@ -12,9 +13,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.security.GeneralSecurityException;
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,7 +39,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntimeException(RuntimeException ex, WebRequest request) {
         // You might want to log the exception or perform some other action here.
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("A runtime error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -161,6 +165,53 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         body.put("path", request.getDescription(false));
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<Object> handleIOException(IOException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("error", "Internal Server Error");
+        body.put("message", "An error occurred while processing the request: " + ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGenericException(Exception ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("error", "Internal Server Error");
+        body.put("message", "An unexpected error occurred: " + ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(SignatureVerificationException.class)
+    public ResponseEntity<Object> handleSignatureVerificationException(SignatureVerificationException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.UNAUTHORIZED.value());
+        body.put("error", "Unauthorized");
+        body.put("message", "Failed signature verification. The request is unauthorized.");
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
+
+//    @ExceptionHandler(FileConversionException.class)
+//    public ResponseEntity<Object> handleFileConversionException(FileConversionException ex) {
+//        Map<String, Object> body = new HashMap<>();
+//        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+//        body.put("error", "Internal Server Error");
+//        body.put("message", "Failed to convert file: " + ex.getMessage());
+//        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
+
+    @ExceptionHandler(GeneralSecurityException.class)
+    public ResponseEntity<Object> handleGeneralSecurityException(GeneralSecurityException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.UNAUTHORIZED.value());
+        body.put("error", "Security Exception");
+        body.put("message", "A security issue was encountered: " + ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
+
+
 }
 
 

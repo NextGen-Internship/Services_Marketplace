@@ -5,7 +5,6 @@ import com.service.marketplace.dto.response.OfferResponse;
 import com.service.marketplace.exception.OfferNotFoundException;
 import com.service.marketplace.exception.RequestNotFoundException;
 import com.service.marketplace.exception.UserNotFoundException;
-import com.service.marketplace.exception.VipServiceNotFoundException;
 import com.service.marketplace.mapper.OfferMapper;
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
@@ -32,6 +31,7 @@ public class OfferServiceImpl implements OfferService {
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
     private final UserService userService;
+    //CORRECT ! ! !
 
     @Override
     public List<OfferResponse> getAllOffer() {
@@ -50,7 +50,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public OfferResponse createOffer(OfferRequest offerToCreate) {
-        User provider = userRepository.findById(offerToCreate.getProvider_id()).orElseThrow(() -> new UserNotFoundException());
+        User provider = userRepository.findById(offerToCreate.getProvider_id()).orElseThrow(() -> new UserNotFoundException("User not found!"));
         Request existingRequest = requestRepository.findById(offerToCreate.getRequest_id()).orElseThrow(() -> new RequestNotFoundException());
         Offer newOffer = offerMapper.OfferRequestToOffer(offerToCreate, provider, existingRequest);
         Offer savedOffer = offerRepository.save(newOffer);

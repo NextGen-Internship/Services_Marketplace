@@ -3,7 +3,6 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.CategoryRequest;
 import com.service.marketplace.dto.response.CategoryResponse;
 import com.service.marketplace.exception.CategoryNotFoundException;
-import com.service.marketplace.exception.CityNotFoundException;
 import com.service.marketplace.mapper.CategoryMapper;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.repository.CategoryRepository;
@@ -26,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse getCategoryById(Integer categoryId) {
+    public CategoryResponse getCategoryById(Integer categoryId) { //YES
         CategoryResponse category = categoryMapper.categoryToCategoryResponse(categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException(categoryId)));
 
         return category;

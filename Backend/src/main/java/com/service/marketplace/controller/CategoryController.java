@@ -2,6 +2,7 @@ package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.CategoryRequest;
 import com.service.marketplace.dto.response.CategoryResponse;
+import com.service.marketplace.exception.CategoryNotFoundException;
 import com.service.marketplace.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequestMapping("/v1/categories")
 public class CategoryController {
     private final CategoryService categoryService;
+    //CORRECT ! ! !
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
@@ -41,11 +43,14 @@ public class CategoryController {
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Integer categoryId, @RequestBody CategoryRequest categoryToUpdate) {
         try {
             CategoryResponse updatedCategory = categoryService.updateCategory(categoryId, categoryToUpdate);
-            if (updatedCategory == null) {
-                return ResponseEntity.notFound().build();
-            } else {
-                return ResponseEntity.ok(updatedCategory);
-            }
+            return ResponseEntity.notFound().build();
+        } catch (CategoryNotFoundException e) {
+            throw new CategoryNotFoundException(categoryId);
+//            if (updatedCategory == null) {
+//                return ResponseEntity.notFound().build();
+//            } else {
+//                return ResponseEntity.ok(updatedCategory);
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

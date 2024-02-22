@@ -13,6 +13,7 @@ import java.util.List;
 @RequestMapping("/api/files")
 public class FilesController {
     private final FilesService filesService;
+    //CORRECT ! ! !
 
     @GetMapping("/all")
     public ResponseEntity<List<FilesResponse>> getAllFiles() {

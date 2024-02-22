@@ -3,7 +3,6 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.CityRequest;
 import com.service.marketplace.dto.response.CityResponse;
 import com.service.marketplace.exception.CityNotFoundException;
-import com.service.marketplace.exception.FileNotFoundException;
 import com.service.marketplace.mapper.CityMapper;
 import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.repository.CityRepository;
@@ -18,6 +17,7 @@ import java.util.List;
 public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
     private final CityMapper cityMapper;
+    //CORRECT ! ! !
 
     @Override
     public List<CityResponse> getAllCities() {
