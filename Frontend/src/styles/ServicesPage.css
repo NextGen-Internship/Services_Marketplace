@@ -16,7 +16,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: 20px;
+    margin-top: 25px;
   }
   
   .services header {
@@ -35,7 +35,6 @@
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin-left: 470px;
     
   }
   
@@ -78,9 +77,8 @@
     display: flex;
     justify-content: center;
     list-style: none;
-    margin-left: 250px;
     color: #ffffff;
-    margin-top: 5px;
+    margin-top: 10px;
     
   }
   
