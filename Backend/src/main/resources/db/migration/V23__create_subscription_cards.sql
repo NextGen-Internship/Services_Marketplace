@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS subscription (
     user_id INT,
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
-    isActive BOOLEAN NOT NULL DEFAULT TRUE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     stripe_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user (id)
 );

@@ -33,7 +33,8 @@ const config = {
     createReview: '/api/reviews/create',
     getReviewsByReviewId: '/api/files/review',
     updateCurrentReview: '/api/reviews/update',
-    createOfferPayment: '/api/subscribe/offerPay'
+    refreshToken: '/api/auth/refresh',
+    createOfferPayment: '/api/subscribe/offerPay',
 }
 
 

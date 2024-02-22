@@ -512,6 +512,16 @@ const getRequestById = async (requestId) => {
       }
     };
 
+    const refreshToken = async (formData) => {
+      try {
+        const response = await axios.post(config.baseUrl + config.refreshToken, formData);
+        return response.data;
+      } catch (error) {
+        console.error("Error creating registration", error);
+        throw error;
+      }
+    };
+
     const OfferPaymentChechout = async (formData) => {
       try {
         const response = await axios.post(config.baseUrl + config.createOfferPayment, formData);
@@ -553,6 +563,7 @@ const getRequestById = async (requestId) => {
       createOffer,
       getOffersByUser,
       getRequestById,
+      refreshToken,
       OfferPaymentChechout,
     }
     export default apiService;

@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/Home.css';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import Category from './Category'; // Import your Category component
+import Category from './Category';
 import Footer from './Footer';
 import firstPhoto from '../assets/istockphoto-1127929107-612x612.jpg'
 import secondPhoto from '../assets/photodune-6221194-customer-service-team-s-e1468394369939-742x353.jpg';
@@ -43,7 +43,7 @@ const Home = () => {
       </Carousel>
       <hr className='line-home'/>
       <div className="home-category">
-        <Category handleCategoryClick={handleCategoryClick} /> {/* Include the Category component here */}
+        <Category handleCategoryClick={handleCategoryClick} />
       </div>
       <Footer></Footer>
     </div>

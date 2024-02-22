@@ -67,6 +67,7 @@ const ReviewAddForm = ({ onAdd, serviceId }) => {
 
         setReviewDescription('');
         setReviewRating('');
+        setSelectedFiles([]);
     };
 
     return (

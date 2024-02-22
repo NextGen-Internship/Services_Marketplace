@@ -9,6 +9,7 @@ import com.service.marketplace.dto.request.StripeAccountRequest;
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Role;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.service.EmailSenderService;
 import com.service.marketplace.persistence.enums.OfferStatus;
 import com.service.marketplace.persistence.repository.*;
 import com.service.marketplace.service.StripeService;
@@ -37,7 +38,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -49,6 +49,7 @@ public class StripeServiceImpl implements StripeService {
     private final OfferRepository offerRepository;
     private final ServiceRepository serviceRepository;
     private final VipServiceRepository vipServiceRepository;
+    private final EmailSenderService emailSenderService;
 
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
@@ -146,6 +147,7 @@ public class StripeServiceImpl implements StripeService {
                         .setQuantity(1L)
                         .setPrice(checkout.getPriceId())
                         .build())
+                .setCustomerEmail(checkout.getEmail())
                 .build();
 
         try {
@@ -161,7 +163,6 @@ public class StripeServiceImpl implements StripeService {
             return gson.toJson(responseData);
         }
     }
-
 
     @Override
     public String getProductPrice(String priceId) {
@@ -243,7 +244,6 @@ public class StripeServiceImpl implements StripeService {
                     try {
                         Customer customer = Customer.list(CustomerListParams.builder().setEmail(userEmail).build()).getData().get(0);
                         String customerId = customer.getId();
-
                         PaymentIntentListParams paymentIntentParams = PaymentIntentListParams.builder()
                                 .setCustomer(customerId)
                                 .build();
@@ -262,10 +262,27 @@ public class StripeServiceImpl implements StripeService {
                                 .filter(paymentIntent -> serviceOptional.isPresent())
                                 .ifPresent(s -> updateVipService(serviceOptional.get(), s));
 
+                        User user = userRepository.findByEmail(userEmail).orElseThrow();
+
+                        String emailSubject = "Congratulations on upgrading your service to VIP!";
+                        String emailBody = String.format("Dear %s %s,\n" +
+                                "\n" +
+                                "Congratulations on successfully upgrading your service to VIP with Service Marketplace!\n" +
+                                "\n" +
+                                "We're delighted to inform you that your service is now part of our exclusive VIP services. As having a VIP service, you'll enjoy premium features and benefits tailored to enhance your experience.\n" +
+                                "\n" +
+                                "Thank you for choosing to upgrade your service with us. If you have any questions or need assistance, feel free to reach out to our support team.\n" +
+                                "\n" +
+                                "Best regards,\n" +
+                                "\n" +
+                                "Service Marketplace Team", user.getFirstName(), user.getLastName());
+
+                        emailSenderService.sendSimpleEmail(user.getEmail(), emailSubject, emailBody);
+
+
                         return ResponseEntity.status(HttpStatus.OK).body("VIP service created");
                     } catch (Exception e) {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
-
                     }
                 } else {
                     try {
@@ -280,11 +297,9 @@ public class StripeServiceImpl implements StripeService {
                         }
 
                         boolean hasActiveSubscription = subscriptions.stream().anyMatch(subscription -> "active".equals(subscription.getStatus()));
-                        User userToBeUpdated = userRepository.findByEmail(userEmail).orElse(null);
+                        User userToBeUpdated = userRepository.findByEmail(userEmail).orElseThrow();
                         if (hasActiveSubscription) {
-                            if (userToBeUpdated != null) {
-                                userService.updateUserRoleToProvider(userToBeUpdated.getId());
-                            }
+                            userService.updateUserRoleToProvider(userToBeUpdated.getId());
                         }
 
                         long currentPeriodStart = subscriptions.get(0).getCurrentPeriodStart();
@@ -293,26 +308,38 @@ public class StripeServiceImpl implements StripeService {
                         java.util.Date startDate = new java.util.Date(currentPeriodStart * 1000);
                         java.util.Date endDate = new java.util.Date(currentPeriodEnd * 1000);
 
-                        String subscriptionStatus = subscriptions.get(0).getStatus();
-                        boolean isActive = "active".equals(subscriptionStatus);
-
                         com.service.marketplace.persistence.entity.Subscription subscription = new com.service.marketplace.persistence.entity.Subscription();
                         subscription.setStripeId(subscriptions.get(0).getId());
                         subscription.setStartDate(startDate);
                         subscription.setEndDate(endDate);
                         subscription.setUser(userToBeUpdated);
-                        subscription.setActive(isActive);
+                        subscription.setActive("active".equals(subscriptions.get(0).getStatus()));
 
                         subscriptionRepository.save(subscription);
+
+                        String emailSubject = "Thank You for Subscribing!";
+                        String emailBody = String.format("Dear %s %s,\n" +
+                                "\n" +
+                                "Congratulations! Your subscription to Service Marketplace is now active. \uD83C\uDF89\n" +
+                                "\n" +
+                                "Thank you for choosing us! We appreciate your trust and look forward to providing you with a seamless experience. As a subscriber, you gain access to exclusive features and updates.\n" +
+                                "\n" +
+                                "If you have any questions or need assistance, feel free to reach out. We're here to help!\n" +
+                                "\n" +
+                                "Best regards,\n" +
+                                "\n" +
+                                "Service Marketplace Team", userToBeUpdated.getFirstName(), userToBeUpdated.getLastName());
+
+                        emailSenderService.sendSimpleEmail(userEmail, emailSubject, emailBody);
                     } catch (StripeException e) {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving customer data from Stripe");
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling webhook event");
+
                     }
                 }
             }
             break;
 
             case "customer.subscription.created": {
-                System.out.println("Webhook for created subscription");
                 break;
             }
             case "customer.subscription.deleted": {
@@ -341,6 +368,26 @@ public class StripeServiceImpl implements StripeService {
                         SubscriptionUpdateParams.builder().setCancelAtPeriodEnd(true).build();
 
                 Subscription canceledSubscription = subscription.update(params);
+                com.service.marketplace.persistence.entity.Subscription existingSubscription = subscriptionRepository.findByStripeId(stripeId);
+                existingSubscription.setCancelled(true);
+                subscriptionRepository.save(existingSubscription);
+
+                User user = userRepository.findById(existingSubscription.getUser().getId()).orElseThrow();
+
+                String emailSubject = "We're Sorry to See You Go";
+                String emailBody = String.format("Dear %s %s,\n" +
+                        "\n" +
+                        "We're sorry to inform you that your subscription with Service Marketplace has been canceled.\n" +
+                        "\n" +
+                        "We value your past support and hope to serve you again in the future. If you have any feedback on how we can improve, please don't hesitate to share it with us.\n" +
+                        "\n" +
+                        "Should you have any questions or require further assistance, please feel free to reach out to our support team.\n" +
+                        "\n" +
+                        "Best regards,\n" +
+                        "\n" +
+                        "Service Marketplace Team", user.getFirstName(), user.getLastName());
+
+                emailSenderService.sendSimpleEmail(user.getEmail(), emailSubject, emailBody);
 
                 if (canceledSubscription.getCancelAtPeriodEnd()) {
                     return ResponseEntity.ok("Subscription is successfully canceled.");
@@ -382,7 +429,7 @@ public class StripeServiceImpl implements StripeService {
     public void checkSubscriptionsStatus() {
         Stripe.apiKey = stripeApiKey;
 
-        List<com.service.marketplace.persistence.entity.Subscription> subscriptions = subscriptionRepository.findAll();
+        List<com.service.marketplace.persistence.entity.Subscription> subscriptions = subscriptionRepository.findByIsActiveTrue();
 
         for (com.service.marketplace.persistence.entity.Subscription subscription : subscriptions) {
             try {
@@ -397,9 +444,7 @@ public class StripeServiceImpl implements StripeService {
                     Set<Role> userRoles = user.getRoles();
                     Role role = new Role("PROVIDER");
                     userRoles.remove(role);
-
                     user.setRoles(userRoles);
-
                     userRepository.save(user);
                 }
             } catch (StripeException e) {
@@ -533,6 +578,5 @@ public class StripeServiceImpl implements StripeService {
             }
         }
     }
-
 
 }

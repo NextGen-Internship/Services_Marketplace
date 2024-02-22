@@ -11,4 +11,5 @@ public class SubscriptionResponse {
     private Date endDate;
     private boolean isActive;
     private String stripeId;
+    private boolean isCancelled;
 }

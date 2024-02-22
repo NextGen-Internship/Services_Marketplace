@@ -24,7 +24,6 @@ function AddServicePage() {
         try {
             const newService = await createService(service, files);
 
-            console.log(newService);
             setServices([...services, newService]);
         } catch (error) {
             console.error(error);

@@ -16,4 +16,5 @@ public class UserResponse {
     private String description;
     private String picture;
     private Set<Role> roles;
+    private String stripeAccountId;
 }
