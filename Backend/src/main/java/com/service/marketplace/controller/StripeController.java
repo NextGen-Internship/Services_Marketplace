@@ -1,6 +1,7 @@
 package com.service.marketplace.controller;
 
 import com.service.marketplace.dto.request.Checkout;
+import com.service.marketplace.dto.request.OfferPaymentRequest;
 import com.service.marketplace.dto.request.StripeAccountRequest;
 import com.service.marketplace.service.StripeService;
 import com.stripe.exception.StripeException;
@@ -39,6 +40,12 @@ public class StripeController {
     public ResponseEntity<String> cancelSubscription(@PathVariable String stripeId) {
         return stripeService.cancelSubscription(stripeId);
     }
+
+    @PostMapping("/offerPay")
+    public String createOfferPayment(@RequestBody OfferPaymentRequest offerPaymentRequest) throws StripeException {
+        return stripeService.payCheckout(offerPaymentRequest);
+    }
+
 
     @PostMapping("/vip")
     public String vipWithCheckoutPage(@RequestBody Checkout checkout) throws StripeException {

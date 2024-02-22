@@ -19,7 +19,6 @@ public interface RequestMapper {
     @Mapping(target = "service", source = "service")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "active", source = "request.active")
     Request requestRequestToRequest(RequestToCreateDto request, User customer, Service service);
 
     @Mapping(target = "customerId", source = "request.customer.id")

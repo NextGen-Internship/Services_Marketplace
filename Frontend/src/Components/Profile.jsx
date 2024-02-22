@@ -631,10 +631,7 @@ const Profile = () => {
   const showRequestsButton = (
     <button onClick={handleRequest}>Requests</button>
   );
-  // const handleRequestDetails = (request) => {
-  //   setSelectedRequest(request);
-  //   // You can perform additional actions here if needed
-  // };
+ 
 
   console.log(editableService);
 
@@ -801,7 +798,7 @@ const Profile = () => {
           </div>
           <div className="input-group">
             <label>Phone number:</label>
-            <input type="text" name="phoneNumber" onChange={handleProviderInfoChange} />
+            <input type="text" name="phoneNumber" defaultValue="+359" onChange={handleProviderInfoChange} />
           </div>
           <div className="input-group">
             <label>Email:</label>

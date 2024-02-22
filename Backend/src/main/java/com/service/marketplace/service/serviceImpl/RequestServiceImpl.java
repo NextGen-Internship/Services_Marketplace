@@ -12,6 +12,7 @@ import com.service.marketplace.service.RequestService;
 import com.service.marketplace.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class RequestServiceImpl implements RequestService {
         if (existingRequest != null) {
             requestMapper.requestFromRequest(requestToUpdate, existingRequest);
             Request updatedRequest = requestRepository.save(existingRequest);
+            existingRequest.setRequestStatus(requestToUpdate.getRequestStatus());
             return requestMapper.requestToRequestResponse(updatedRequest);
         } else {
             return null;
@@ -81,5 +83,17 @@ public class RequestServiceImpl implements RequestService {
 
         }
         return requestMapper.toRequestResponseList(requests);
+    }
+
+    public ResponseEntity<String> cancelRequest(RequestToCreateDto requestDto, Integer requestId) {
+        try {
+            Request existingRequest = requestRepository.findById(requestId).orElse(null);
+            existingRequest.setRequestStatus(requestDto.getRequestStatus());
+            requestRepository.save(existingRequest);
+        } catch (Exception e) {
+            System.err.println("Request update error: " + e.getMessage());
+        }
+
+        return null;
     }
 }
