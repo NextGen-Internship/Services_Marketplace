@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile) { //?????????????????
+    public UserResponse updateUser(Integer userId, UserUpdateRequest userToUpdate, MultipartFile multipartFile) { //????????????
         User existingUser = null;
 
         if (userId != null) {
@@ -113,12 +113,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest) { //?????????????????????
+    public UserResponse updateUserRole(Integer userId, SetProviderRequest providerRequest) { //YES
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         String roleName = providerRequest.getRole();
         Role role = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RoleNotFoundException("Role not found: " + roleName));
+                .orElseThrow(() -> new RoleNotFoundException());
 
         if (!existingUser.getRoles().contains(role)) {
             existingUser.getRoles().add(role);

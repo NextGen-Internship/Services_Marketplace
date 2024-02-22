@@ -21,6 +21,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionMapper subscriptionMapper;
     private final UserRepository userRepository;
+    //CORRECT ! ! !
 
     @Override
     public List<SubscriptionResponse> getAllSubscriptions() {

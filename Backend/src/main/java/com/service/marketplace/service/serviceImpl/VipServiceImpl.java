@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VipServiceImpl implements VipServiceService {
+    //CORRECT ! ! !
 
     private final UserRepository userRepository;
     private final VipServiceRepository vipServiceRepository;
@@ -27,7 +28,7 @@ public class VipServiceImpl implements VipServiceService {
     }
 
     @Override
-    public VipServiceResponse getVipServiceById(Integer vipServiceId) {
+    public VipServiceResponse getVipServiceById(Integer vipServiceId) { //YES
         VipService vipService = vipServiceRepository.findById(vipServiceId).orElseThrow(() -> new VipServiceNotFoundException(vipServiceId));
 
         return //(vipService != null) ?

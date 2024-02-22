@@ -52,7 +52,7 @@ public class StripeServiceImpl implements StripeService {
     private String stripeApiKey;
 
     @Override
-    public String createStripeAccount(StripeAccountRequest stripeAccountRequest) {
+    public String createStripeAccount(StripeAccountRequest stripeAccountRequest) { //NOOOOOOOOOOOOOOOOO
         String[] data = stripeAccountRequest.getDateOfBirth().split("-");
 
         try {
@@ -127,7 +127,7 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public String subscriptionWithCheckoutPage(Checkout checkout) {
+    public String subscriptionWithCheckoutPage(Checkout checkout) { //Maybe YES
         Stripe.apiKey = stripeApiKey;
 
         SessionCreateParams params = new SessionCreateParams.Builder()
@@ -153,7 +153,7 @@ public class StripeServiceImpl implements StripeService {
 
 
     @Override
-    public String getProductPrice(String priceId) {
+    public String getProductPrice(String priceId) { //NOOOOOOOOOOOOOOOOO
         Stripe.apiKey = stripeApiKey;
 
         try {
