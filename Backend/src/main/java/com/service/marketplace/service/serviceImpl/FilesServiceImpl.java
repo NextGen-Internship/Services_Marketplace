@@ -3,6 +3,7 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.FilesRequest;
 import com.service.marketplace.dto.response.FilesResponse;
 import com.service.marketplace.exception.FileNotFoundException;
+import com.service.marketplace.exception.RequestNotFoundException;
 import com.service.marketplace.exception.ReviewNotFoundException;
 import com.service.marketplace.exception.ServiceNotFoundException;
 import com.service.marketplace.mapper.FilesMapper;
@@ -84,6 +85,9 @@ public class FilesServiceImpl implements FilesService {
 
     @Override
     public void deleteFileById(Integer fileId) {
+        if (!filesRepository.existsById(fileId)) {
+            throw new FileNotFoundException(fileId);
+        }
         filesRepository.deleteById(fileId);
     }
 

@@ -5,6 +5,7 @@ import com.service.marketplace.dto.response.RequestResponse;
 import com.service.marketplace.exception.RequestNotFoundException;
 import com.service.marketplace.exception.ServiceNotFoundException;
 import com.service.marketplace.exception.UserNotFoundException;
+import com.service.marketplace.exception.VipServiceNotFoundException;
 import com.service.marketplace.mapper.RequestMapper;
 import com.service.marketplace.persistence.entity.Request;
 import com.service.marketplace.persistence.entity.User;
@@ -70,6 +71,9 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public void deleteRequestById(Integer requestId) {
+        if (!requestRepository.existsById(requestId)) {
+            throw new RequestNotFoundException(requestId);
+        }
         requestRepository.deleteById(requestId);
     }
 

@@ -50,7 +50,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewResponse createReview(ReviewRequest reviewToCreate, MultipartFile[] files) {
-        User customer = userRepository.findById(reviewToCreate.getCustomerId()).orElseThrow(() -> new UserNotFoundException());
+        User customer = userRepository.findById(reviewToCreate.getCustomerId()).orElseThrow(() -> new UserNotFoundException("User not found!"));
         com.service.marketplace.persistence.entity.Service service = serviceRepository.findById(reviewToCreate.getServiceId()).orElseThrow(() -> new ServiceNotFoundException());
 
         Review newReview = reviewMapper.reviewRequestToReview(reviewToCreate, customer, service);

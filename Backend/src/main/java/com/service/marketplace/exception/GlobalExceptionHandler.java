@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.net.MalformedURLException;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -59,7 +60,6 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
-
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
@@ -77,7 +77,6 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
-
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -95,7 +94,6 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
         body.put("errorCode", ex.getErrorCode());
-
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -151,6 +149,17 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(VipServiceNotFoundException.class)
     public ResponseEntity<?> handleVipServiceNotFoundException(VipServiceNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>("VipService not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // Storage Service Impl
+    @ExceptionHandler(MalformedURLException.class)
+    public ResponseEntity<?> handleMalformedURLException(MalformedURLException ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Bad Request");
+        body.put("message", "The URL is malformed or invalid: " + ex.getMessage());
+        body.put("path", request.getDescription(false));
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }
 

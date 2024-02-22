@@ -3,6 +3,7 @@ package com.service.marketplace.service.serviceImpl;
 import com.service.marketplace.dto.request.CityRequest;
 import com.service.marketplace.dto.response.CityResponse;
 import com.service.marketplace.exception.CityNotFoundException;
+import com.service.marketplace.exception.FileNotFoundException;
 import com.service.marketplace.mapper.CityMapper;
 import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.repository.CityRepository;
@@ -60,6 +61,9 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public void deleteCityById(Integer cityId) {
+        if (!cityRepository.existsById(cityId)) {
+            throw new CityNotFoundException(cityId);
+        }
         cityRepository.deleteById(cityId);
     }
 }

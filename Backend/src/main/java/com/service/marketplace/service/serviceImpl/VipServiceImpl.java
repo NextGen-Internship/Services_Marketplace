@@ -38,8 +38,12 @@ public class VipServiceImpl implements VipServiceService {
 
     @Override
     public void deleteVipServiceById(Integer vipServiceId) {
+        if (!vipServiceRepository.existsById(vipServiceId)) {
+            throw new VipServiceNotFoundException(vipServiceId);
+        }
         vipServiceRepository.deleteById(vipServiceId);
     }
+
 
 
 }

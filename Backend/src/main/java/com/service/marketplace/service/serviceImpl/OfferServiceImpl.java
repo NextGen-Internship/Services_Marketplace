@@ -5,6 +5,7 @@ import com.service.marketplace.dto.response.OfferResponse;
 import com.service.marketplace.exception.OfferNotFoundException;
 import com.service.marketplace.exception.RequestNotFoundException;
 import com.service.marketplace.exception.UserNotFoundException;
+import com.service.marketplace.exception.VipServiceNotFoundException;
 import com.service.marketplace.mapper.OfferMapper;
 import com.service.marketplace.persistence.entity.Offer;
 import com.service.marketplace.persistence.entity.Request;
@@ -58,6 +59,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void deleteOfferById(Integer offerId) {
+        if (!offerRepository.existsById(offerId)) {
+            throw new OfferNotFoundException(offerId);
+        }
         offerRepository.deleteById(offerId);
     }
 

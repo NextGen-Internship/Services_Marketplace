@@ -40,8 +40,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public void deleteSubscriptionById(Integer subscriptionId) {
+        if (!subscriptionRepository.existsById(subscriptionId)) {
+            throw new SubscriptionNotFoundException(subscriptionId);
+        }
         subscriptionRepository.deleteById(subscriptionId);
     }
+
 
     @Override
     public SubscriptionResponse getSubscriptionByUserId(Integer userId) {  //YES

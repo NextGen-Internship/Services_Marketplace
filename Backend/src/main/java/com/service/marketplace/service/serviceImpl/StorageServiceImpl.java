@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.service.marketplace.exception.FileConversionException;
+import com.service.marketplace.exception.FileUploadException;
 import com.service.marketplace.exception.UserNotFoundException;
 import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.persistence.repository.UserRepository;
@@ -40,7 +41,7 @@ public class StorageServiceImpl implements StorageService {
 
     public String uploadFile(MultipartFile file) {
         if (file == null) {
-            return null;
+            throw new FileUploadException("File must not be null");
         }
         File fileObj = convertMultipartFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();

@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
 
         String roleName = providerRequest.getRole();
         Role role = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RoleNotFoundException());
+                .orElseThrow(() -> new RoleNotFoundException("Role not found!"));
 
         if (!existingUser.getRoles().contains(role)) {
             existingUser.getRoles().add(role);

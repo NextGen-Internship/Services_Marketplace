@@ -47,12 +47,14 @@ public class StripeServiceImpl implements StripeService {
     private final VipServiceRepository vipServiceRepository;
     private final SubscriptionRepository subscriptionRepository;
 
+    //Maybe yes
+
     private String vipSessionId = "";
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
 
     @Override
-    public String createStripeAccount(StripeAccountRequest stripeAccountRequest) { //NOOOOOOOOOOOOOOOOO
+    public String createStripeAccount(StripeAccountRequest stripeAccountRequest) {
         String[] data = stripeAccountRequest.getDateOfBirth().split("-");
 
         try {
@@ -127,7 +129,7 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public String subscriptionWithCheckoutPage(Checkout checkout) { //Maybe YES
+    public String subscriptionWithCheckoutPage(Checkout checkout) {
         Stripe.apiKey = stripeApiKey;
 
         SessionCreateParams params = new SessionCreateParams.Builder()
@@ -153,7 +155,7 @@ public class StripeServiceImpl implements StripeService {
 
 
     @Override
-    public String getProductPrice(String priceId) { //NOOOOOOOOOOOOOOOOO
+    public String getProductPrice(String priceId) { //noooo
         Stripe.apiKey = stripeApiKey;
 
         try {
