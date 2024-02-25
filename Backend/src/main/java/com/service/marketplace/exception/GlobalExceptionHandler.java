@@ -1,5 +1,6 @@
 package com.service.marketplace.exception;
 
+import com.service.marketplace.dto.response.CustomErrorResponse;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,170 +28,159 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
 
     //UserServiceImpl
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("Entity not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Entity not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        return new ResponseEntity<>("Invalid argument: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Invalid argument", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        // You might want to log the exception or perform some other action here.
-        return new ResponseEntity<>("A runtime error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<CustomErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Runtime error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
-        // Custom handling for user not found
-        return new ResponseEntity<>("User not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("User not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(FileUploadException.class)
-    public ResponseEntity<?> handleFileUploadException(FileUploadException ex, WebRequest request) {
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<CustomErrorResponse> handleFileUploadException(FileUploadException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("File upload error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(RoleNotFoundException.class)
-    public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException ex) {
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<CustomErrorResponse> handleRoleNotFoundException(RoleNotFoundException ex) {
+        CustomErrorResponse error = new CustomErrorResponse("Role not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     //Subscription Controller
     @ExceptionHandler(SubscriptionNotFoundException.class)
-    public ResponseEntity<Object> handleSubscriptionNotFoundException(SubscriptionNotFoundException ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleSubscriptionNotFoundException(SubscriptionNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Subscription not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     //Stripe Service Impl
     @ExceptionHandler(PayloadProcessingException.class)
-    public ResponseEntity<Object> handlePayloadProcessingException(PayloadProcessingException ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handlePayloadProcessingException(PayloadProcessingException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Payload processing error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(StripeAccountCreationException.class)
-    public ResponseEntity<Object> handleStripeAccountCreationException(StripeAccountCreationException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleStripeAccountCreationException(StripeAccountCreationException ex) {
+        CustomErrorResponse error = new CustomErrorResponse("Stripe account creation error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(StripeSessionCreationException.class)
-    public ResponseEntity<Map<String, Object>> handleStripeSessionCreationException(StripeException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleStripeSessionCreationException(StripeException ex) {
+        CustomErrorResponse error = new CustomErrorResponse("Stripe session creation error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(StripeServiceException.class)
-    public ResponseEntity<Map<String, Object>> handleStripeServiceException(StripeServiceException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("errorCode", ex.getErrorCode());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleStripeServiceException(StripeServiceException ex) {
+        CustomErrorResponse error = new CustomErrorResponse("Stripe service error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     //Storage Service Impl
     @ExceptionHandler(FileConversionException.class)
-    public ResponseEntity<?> handleFileConversionException(FileConversionException ex, WebRequest request) {
-        return new ResponseEntity<>("File conversion error: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleFileConversionException(FileConversionException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("File conversion error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     // Service Impl
     @ExceptionHandler(ServiceNotFoundException.class)
-    public ResponseEntity<?> handleServiceNotFoundException(ServiceNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("Service not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleServiceNotFoundException(ServiceNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Service not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     //Review Service Impl
     @ExceptionHandler(ReviewNotFoundException.class)
-    public ResponseEntity<?> handleReviewNotFoundException(ReviewNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("Review not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleReviewNotFoundException(ReviewNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Review not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     //Request Service Impl
     @ExceptionHandler(RequestNotFoundException.class)
-    public ResponseEntity<?> handleRequestNotFoundException(RequestNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("Request not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleRequestNotFoundException(RequestNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Request not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     //Offer Service Impl
     @ExceptionHandler(OfferNotFoundException.class)
-    public ResponseEntity<?> handleOfferNotFoundException(OfferNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("Offer not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleOfferNotFoundException(OfferNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Offer not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     // File Service Impl
     @ExceptionHandler(FileNotFoundException.class)
-    public ResponseEntity<?> handleFileNotFoundException(FileNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("File not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleFileNotFoundException(FileNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("File not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     //City Service Impl
     @ExceptionHandler(CityNotFoundException.class)
-    public ResponseEntity<?> handleCityNotFoundException(CityNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("City not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleCityNotFoundException(CityNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("City not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     //Category Service Impl
     @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<?> handleCategoryNotFoundException(CategoryNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("Category not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleCategoryNotFoundException(CategoryNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Category not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     //VipService
     @ExceptionHandler(VipServiceNotFoundException.class)
-    public ResponseEntity<?> handleVipServiceNotFoundException(VipServiceNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>("VipService not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleVipServiceNotFoundException(VipServiceNotFoundException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("VipService not found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     // Storage Service Impl
     @ExceptionHandler(MalformedURLException.class)
-    public ResponseEntity<?> handleMalformedURLException(MalformedURLException ex, WebRequest request) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Bad Request");
-        body.put("message", "The URL is malformed or invalid: " + ex.getMessage());
-        body.put("path", request.getDescription(false));
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleMalformedURLException(MalformedURLException ex, WebRequest request) {
+        CustomErrorResponse error = new CustomErrorResponse("Malformed URL", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<Object> handleIOException(IOException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        body.put("error", "Internal Server Error");
-        body.put("message", "An error occurred while processing the request: " + ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<CustomErrorResponse> handleIOException(IOException ex) {
+        CustomErrorResponse error = new CustomErrorResponse("I/O Error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        body.put("error", "Internal Server Error");
-        body.put("message", "An unexpected error occurred: " + ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<CustomErrorResponse> handleGenericException(Exception ex) {
+        CustomErrorResponse error = new CustomErrorResponse("Internal Server Error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(SignatureVerificationException.class)
-    public ResponseEntity<Object> handleSignatureVerificationException(SignatureVerificationException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.UNAUTHORIZED.value());
-        body.put("error", "Unauthorized");
-        body.put("message", "Failed signature verification. The request is unauthorized.");
-        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<CustomErrorResponse> handleSignatureVerificationException(SignatureVerificationException ex) {
+        CustomErrorResponse error = new CustomErrorResponse("Unauthorized", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
 //    @ExceptionHandler(FileConversionException.class)
@@ -203,12 +193,9 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
 //    }
 
     @ExceptionHandler(GeneralSecurityException.class)
-    public ResponseEntity<Object> handleGeneralSecurityException(GeneralSecurityException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.UNAUTHORIZED.value());
-        body.put("error", "Security Exception");
-        body.put("message", "A security issue was encountered: " + ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<CustomErrorResponse> handleGeneralSecurityException(GeneralSecurityException ex) {
+        CustomErrorResponse error = new CustomErrorResponse("Security Exception", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
 

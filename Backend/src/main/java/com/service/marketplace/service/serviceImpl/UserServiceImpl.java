@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUserRoleToProvider(Integer userId) { //???????????????????
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         Role role = roleRepository.findByName("PROVIDER").orElseThrow(() -> new RoleNotFoundException("Role not found!"));
 
