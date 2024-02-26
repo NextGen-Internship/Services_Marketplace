@@ -542,13 +542,11 @@ const getRequestById = async (requestId) => {
       }
     };
 
-    const forgotPassword = async (formData) => {
+    const forgotPassword = async (email) => {
+      const formData = new FormData();
+formData.append('email', email);
       try {
-        const response = await axios.post(`${config.baseUrl}${config.forgotPassword}`, null, {
-          params: {
-              email: formData
-          }
-      });
+        const response = await axios.post(`${config.baseUrl}${config.forgotPassword}`, formData);
         return response.data;
       } catch (error) {
         console.error("Error resetting the password", error);

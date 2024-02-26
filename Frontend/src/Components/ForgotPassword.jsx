@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { forgotPassword } from '../service/ApiService';
 
 const ForgotPassword = () => {
@@ -11,7 +10,7 @@ const ForgotPassword = () => {
         event.preventDefault();
         try {
             const response = await forgotPassword(email);
-            setMessage(response.data);
+            setMessage(response);
             setError(null);
         } catch (error) {
             setMessage(null);
