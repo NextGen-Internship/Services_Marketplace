@@ -48,8 +48,8 @@ const SuccessPage = () => {
 
     return (
         <div className="success-page-container"> 
-            <h1>Subscription Successful!</h1>
-            <p>Thank you for subscribing to our service.</p>
+            <h1>Successful!</h1>
+            <p>Thank you for using our services.</p>
             <button onClick={onButtonClick}>Go Home</button>
         </div>
     )
