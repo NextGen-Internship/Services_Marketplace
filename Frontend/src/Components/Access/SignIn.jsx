@@ -89,7 +89,7 @@ export const SignIn = () => {
           <GoogleLogin
             onSuccess={handleGoogleLogin}
             onFailure={handleGoogleLogin}
-            clientId="YOUR_GOOGLE_CLIENT_ID"
+            clientId="350761079008-0ipa8rk7sumieir1rq4b5ljg3pu78trt.apps.googleusercontent.com"
             buttonText="Login with Google"
             cookiePolicy={'single_host_origin'}
           />
