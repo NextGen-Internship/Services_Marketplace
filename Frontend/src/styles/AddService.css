@@ -130,3 +130,8 @@
     border-top: 1px solid #ccc;
     background-color: #ffffff;
 }
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+  }

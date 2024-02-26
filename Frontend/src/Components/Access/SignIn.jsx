@@ -5,20 +5,17 @@ import { IoIosLock } from 'react-icons/io';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { googleLogin, postLogin } from '../../service/ApiService';
-
-
 export const SignIn = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-
+  const [error, setError] = useState('');
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -26,12 +23,12 @@ export const SignIn = () => {
       console.log('Backend response:', response);
       const jwtToken = response.token;
       localStorage.setItem('Jwt_Token', jwtToken);
-      navigate('/home-page'); 
+      navigate('/home-page');
     } catch (error) {
       console.error('Error during login:', error);
-    } 
+      setError('Invalid email or password. Please try again.');
+    }
   };
-
   const handleGoogleLogin = async (response) => {
     console.log(response.credential);
     try {
@@ -42,13 +39,11 @@ export const SignIn = () => {
       console.log('Backend Response:', backendResponse);
       const jwtToken = backendResponse.token;
       localStorage.setItem('Jwt_Token', jwtToken);
-      navigate('/home-page'); 
-
+      navigate('/home-page');
     } catch (error) {
       console.error('Error during Google login:', error);
     }
   };
-
   return (
     <div className='sign-in'>
       <div>
@@ -76,6 +71,7 @@ export const SignIn = () => {
             />
             <IoIosLock className='icon' />
           </div>
+          {error && <p className='error-message'>{error}</p>}
           <div className='remember-forgot'>
             <label>
               <input type='checkbox' />Remember me
@@ -102,5 +98,4 @@ export const SignIn = () => {
     </div>
   );
 };
-
 export default SignIn;

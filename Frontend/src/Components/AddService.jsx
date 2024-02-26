@@ -15,6 +15,7 @@ const AddService = ({ onAdd }) => {
   const [cities, setCities] = useState([]);
   const [chosen, setChosen] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -88,64 +89,61 @@ const AddService = ({ onAdd }) => {
   const handleImageChange = (event) => {
     const files = event.target.files;
     setSelectedFiles(files);
-}
+  }
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (!serviceTitle) {
-      alert('Please add title');
-      return;
-    }
+    const errors = {};
 
-    if (serviceTitle.length < 2) {
-      alert('The title has to be more than 2 symbols');
-      return;
+    if (!serviceTitle) {
+      errors.title = 'Please add title';
+    } else if (serviceTitle.length < 2) {
+      errors.title = 'The title has to be more than 2 symbols';
     }
 
     if (!serviceDescription) {
-      alert('Please add description');
-      return;
-    }
-
-    if (serviceDescription.length < 2) {
-      alert('The description has to be more than 2 symbols');
-      return;
+      errors.description = 'Please add description';
+    } else if (serviceDescription.length < 2) {
+      errors.description = 'The description has to be more than 2 symbols';
     }
 
     if (!servicePrice) {
-      alert('Please add price');
-      return;
-    }
-
-    if (isNaN(parseFloat(servicePrice)) || !isFinite(parseFloat(servicePrice))) {
-      alert('Price has to be a valid number');
-      return;
+      errors.price = 'Please add price';
+    } else if (isNaN(parseFloat(servicePrice)) || !isFinite(parseFloat(servicePrice))) {
+      errors.price = 'Price has to be a valid number';
     }
 
     if (!serviceCategory) {
-      alert('Please choose category');
-      return;
+      errors.category = 'Please choose category';
     }
 
-    const serviceRequest = {
-      title: serviceTitle,
-      description: serviceDescription,
-      serviceStatus: 'ACTIVE',
-      price: parseFloat(servicePrice),
-      providerId: providerId,
-      categoryId: parseInt(serviceCategory),
-      cityIds: chosen.map((city) => city.id)
-    };
+    if (chosen.length === 0) {
+      errors.city = 'Please select at least one city';
+    }
 
-    onAdd(serviceRequest, selectedFiles);
+    setErrors(errors);
 
-    setServiceTitle('');
-    setServiceDescription('');
-    setServicePrice('');
-    setServiceCategory('');
-    setChosen([]);
-    setSelectedFiles([]);
+    if (Object.keys(errors).length === 0) {
+      const serviceRequest = {
+        title: serviceTitle,
+        description: serviceDescription,
+        serviceStatus: 'ACTIVE',
+        price: parseFloat(servicePrice),
+        providerId: providerId,
+        categoryId: parseInt(serviceCategory),
+        cityIds: chosen.map((city) => city.id)
+      };
+
+      onAdd(serviceRequest, selectedFiles);
+
+      setServiceTitle('');
+      setServiceDescription('');
+      setServicePrice('');
+      setServiceCategory('');
+      setChosen([]);
+      setSelectedFiles([]);
+    }
   };
 
   return (
@@ -159,6 +157,7 @@ const AddService = ({ onAdd }) => {
             value={serviceTitle}
             onChange={(e) => setServiceTitle(e.target.value)}
           />
+          {errors.title && <span className="error">{errors.title}</span>}
         </div>
         <div className='form-control'>
           <label>Description</label>
@@ -168,6 +167,7 @@ const AddService = ({ onAdd }) => {
             value={serviceDescription}
             onChange={(e) => setServiceDescription(e.target.value)}
           />
+          {errors.description && <span className="error">{errors.description}</span>}
         </div>
         <div className='form-control'>
           <label>Price</label>
@@ -177,6 +177,7 @@ const AddService = ({ onAdd }) => {
             value={servicePrice}
             onChange={(e) => setServicePrice(e.target.value)}
           />
+          {errors.price && <span className="error">{errors.price}</span>}
         </div>
         <div className='form-control'>
           <label>Category</label>
@@ -192,6 +193,7 @@ const AddService = ({ onAdd }) => {
               </option>
             ))}
           </select>
+          {errors.category && <span className="error">{errors.category}</span>}
         </div>
         <div className='form-control'>
           <label>Cities</label>
@@ -202,6 +204,7 @@ const AddService = ({ onAdd }) => {
             onRemove={(selectedList) => setChosen(selectedList)}
             displayValue='name'
           />
+          {errors.city && <span className="error">{errors.city}</span>}
         </div>
         <div className="form-control">
           <label>Pictures</label>
