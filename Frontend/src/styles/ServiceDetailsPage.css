@@ -110,3 +110,35 @@
   .reviews-btn:hover{
     background-color: #5db6ee;
   }
+
+  @media screen and (max-width: 768px) {
+    .service-details-container {
+      padding: 50px;
+      font-size: 18px;
+    }
+  
+    .service-title {
+      font-size: 28px;
+    }
+  
+    .service-detail,
+    .service-detail label,
+    .service-detail p {
+      font-size: 16px;
+    }
+  
+    .pay-button,
+    .image-upload-button,
+    .add-review-btn,
+    .reviews-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  
+    .service-details-container .carousel .slide img {
+      margin-top: 100px;
+      max-height: 300px;
+      max-width: 320px;
+      margin-bottom: 20px;
+    }
+  }

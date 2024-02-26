@@ -133,4 +133,36 @@
       order: 1;
     }
   }
+
+  @media screen and (max-width: 1200px) {
+    .service-box {
+      width: 70%;
+    }
+  }
+  
+  @media screen and (max-width: 992px) {
+    .service-box {
+      width: 80%;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .page-container {
+      flex-direction: column;
+    }
+  
+    .filter {
+      width: 100%;
+      order: 2;
+    }
+  
+    .services {
+      width: 100%;
+      order: 1;
+    }
+  
+    .service-box {
+      width: 100%;
+    }
+  }
   
