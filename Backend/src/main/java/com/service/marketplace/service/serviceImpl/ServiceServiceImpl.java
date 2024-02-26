@@ -68,9 +68,11 @@ public class ServiceServiceImpl implements ServiceService {
 
         ServiceResponse serviceResponse = serviceMapper.serviceToServiceResponse(serviceRepository.save(newService));
 
-        for (MultipartFile multipartFile : files) {
-            FilesRequest filesRequest = new FilesRequest(multipartFile, serviceResponse.getId(), null);
-            filesService.createFile(filesRequest);
+        if (files != null) {
+            for (MultipartFile multipartFile : files) {
+                FilesRequest filesRequest = new FilesRequest(multipartFile, serviceResponse.getId(), null);
+                filesService.createFile(filesRequest);
+            }
         }
 
         return serviceResponse;

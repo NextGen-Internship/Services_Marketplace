@@ -16,6 +16,7 @@ import com.service.marketplace.service.OfferService;
 import com.service.marketplace.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -58,6 +59,20 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    public OfferResponse updateOffer(Integer offerId, OfferRequest offerToUpdate) {
+        Offer existingOffer = offerRepository.findById(offerId).orElse(null);
+        if (existingOffer != null) {
+            Offer updateOffer = offerMapper.OfferRequestToOffer(offerToUpdate);
+            existingOffer.setOfferStatus(updateOffer.getOfferStatus());
+            offerRepository.save(existingOffer);
+            return offerMapper.offerToOfferResponse(existingOffer);
+        } else {
+            return null;
+        }
+    }
+
+
+    @Override
     public void deleteOfferById(Integer offerId) {
         if (!offerRepository.existsById(offerId)) {
             throw new OfferNotFoundException(offerId);
@@ -75,6 +90,17 @@ public class OfferServiceImpl implements OfferService {
             offers.addAll(requestOffer);
         }
         return offerMapper.toOfferResponseList(offers);
+    }
+
+    public ResponseEntity<String> cancelOffer(OfferRequest offerRequest, Integer offerId) {
+        try {
+            Offer existingOffer = offerRepository.findById(offerId).orElse(null);
+            existingOffer.setOfferStatus(offerRequest.getOfferStatus());
+            offerRepository.save(existingOffer);
+        } catch (Exception e) {
+            System.err.println("Offer update error: " + e.getMessage());
+        }
+        return null;
     }
 }
 

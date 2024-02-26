@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Integer> {
     List<Subscription> findByUser(User user);
+    Subscription findByStripeId(String stripeId);
+    List<Subscription> findByIsActiveTrue();
 }

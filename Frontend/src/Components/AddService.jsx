@@ -72,8 +72,6 @@ const AddService = ({ onAdd }) => {
       if (userRole.includes('PROVIDER')) {
         try {
           const userData = await getUserById(userId);
-          console.log('User data:' + userData);
-          console.log('User role:', userRole);
           setProviderId(userId);
         } catch (error) {
           console.error('Error fetching user data:', error);

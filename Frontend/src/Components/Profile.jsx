@@ -31,7 +31,6 @@ const Profile = () => {
   const [userServices, setUserServices] = useState([]);
   const [userRequest, setUserRequest] = useState([]);
   const [userOffer, setUserOffer] = useState(true);
-  const [showReviews, setShowReviews] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -53,13 +52,15 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState('');
   const [selectedRequest, setSelectedRequest] = useState(null);
-    const [user, setUser] = useState({
+  const [isButtonDisabled, setIsButtonDisabled] = useState();
+  const [user, setUser] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
     picture: '',
-    roles: []
+    roles: [],
+    stripeAccountId: ''
   });
   const [editableService, setEditableService] = useState({
     id: 0,
@@ -166,11 +167,7 @@ const Profile = () => {
     }
 
     const decodedToken = jwtDecode(localToken);
-
-    console.log(decodedToken);
-
     const userId = decodedToken['jti'];
-    console.log(userId);
 
     if (!userId) {
       console.error('No user email found');
@@ -183,15 +180,13 @@ const Profile = () => {
       lastName: user.lastName,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      roles: user.roles
+      roles: user.roles,
+      stripeAccountId: user.stripeAccountId
     };
-    console.log(updatedUserData);
 
     try {
       const updatedUser = await updateCurrentUser(updatedUserData, localFile);
-      console.log(updatedUser.picture);
       setProfilePicture(updatedUser.picture);
-      console.log('Profile updated successfully:', updatedUser);
       setUser(updatedUser);
       setEditMode(false);
     } catch (error) {
@@ -222,75 +217,15 @@ const Profile = () => {
 
         setPreviewVisible(true);
         setIsEditingPicture(false);
-        console.log('Profile picture updated successfully');
       } catch (error) {
         console.error('Error updating profile picture:', error);
       }
     }
   };
 
-  const handleBecomeProvider = async (newRole) => {
-    setShowServices(false);
-    setShowPersonalInfo(false);
-    console.log('Request to become a provider sent');
-
-    const localToken = localStorage.getItem('Jwt_Token');
-    if (!localToken) {
-      console.error('No token found');
-      navigate('/login');
-      return;
-    }
-
-    const decodedToken = jwtDecode(localToken);
-    const userId = decodedToken['jti'];
-    if (!userId) {
-      console.error('No user ID found');
-      navigate('/login');
-      return;
-    }
-
-    try {
-      const response = await updateUserRole(userId, newRole);
-      console.log("Request data:", { userId, newRole });
-
-      console.log('User role updated successfully:', response);
-
-      //setUser(prevUser => ({ ...prevUser, roles: prevUser.roles.push() }));
-      setUser(await getCurrentUser())
-      console.log('Updated role:', newRole);
-      console.log('User role:', user.roles);
-
-      if (isProvider(user)) {
-        setShowPersonalInfo(true);
-        setShowServices(true);
-        setBecomeProviderBtn(false);
-      }
-
-    } catch (error) {
-      console.error('Error updating user role:', error);
-    }
-  };
-
-  const handlePhoneChange = (phone) => {
-    setPhoneNumber(phone);
-    setUser(current => ({ ...current, phoneNumber: phone }));
-  };
-
   const isProvider = (usr) => {
     return Array.isArray(usr.roles) && usr.roles.some(role => role.authority === 'PROVIDER');
   }
-
-
-
-  useEffect(() => {
-    const getPictureMethod = async () => {
-      const currentUser = await getCurrentUser();
-      const picUrl = currentUser.picture;
-      console.log('polled url', picUrl);
-      setProfilePicture(picUrl);
-      setUser(prevUser => ({ ...prevUser, picture: picUrl }));
-    };
-  }, []);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -324,7 +259,6 @@ const Profile = () => {
 
       try {
         const updatedUserData = await getCurrentUser();
-        console.log('User data:', updatedUserData);
         setUser(updatedUserData);
 
         if (isProvider(updatedUserData)) {
@@ -346,12 +280,11 @@ const Profile = () => {
     setPreviewVisible(false);
     setShowPersonalInfo(false);
   };
-  
+
   useEffect(() => {
     const getPictureMethod = async () => {
       const currentUser = await getCurrentUser();
       const picUrl = currentUser.picture;
-      console.log('polled url', picUrl);
       setProfilePicture(picUrl);
       setUser(prevUser => ({ ...prevUser, picture: picUrl }));
     };
@@ -369,14 +302,9 @@ const Profile = () => {
         const userData = await getCurrentUser();
         setUser(userData);
         setPhoneNumber(userData.phoneNumber);
-        console.log('User data:');
-        console.log(userData);
 
         if (user.picture !== defaultImageUrl) {
-          console.log("custom avatar!")
           await getPictureMethod();
-          console.log('User Avatar img: ', user.picture)
-          console.log(profilePicture);
         }
         else {
           console.log("default");
@@ -386,7 +314,6 @@ const Profile = () => {
         console.error('Error fetching user data:', error);
       }
     };
-    console.log('Fetched user role:', user.roles);
 
     fetchUserData();
   }, [profilePicture]);
@@ -547,8 +474,8 @@ const Profile = () => {
   const fetchSubscription = async (userId) => {
     try {
       const response = await getSubscriptionByUserId(userId);
-      console.log(response);
       setSubscriptionId(response.stripeId);
+      setIsButtonDisabled(response.cancelled);
     } catch (error) {
       console.error('Error fetching subscription data:', error);
     }
@@ -556,6 +483,7 @@ const Profile = () => {
 
   const handleSubscriptionCancel = async () => {
     if (subscriptionId) {
+      setIsButtonDisabled(true);
       cancelSubscription(subscriptionId);
     } else {
       console.error('No subscription ID found');
@@ -631,23 +559,6 @@ const Profile = () => {
   const showRequestsButton = (
     <button onClick={handleRequest}>Requests</button>
   );
-  // const handleRequestDetails = (request) => {
-  //   setSelectedRequest(request);
-  //   // You can perform additional actions here if needed
-  // };
-
-  console.log(editableService);
-
-  // const handleVIPPaymentSuccess = (serviceId) => {
-  //   setUserServices(currentServices => currentServices.map(service => {
-  //     if(service.id === serviceId) {
-  //       return {...service, isVip: 1};
-  //     }
-  //     return service;
-  //   }));
-  // }
-
-
 
   const renderServiceBox = (serviceToRender) => {
     const isEditing = serviceBoxIdToEdit === serviceToRender.id;
@@ -735,7 +646,7 @@ const Profile = () => {
       </div>
       {isProvider(user) &&
         (<div className="provider-info">
-          <button className='save-button' onClick={handleSubscriptionCancel} >Cancel Subscription</button>
+          <button className='save-button' onClick={handleSubscriptionCancel} disabled={isButtonDisabled} >Cancel Subscription</button>
         </div>)
       }
       {isEditingPicture && (
@@ -787,44 +698,48 @@ const Profile = () => {
       )}
       {showBecomeProviderForm && (
         <div className="provider-info">
-          <div className="input-group">
-            <label>First and Middle:</label>
-            <input type="text" name="firstMiddleName" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Last Name:</label>
-            <input type="text" name="lastName" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Date of birth:</label>
-            <input type="date" name="dateOfBirth" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Phone number:</label>
-            <input type="text" name="phoneNumber" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Email:</label>
-            <input type="email" name="email" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Address:</label>
-            <input type="address" name="address" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>City:</label>
-            <input type="city" name="city" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>Postal code:</label>
-            <input type="Postal code" name="postalCode" onChange={handleProviderInfoChange} />
-          </div>
-          <div className="input-group">
-            <label>IBAN:</label>
-            <input type="text" name="iban" onChange={handleProviderInfoChange} />
-          </div>
+          {!user.stripeAccountId && (
+            <div>
+              <div className="input-group">
+                <label>First and Middle:</label>
+                <input type="text" name="firstMiddleName" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Last Name:</label>
+                <input type="text" name="lastName" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Date of birth:</label>
+                <input type="date" name="dateOfBirth" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Phone number:</label>
+                <input type="text" name="phoneNumber" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Email:</label>
+                <input type="email" name="email" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Address:</label>
+                <input type="address" name="address" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>City:</label>
+                <input type="city" name="city" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>Postal code:</label>
+                <input type="Postal code" name="postalCode" onChange={handleProviderInfoChange} />
+              </div>
+              <div className="input-group">
+                <label>IBAN:</label>
+                <input type="text" name="iban" onChange={handleProviderInfoChange} />
+              </div>
+            </div>)
+          }
           <div>
-            <SubscriptionComponent handleAccountCreation={handleAccountCreation} />
+            <SubscriptionComponent handleAccountCreation={!user.stripeAccountId ? handleAccountCreation : undefined} />
           </div>
         </div>
       )
@@ -856,7 +771,7 @@ const Profile = () => {
           )}
         </div>
       )}
-        {showOffers && (
+      {showOffers && (
         <div className="user-offers-profile">
           {userOffer.length > 0 ? (
             userOffer.map((offer, index) => (

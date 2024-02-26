@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SuccessPage.css';
-
+import { jwtDecode } from 'jwt-decode';
+import { getUserById, refreshToken } from '../service/ApiService';
 
 const SuccessPage = () => {
     const location = useLocation();
@@ -16,7 +17,33 @@ const SuccessPage = () => {
     }, [location.search]);
 
     const onButtonClick = () => {
-        navigate("/home-page")
+        const handleCheckoutSuccess = async () => {
+            try {
+                const localToken = localStorage.getItem('Jwt_Token');
+                if (!localToken) {
+                    console.error('No token found');
+                    navigate('/login');
+                    return;
+                }
+    
+                const decodedToken = jwtDecode(localToken);
+                const userId = decodedToken['jti'];
+    
+                const response = await getUserById(userId);
+                const updatedUserData = response;
+    
+                const newTokenResponse = await refreshToken(updatedUserData);
+                const newToken = newTokenResponse;
+    
+                localStorage.setItem('Jwt_Token', newToken);
+            } catch (error) {
+                console.error('Error updating token:', error);
+            }
+        };
+
+        handleCheckoutSuccess();
+        
+        navigate("/home-page");
     }
 
     return (

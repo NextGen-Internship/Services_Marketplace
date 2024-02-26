@@ -22,9 +22,12 @@ public class Subscription extends BaseEntity {
     @Column(name = "end_date", nullable = false)
     private Date endDate;
 
-    @Column(name = "isActive", nullable = false)
+    @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
     @Column(name = "stripe_id", nullable = false)
     private String stripeId;
+
+    @Column(name = "is_cancelled")
+    private boolean isCancelled = false;
 }

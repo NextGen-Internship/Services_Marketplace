@@ -87,8 +87,6 @@ const ServiceDetailsPage = () => {
 
     useEffect(() => {
         async function loadServiceDetails() {
-            console.log('Rendering ServiceDetailsPage', serviceId);
-
             const getServiceDetails = async () => {
                 const serviceDetails = await getServiceById(serviceId);
                 setService(serviceDetails);
