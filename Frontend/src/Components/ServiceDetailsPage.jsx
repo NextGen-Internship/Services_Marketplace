@@ -132,13 +132,15 @@ const ServiceDetailsPage = () => {
         setShowAddRequestForm(!showAddRequestForm);
     }
 
-    const addRequest = async (request) => {
+    const addRequest = async (request, isVisible) => {
         try {
             const newRequest = await createRequest(request);
             console.log(newRequest);
         } catch (error) {
             console.error(error);
         }
+
+        setShowAddRequestForm(isVisible);
     };
     const handleReviewToggle = () => {
         setShowReviews(!showReviews);

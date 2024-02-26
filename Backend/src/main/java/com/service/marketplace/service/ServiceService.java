@@ -28,4 +28,8 @@ public interface ServiceService {
     List<ServiceResponse> getServicesByCurrentUser();
 
     List<ServiceResponse> getServicesByCategory(Integer categoryId);
+
+    void makeServicesInactive(Integer providerId);
+
+    void makeServicesActive(Integer providerId);
 }

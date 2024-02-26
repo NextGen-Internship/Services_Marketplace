@@ -33,7 +33,7 @@ const RequestAddForm = ({ onAdd, serviceId }) => {
             serviceId: serviceId,
             isActive: 'PENDING'
         };
-        onAdd(requestRequesst);
+        onAdd(requestRequesst, false);
         setRequestDescription('');
     };
 
