@@ -35,6 +35,8 @@ const config = {
     updateCurrentReview: '/api/reviews/update',
     refreshToken: '/api/auth/refresh',
     createOfferPayment: '/api/subscribe/offerPay',
+    resetPassword: '/forgot-password/reset',
+    forgotPassword: '/forgot-password/process',
 }
 
 

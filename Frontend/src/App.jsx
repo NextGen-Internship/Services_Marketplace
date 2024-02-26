@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Navbar from './Components/Navbar';
 import Menu from './Components/Menu';
 import Home from './Components/Home';
+import ForgotPassword from './Components/ForgotPassword';
+import ResetPassword from './Components/ResetPassword';
 
 import { SignIn } from './Components/Access/SignIn';
 import SignUp from './Components/Access/SignUp';
@@ -32,6 +34,8 @@ function App() {
           <Route exact path="sign-up" element={<SignUp/>}/>
           <Route exact path="success" element={<SuccessPage/>} />
           <Route exact path="cancel" element={<CancelPage/>} />
+          <Route exact path="forget-password" element={<ForgotPassword />} />
+          <Route exact path="reset-password" element={<ResetPassword />} />
           <Route exact path="/contact-us" element={<ContactUsPage />} />
           <Route exact path='/new-subscription' element={<NewSubscription />} />
           <Route exact path="services/service-details/:serviceId" element={<ServiceDetailsPage />} />

@@ -24,4 +24,10 @@ public interface UserService {
     UserResponse getUserResponseByUser(User user);
 
     UserResponse updateUserRoleToProvider(Integer userId);
+
+    void updateResetPasswordToken(String token, String email);
+
+    User getByResetPasswordToken(String token);
+
+    void updatePassword(User user, String newPassword);
 }

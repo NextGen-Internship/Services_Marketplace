@@ -532,6 +532,28 @@ const getRequestById = async (requestId) => {
       }
     };
 
+    const resetPassword = async (formData) => {
+      try {
+        const response = await axios.post(`${config.baseUrl}${config.resetPassword}`, formData);
+        return response.data;
+      } catch (error) {
+        console.error("Error resetting the password", error);
+        throw error;
+      }
+    };
+
+    const forgotPassword = async (email) => {
+      const formData = new FormData();
+formData.append('email', email);
+      try {
+        const response = await axios.post(`${config.baseUrl}${config.forgotPassword}`, formData);
+        return response.data;
+      } catch (error) {
+        console.error("Error resetting the password", error);
+        throw error;
+      }
+    };
+
     export {
       getAllServices,
       getAllCategories,
@@ -565,5 +587,7 @@ const getRequestById = async (requestId) => {
       getRequestById,
       refreshToken,
       OfferPaymentChechout,
+      resetPassword,
+      forgotPassword,
     }
     export default apiService;

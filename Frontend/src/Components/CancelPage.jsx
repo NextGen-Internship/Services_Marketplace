@@ -12,8 +12,8 @@ const CancelPage = () => {
 
     return (
         <div className="cancel-page-container">
-            <h1>Subscription Canceled</h1>
-            <p>Your subscription process has been canceled.</p>
+            <h1>Canceled</h1>
+            <p>Your payment process has been canceled.</p>
             <button onClick={onButtonClick}>Go Home</button>
         </div>
     );
