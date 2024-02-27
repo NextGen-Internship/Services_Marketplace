@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { forgotPassword } from '../service/ApiService';
+import '../styles/ForgotPassword.css';
 
 const ForgotPassword = () => {
     const [error, setError] = useState(null);
@@ -19,42 +20,38 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div>
-            <h2>Forgot Password</h2>
+        <div className="forgot-password-container">
+            <h2 className="forgot-password-title">Forgot Password</h2>
 
             {error && (
-                <div>
-                    <p className="text-danger">{error}</p>
+                <div className="error-container">
+                    <p className="error-message">{error}</p>
                 </div>
             )}
 
             {message && (
-                <div>
-                    <p className="text-warning">{message}</p>
+                <div className="message-container">
+                    <p className="message">{message}</p>
                 </div>
             )}
 
-            <form onSubmit={handleFormSubmit} style={{ maxWidth: '420px', margin: '0 auto' }}>
-                <div className="border border-secondary rounded p-3">
-                    <div>
-                        <p>We will be sending a reset password link to your email.</p>
-                    </div>
-                    <div>
-                        <p>
-                            <input
-                                type="email"
-                                name="email"
-                                className="form-control"
-                                placeholder="Enter your e-mail"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                autoFocus
-                            />
-                        </p>
-                        <p className="text-center">
-                            <input type="submit" value="Send" className="btn btn-primary" />
-                        </p>
-                    </div>
+            <form onSubmit={handleFormSubmit} className="forgot-password-form">
+                <div className="form-section">
+                    <p className="form-description">We will be sending a reset password link to your email.</p>
+                </div>
+                <div className="form-section">
+                    <input
+                        type="email"
+                        name="email"
+                        className="email-input"
+                        placeholder="Enter your e-mail"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoFocus
+                    />
+                </div>
+                <div className="form-section">
+                    <input type="submit" value="Send" className="submit-button" />
                 </div>
             </form>
         </div>

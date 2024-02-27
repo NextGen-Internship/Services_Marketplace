@@ -4,21 +4,14 @@ import '../styles/ContactUsPage.css';
 const ContactUsPage = () => {
   return (
     <div className="contact-us-container">
-      <h1>Contact Us</h1>
-      {/* <div className="contact-list">
+      <h1 className="contact-us-heading">Contact Us</h1>
+      <div className="contact-list">
         <div className="contact-item">
-          <h2>Aleksandra Misheva</h2>
-          <p>Email: <a href="mailto:aleksandra.misheva@blankfactor.com">aleksandra.misheva@blankfactor.com</a></p>
+          <h2 className="contact-item-heading">Service Marketplace Team</h2>
+          <p className="contact-info">Email: <a href="mailto:service.marketplace.blankfactor@gmail.com" className="contact-link">service.marketplace.blankfactor@gmail.com</a></p>
+          <p className="contact-info">Address: <br></br> Studentski Kompleks, bulevard „Doctor G. M. Dimitrov“ 59, 1756 Sofia</p>
         </div>
-        <div className="contact-item">
-          <h2>Borislav Nikolov</h2>
-          <p>Email: <a href="mailto:borislav.nikolov@blankfactor.com">borislav.nikolov@blankfactor.com</a></p>
-        </div>
-        <div className="contact-item">
-          <h2>Vasil Hristov</h2>
-          <p>Email: <a href="mailto:vasil.hristov@blankfactor.com">vasil.hristov@blankfactor.com</a></p>
-        </div>
-      </div> */}
+      </div>
     </div>
   );
 };
