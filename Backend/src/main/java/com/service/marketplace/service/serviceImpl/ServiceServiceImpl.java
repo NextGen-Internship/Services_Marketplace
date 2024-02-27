@@ -8,6 +8,7 @@ import com.service.marketplace.mapper.ServiceMapper;
 import com.service.marketplace.persistence.entity.Category;
 import com.service.marketplace.persistence.entity.City;
 import com.service.marketplace.persistence.entity.User;
+import com.service.marketplace.persistence.enums.ServiceStatus;
 import com.service.marketplace.persistence.repository.CategoryRepository;
 import com.service.marketplace.persistence.repository.CityRepository;
 import com.service.marketplace.persistence.repository.ServiceRepository;
@@ -108,7 +109,7 @@ public class ServiceServiceImpl implements ServiceService {
         Sort sort = Sort.by(Sort.Direction.valueOf(sortingDirection), sortingField);
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
-        return serviceMapper.toServiceResponsePage(serviceRepository.findAll(pageable));
+        return serviceMapper.toServiceResponsePage(serviceRepository.findByServiceStatus(ServiceStatus.ACTIVE, pageable));
     }
 
     @Override
@@ -166,4 +167,27 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceMapper.toServiceResponseList(userServices);
     }
 
+    @Override
+    public void makeServicesInactive(Integer providerId) {
+        User user = userRepository.findById(providerId).orElseThrow();
+        List<com.service.marketplace.persistence.entity.Service> services = serviceRepository.findByProvider(user);
+
+        for (com.service.marketplace.persistence.entity.Service service : services) {
+            service.setServiceStatus(ServiceStatus.INACTIVE);
+        }
+
+        serviceRepository.saveAll(services);
+    }
+
+    @Override
+    public void makeServicesActive(Integer providerId) {
+        User user = userRepository.findById(providerId).orElseThrow();
+        List<com.service.marketplace.persistence.entity.Service> services = serviceRepository.findByProvider(user);
+
+        for (com.service.marketplace.persistence.entity.Service service : services) {
+            service.setServiceStatus(ServiceStatus.ACTIVE);
+        }
+
+        serviceRepository.saveAll(services);
+    }
 }

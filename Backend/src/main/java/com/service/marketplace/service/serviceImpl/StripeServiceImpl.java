@@ -12,6 +12,7 @@ import com.service.marketplace.persistence.entity.User;
 import com.service.marketplace.service.EmailSenderService;
 import com.service.marketplace.persistence.enums.OfferStatus;
 import com.service.marketplace.persistence.repository.*;
+import com.service.marketplace.service.ServiceService;
 import com.service.marketplace.service.StripeService;
 import com.service.marketplace.service.UserService;
 import com.stripe.Stripe;
@@ -50,6 +51,7 @@ public class StripeServiceImpl implements StripeService {
     private final ServiceRepository serviceRepository;
     private final VipServiceRepository vipServiceRepository;
     private final EmailSenderService emailSenderService;
+    private final ServiceService serviceService;
 
     @Value("${STRIPE_PRIVATE_KEY}")
     private String stripeApiKey;
@@ -317,6 +319,11 @@ public class StripeServiceImpl implements StripeService {
 
                         subscriptionRepository.save(subscription);
 
+                        List<com.service.marketplace.persistence.entity.Service> services = serviceRepository.findByProvider(userToBeUpdated);
+                        if (!services.isEmpty()) {
+                            serviceService.makeServicesActive(userToBeUpdated.getId());
+                        }
+
                         String emailSubject = "Thank You for Subscribing!";
                         String emailBody = String.format("Dear %s %s,\n" +
                                 "\n" +
@@ -446,6 +453,8 @@ public class StripeServiceImpl implements StripeService {
                     userRoles.remove(role);
                     user.setRoles(userRoles);
                     userRepository.save(user);
+
+                    serviceService.makeServicesInactive(user.getId());
                 }
             } catch (StripeException e) {
                 System.err.println("Error: " + e.getMessage());
