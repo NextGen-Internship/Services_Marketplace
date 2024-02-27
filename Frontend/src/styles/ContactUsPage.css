@@ -1,37 +1,53 @@
 .contact-us-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .contact-list {
-    margin-top: 20px;
-  }
-  
-  .contact-item {
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f2f2f2;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .contact-item h2 {
-    margin-top: 0;
-    color: #333;
-  }
-  
-  .contact-item p {
-    margin: 5px 0;
-  }
-  
-  .contact-item a {
-    color: #0066cc;
-    text-decoration: none;
-  }
-  
-  .contact-item a:hover {
-    text-decoration: underline;
-  }
-  
+  padding: 20px;
+  text-align: center;
+  margin-top: 100px;
+}
+
+.contact-us-heading {
+  font-size: 36px;
+  margin-bottom: 30px;
+  color: #ffffff;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-item {
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 400px;
+  margin-bottom: 30px;
+
+.contact-item-heading {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.contact-info {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #ffffff; 
+}
+
+.email {
+  font-weight: bold;
+}
+
+.address {
+  font-style: italic;
+}
+
+.contact-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
+}
+}

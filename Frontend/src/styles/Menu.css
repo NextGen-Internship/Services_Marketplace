@@ -1,5 +1,5 @@
 .Navbars{
-    background-color: rgb(195, 237, 55);
+    background-color: rgb(244, 246, 237);
     padding-bottom: 20px;
     position: absolute;
     width: 100%;
@@ -28,7 +28,7 @@
     color:rgb(19, 10, 10);
 }
 .link:hover{
-    color:#E93A7D;
+    color:#3aa6e9;
     padding: 10px;
     border-radius: 20px;
     padding-left: 30px;
@@ -42,14 +42,14 @@
 .linkbtn{
     text-decoration: none;
     color:white;
-    background-color:#E93A7D;
+    background-color:#3aa6e9;
     padding: 10px;
     border-radius: 20px;
     padding-left: 30px;
     padding-right: 30px;
 }
 .linkbtn:hover{
-    background-color:#c43169;
+    background-color:#3aa6e9;
 }
 
 .Navbutton{

@@ -47,6 +47,6 @@ services:
       - ./target:/app
     command: [ "java", "-jar", "/app/marketplace-0.0.1-SNAPSHOT.jar" ]
     restart: on-failure
-    env_file: ../../app.env
+    env_file: ../app.env
 volumes:
   spring-data:
