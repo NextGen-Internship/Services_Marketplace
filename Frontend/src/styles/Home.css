@@ -66,15 +66,15 @@ body {
   margin-left: 0; /* Adjusted for responsiveness */
   justify-content: center;
 }
-
 .category-card {
   margin-bottom: 15px;
   box-sizing: border-box;
   background: rgba(255, 255, 255, 0.954);
   border-radius: 30px;
   height: 140px;
-  flex-basis: 100%; /* Full width for smaller screens, adjust as needed */
-  margin-right: 4%; 
+  /* Adjust this for your desired number of cards per row on large screens */
+  flex-basis: calc(33.333% - 10px); /* Example for 3 cards per row, adjust margin accordingly */
+  margin-right: 15px; /* Adjust based on the flex-basis calculation */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,7 +128,10 @@ body {
     font-size: 2em; /* Adjust font size for smaller screens */
   }
 
-  .category-card {
-    flex-basis: 100%; /* Full width for very small screens */
+  @media (max-width: 768px) {
+    .category-card {
+      flex-basis: 100%; /* Full width for very small screens */
+      margin-right: 0; /* Reset margin as it takes full width */
+    }
   }
 }
