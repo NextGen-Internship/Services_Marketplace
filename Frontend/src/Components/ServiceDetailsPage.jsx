@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, createRequest,getFilesByServiceId, getReviewsByServiceId, createReview  } from '../service/ApiService';
+import { getServiceById, getCityById, getCategoryById, getUserById, getAllCities, createRequest, getFilesByServiceId, getReviewsByServiceId, createReview } from '../service/ApiService';
 import RequestAddForm from './RequestAddForm';
 import '../styles/ServiceDetailsPage.css';
 import moment from 'moment';
 import { Carousel } from 'react-responsive-carousel';
 import ReviewAddForm from './ReviewAddForm';
 import ReviewBox from './ReviewBox';
+import { useNotification } from './NotificationProvider';
+import {v4} from "uuid";
 
 const ServiceDetailsPage = () => {
     const [showAddRequestForm, setShowAddRequestForm] = useState(false);
@@ -14,6 +16,8 @@ const ServiceDetailsPage = () => {
     const [reviews, setReviews] = useState([]);
     const [showReviews, setShowReviews] = useState(false);
     const [showAddReviewForm, setShowAddReviewForm] = useState(false);
+    const [inputVal, setInputVal] = useState("");
+    const dispatch = useNotification();
     const [service, setService] = useState({
         id: 0,
         title: '',
@@ -132,15 +136,29 @@ const ServiceDetailsPage = () => {
         setShowAddRequestForm(!showAddRequestForm);
     }
 
+    const handleNewNotification = () => {
+        dispatch({
+          type: "ADD_NOTIFICATION",
+          payload: {
+            id: v4(),
+            message: inputVal,
+            title: 'Successful'
+          }
+        });
+      };
+      
+
     const addRequest = async (request, isVisible) => {
         try {
             const newRequest = await createRequest(request);
             console.log(newRequest);
+            setInputVal("Successfully made a request");
         } catch (error) {
             console.error(error);
         }
 
         setShowAddRequestForm(isVisible);
+        handleNewNotification();
     };
     const handleReviewToggle = () => {
         setShowReviews(!showReviews);
@@ -156,9 +174,12 @@ const ServiceDetailsPage = () => {
 
             console.log(newReview);
             setReviews([...reviews, newReview]);
+            setInputVal("Successfully added review");
         } catch (error) {
             console.error(error);
         }
+
+        handleNewNotification();
     };
 
 

@@ -5,6 +5,8 @@ import { createOffer } from '../service/ApiService';
 import { useEffect } from 'react';
 import { getUserById, getServiceById } from '../service/ApiService';
 import '../styles/RequestBox.css';
+import { useNotification } from './NotificationProvider';
+import {v4} from "uuid";
 
 
 const RequestsBox = ({ request }) => {
@@ -12,6 +14,8 @@ const RequestsBox = ({ request }) => {
     const [showCustomer, setShowCustomer] = useState(false);
     const [service, setService] = useState('');
     const [requestId, setRequestId] = useState(request.id);
+    const [inputVal, setInputVal] = useState("");
+    const dispatch = useNotification();
 
 
     const handleMakeOfferForm = () => {
@@ -51,15 +55,29 @@ const RequestsBox = ({ request }) => {
         }
     };
 
+    const handleNewNotification = () => {
+        dispatch({
+          type: "ADD_NOTIFICATION",
+          payload: {
+            id: v4(),
+            message: inputVal,
+            title: 'Successful'
+          }
+        });
+      };
+
     const addOffer = async (offer,Request) => {
         console.log(Request);
         try {
             const addOffer = await createOffer(offer);
             const updateRequestStatus = await axios.put(`http://localhost:8080/v1/request/${offer.request_id}`, Request);
             console.log(offer)
+            setInputVal('Successfully made an offer');
         } catch (error) {
             console.error(error);
         }
+
+        handleNewNotification();
     };
 
     useEffect(() => {
